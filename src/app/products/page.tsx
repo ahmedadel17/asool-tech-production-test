@@ -1,7 +1,8 @@
 import React from 'react'
 import { Product } from '../dummyData/products'
 import Breadcrumb from '@/components/header/headerBreadcrumb'
-import axios from "axios";
+import getRequest from '../../../helpers/get';
+import { unstable_cache } from 'next/cache';
 
 import ProductSortControls from '@/components/product/widgets/filterform';
 import ProductPagination from '@/components/product/productPagination';
@@ -9,6 +10,9 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { cookies } from 'next/headers';
 import ProductCard2 from '@/components/product/productCard2';
 import FilterSidebar from '@/components/product/widgets/FilterSidebar';
+
+// Enable caching for this page (revalidate every 30 seconds)
+export const revalidate = 30;
 interface ProductsPageProps {
   searchParams: Promise<{
     page?: string;
@@ -119,92 +123,32 @@ async function Products({ searchParams }: ProductsPageProps) {
   // console.log('Attributes parameter being sent to API:', { attributes });
 
   try {
-    // Prepare headers
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+    // Create cache key from query parameters
+    const cacheKey = `products-${queryParams.toString()}-${locale}-${token ? 'auth' : 'guest'}`;
     
-    // Add authorization header if token exists
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    
-    // Debug: Check what the API base URL is
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    // console.log('Products page - Environment check:', {
-    //   'process.env.NEXT_PUBLIC_API_BASE_URL': apiBaseUrl,
-    //   'typeof apiBaseUrl': typeof apiBaseUrl,
-    //   'NODE_ENV': process.env.NODE_ENV
-    // });
-    
-    if (!apiBaseUrl) {
-      console.error('NEXT_PUBLIC_API_BASE_URL is not set! This will cause requests to go to localhost.');
-      throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is not set. Please check your .env file.');
-    }
-    
-    // Ensure proper URL construction
-    const cleanBaseUrl = apiBaseUrl.replace(/\/+$/, '');
-    const apiUrl = `${cleanBaseUrl}/catalog/products?${queryParams.toString()}`;
-    
-    // console.log('🟢 Products Page - Making API request to:', apiUrl);
-    // console.log('🟢 Products Page - Request URL:', apiUrl);
-    // console.log('🟢 Products Page - Query Parameters:', queryParams.toString());
-    // console.log('🟢 Products Page - Selected Categories:', categoriesArray);
-    // console.log('🟢 Products Page - Full Request Details:', {
-    //   baseUrl: cleanBaseUrl,
-    //   endpoint: '/catalog/products',
-    //   queryParams: Object.fromEntries(queryParams),
-    //   headers: {
-    //     ...headers,
-    //     "Accept-Language": locale,
-    //   }
-    // });
-    
-    // Helper function to retry with exponential backoff
-    const retryWithBackoff = async <T,>(fn: () => Promise<T>, maxRetries = 3, delay = 1000): Promise<T> => {
-      for (let i = 0; i < maxRetries; i++) {
-        try {
-          return await fn();
-        } catch (error) {
-          const isLastAttempt = i === maxRetries - 1;
-          const axiosError = error as { response?: { status?: number } };
-          
-          // Check if it's a 429 error and not the last attempt
-          if (axiosError?.response?.status === 429 && !isLastAttempt) {
-            const retryDelay = delay * Math.pow(2, i); // Exponential backoff
-            console.warn(`Rate limited (429). Retrying in ${retryDelay}ms... (Attempt ${i + 1}/${maxRetries})`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
-            continue;
-          }
-          
-          // If it's not a 429 or it's the last attempt, throw the error
-          throw error;
+    // Fetch products with caching
+    const getCachedProducts = unstable_cache(
+      async () => {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
         }
+        
+        const response = await getRequest(`/catalog/products?${queryParams.toString()}`, headers, token, locale);
+        return response;
+      },
+      [cacheKey],
+      {
+        revalidate: 30, // Cache for 30 seconds
+        tags: ['products', `products-${locale}`]
       }
-      throw new Error('Max retries exceeded');
-    };
-
-    const response = await retryWithBackoff(
-      () => axios.get(
-        apiUrl,
-        {
-          headers: {
-            ...headers,
-            "Accept-Language": locale,
-          },  
-        }
-      ),
-      3, // max retries
-      1000 // initial delay in ms
     );
-    
-    // console.log('🟢 Products Page - API Response received:', {
-    //   status: response.status,
-    //   dataCount: response.data?.data?.items?.length || 0,
-    //   totalPages: response.data?.data?.paginate?.total_pages || 0
-    // });
 
-    const productsData = response.data.data;
+    const response = await getCachedProducts();
+    const productsData = response.data;
     const products = (productsData.items || []).map((product: Product & { is_favourite?: boolean }) => ({
       ...product,
       is_favourite: product.is_favourite || false // Ensure is_favourite property exists

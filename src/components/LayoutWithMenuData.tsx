@@ -7,22 +7,34 @@ import HeaderTopBarSkeleton from './skeleton/HeaderTopBarSkeleton';
 import HeaderSkeleton from './skeleton/HeaderSkeleton';
 import FooterSkeleton from './skeleton/FooterSkeleton';
 import MarqueeSkeleton from './skeleton/MarqueeSkeleton';
+import { unstable_cache } from 'next/cache';
 
-// Server component that fetches menu data
+// Server component that fetches menu data with caching
 async function MenuDataProvider({ children }: { children: React.ReactNode }) {
   const { getLocale } = await import('next-intl/server');
   const getRequest = (await import('../../helpers/get')).default;
   
   const locale = await getLocale();
   
-  // Fetch menus server-side
-  let menuData = null;
-  try {
-    menuData = await getRequest('/core/menus', {}, null, locale);
-    // console.log('📋 Menus fetched server-side:', menuData?.data);
-  } catch (error) {
-    console.error('❌ Failed to fetch menus server-side:', error);
-  }
+  // Fetch menus server-side with caching
+  const getCachedMenus = unstable_cache(
+    async (locale: string) => {
+      try {
+        const menuData = await getRequest('/core/menus', {}, null, locale);
+        return menuData;
+      } catch (error) {
+        console.error('❌ Failed to fetch menus server-side:', error);
+        return null;
+      }
+    },
+    ['menus', locale],
+    {
+      revalidate: 300, // Cache for 5 minutes
+      tags: ['menus', `menus-${locale}`]
+    }
+  );
+  
+  const menuData = await getCachedMenus(locale);
   
   return (
     <>
