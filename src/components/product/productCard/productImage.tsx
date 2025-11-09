@@ -1,9 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
+import { CompareProduct } from '../../../app/store/slices/compareSlice'
 import ProductHoverButtons from './productHoverButtons'
 import ProductThumbnailImages from './productThumbnailImages'
 import ProductBadges from './productBadges'
+import ProductQuickViewModal from './productQuickViewModal'
 
 interface Badge {
   type: string
@@ -20,36 +22,56 @@ interface ProductImageProps {
   productId?: number | string
   productPrice?: string
   productImage?: string
-  product?: any // Full product object
+  product?: CompareProduct // Full product object
 }
 
 function ProductImage({ thumbnail, hover, slug, name, title, badges, productId, productPrice, productImage, product }: ProductImageProps) {
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false)
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (product) {
+      setIsQuickViewOpen(true)
+    }
+  }
+
   if (thumbnail) {
     return (
-      <a
-        href={`#`}
-        className="product-thumbnail relative block overflow-hidden rounded-lg lg:rounded-t-lg lg:rounded-b-none group"
-      >
-        {/* Product Badges */}
-        <ProductBadges badges={badges} />
+      <>
+        <div
+          onClick={handleImageClick}
+          className="product-thumbnail relative block overflow-hidden rounded-lg lg:rounded-t-lg lg:rounded-b-none group cursor-pointer"
+        >
+          {/* Product Badges */}
+          <ProductBadges badges={badges} />
 
-        {/* Hover Buttons */}
-        <ProductHoverButtons 
-          product={product}
-          productId={productId || slug}
-          productTitle={name || title}
-          productPrice={productPrice}
-          productImage={productImage || thumbnail}
-        />
+          {/* Hover Buttons */}
+          <ProductHoverButtons 
+            product={product}
+            productId={productId || slug}
+            productTitle={name || title}
+            productPrice={productPrice}
+            productImage={productImage || thumbnail}
+            onOpenModal={() => setIsQuickViewOpen(true)}
+          />
 
-        {/* Thumbnail Images */}
-        <ProductThumbnailImages
-          thumbnail={thumbnail}
-          hover={hover}
-          name={name}
-          title={title}
-        />
-      </a>
+          {/* Thumbnail Images */}
+          <ProductThumbnailImages
+            thumbnail={thumbnail}
+            hover={hover}
+            name={name}
+            title={title}
+          />
+        </div>
+        {product && (
+          <ProductQuickViewModal 
+            product={product} 
+            isOpen={isQuickViewOpen}
+            onClose={() => setIsQuickViewOpen(false)}
+          />
+        )}
+      </>
     )
   }
 

@@ -5,6 +5,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import getRequest from "../../../helpers/get";
 import toast from "react-hot-toast";
 import CreateNewAddressForm from "../checkout/shippingAddress/CreateNewAddressForm";
+import { useTranslations } from "next-intl";
 
 // 🏠 Address interface based on API response
 interface Address {
@@ -37,7 +38,7 @@ const MyAddressesPage: React.FC = () => {
   const [settingDefault, setSettingDefault] = useState<string | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const isFetchingRef = useRef(false);
-
+  const t = useTranslations();
   // Fetch addresses from API
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -189,13 +190,13 @@ const MyAddressesPage: React.FC = () => {
               {/* Header */}
               <div className="p-6 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  My Addresses
+                  {t("My Addresses")}
                 </h1>
                 <button
                   onClick={() => setShowCreateForm(!showCreateForm)}
                   className="te-btn te-btn-primary px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition"
                 >
-                  {showCreateForm ? 'Cancel' : 'Add New Address'}
+                  {showCreateForm ? t("Cancel") : t("Add New Address")}
                 </button>
               </div>
 
@@ -253,7 +254,7 @@ const MyAddressesPage: React.FC = () => {
                       onClick={() => setEditingAddress(null)}
                       className="te-btn te-btn-default"
                     >
-                      Cancel
+                      {t("Cancel")}
                     </button>
                   </div>
                   <CreateNewAddressForm
@@ -310,12 +311,12 @@ const MyAddressesPage: React.FC = () => {
                               {address?.address || `${address?.name} ${address?.house}`}
                               {address.is_default && (
                                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                  Default
+                                 {t("Default")}
                                 </span>
                               )}
                               {settingDefault === address.id.toString() && (
                                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                  Setting as Default...
+                                  {t("Setting as Default")}
                                 </span>
                               )}
                             </h3>
@@ -325,7 +326,7 @@ const MyAddressesPage: React.FC = () => {
                         <div className="mt-2 space-y-1">
                           {address?.name && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              name: {address.name}
+                              {t("name")}: {address.name}
                             </p>
                           )}
                         
@@ -334,12 +335,12 @@ const MyAddressesPage: React.FC = () => {
                           
                           {address.street && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                             street: {address?.street}
+                             {t("street")}: {address?.street}
                             </p>
                           )}
                           {address?.contact_phone && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Phone: {address?.contact_phone}
+                              {t("Phone")}: {address?.contact_phone}
                             </p>
                           )}
                         </div>
@@ -349,7 +350,7 @@ const MyAddressesPage: React.FC = () => {
                             className="text-sm font-medium text-primary-600 dark:text-primary-100 hover:underline"
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditingAddress(address); setShowCreateForm(false); }}
                           >
-                            Edit
+                            {t("Edit")}
                           </button>
                           <span className="text-gray-300 dark:text-gray-600">|</span>
                           <button
@@ -360,7 +361,7 @@ const MyAddressesPage: React.FC = () => {
                             }}
                             className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline"
                           >
-                            Delete
+                            {t("Delete")}
                           </button>
                         </div>
                       </div>
@@ -375,16 +376,16 @@ const MyAddressesPage: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No addresses</h3>
+                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">{t("No addresses")}</h3>
                       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Get started by adding your first address.
+                        {t("Get started by adding your first address")}
                       </p>
                       <div className="mt-6">
                         <Link
                           href="/dashboard/edit-address"
                           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
                         >
-                          Add Address
+                          {t("Add Address")}
                         </Link>
                       </div>
                     </div>

@@ -1,6 +1,6 @@
 "use client";
 import { useCart } from "@/app/hooks/useCart";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DeleteButton from "@/components/DeleteButton";
 import axios from "axios";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -18,29 +18,34 @@ interface CartItem {
 
 const CartDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { cartData, loadCartFromStorage } = useCart();
   const { token } = useAuth();
   const dispatch = useAppDispatch();
   const t = useTranslations();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   // Close dropdown when clicking outside (using React patterns)
   const handleBackdropClick = () => {
     setIsOpen(false);
   };
 
   const handleRemoveItem = async (id: number) => {
-    console.log('Removing item with ID:', id);
+    // console.log('Removing item with ID:', id);
     if (!id) {
-      console.error('Item ID is missing:', id);
+      // console.error('Item ID is missing:', id);
       toast.error('Unable to remove item: ID not found');
       return;
     }
     if (!cartData?.id) {
-      console.error('Cart ID is missing');
+      // console.error('Cart ID is missing');
       toast.error('Unable to remove item: Cart not found');
       return;
     }
     if (!token) {
-      console.error('Token is missing');
+      // console.error('Token is missing');
       toast.error('Please login to continue');
       return;
     }
@@ -104,10 +109,12 @@ const CartDropdown: React.FC = () => {
               <path d="M8 11V6a4 4 0 0 1 8 0v5" />
             </svg>
 
-            {/* Badge */}
-            <span className="header-cart-item absolute -top-1 -right-1 bg-primary-200 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
-              {cartData?.cart_count || 0}
-            </span>
+            {/* Badge - only show after mount to avoid hydration mismatch */}
+            {mounted && (cartData?.cart_count || 0) > 0 && (
+              <span className="header-cart-item absolute -top-1 -right-1 bg-primary-200 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                {cartData?.cart_count || 0}
+              </span>
+            )}
           </div>
         </div>
 
@@ -117,7 +124,7 @@ const CartDropdown: React.FC = () => {
             {t("My Cart")}
           </span>
           <span className="text-gray-900 dark:text-gray-100 text-sm font-medium">
-            {cartData?.amount_to_pay || 0}
+            {mounted ? (cartData?.amount_to_pay || 0) : 0}
           </span>
         </div>
       </div>
@@ -131,21 +138,22 @@ const CartDropdown: React.FC = () => {
       )}
 
       {/* Dropdown Content */}
-      <div className={`cart-drop-down te-navbar-dropdown-content px-4 py-4 bg-white dark:bg-gray-800 max-w-[250px] absolute top-full right-0 mt-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${isOpen ? 'te-dropdown-show' : ''}`}>
-        <div className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-          {t("Shopping Cart")}
-        </div>
-
-        {/* Items */}
-        {cartData?.products.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <svg className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-            </svg>
-            <p className="text-sm">Your cart is empty</p>
+      {mounted && (
+        <div className={`cart-drop-down te-navbar-dropdown-content px-4 py-4 bg-white dark:bg-gray-800 max-w-[250px] absolute top-full right-0 mt-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${isOpen ? 'te-dropdown-show' : ''}`}>
+          <div className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+            {t("Shopping Cart")}
           </div>
-        ) : (
-          cartData?.products.map((item, index) => (
+
+          {/* Items */}
+          {!cartData?.products || cartData.products.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <svg className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+              </svg>
+              <p className="text-sm">Your cart is empty</p>
+            </div>
+          ) : (
+            cartData.products.map((item, index) => (
           <div
             key={index}
             className="flex items-center gap-3 py-3 border-b border-gray-100 dark:border-gray-700"
@@ -181,33 +189,34 @@ const CartDropdown: React.FC = () => {
                 variant="icon"
               />
             </div>
-          </div>
-          ))
-        )}
+            </div>
+            ))
+          )}
 
-        {/* Cart Total */}
-        <div className="mt-6">
-          <div className="flex justify-between items-center font-medium mb-3 text-gray-900 dark:text-white">
-            <span>{t("Total")}:</span>
-            <span>{cartData?.total_amount}</span>
-          </div>
+          {/* Cart Total */}
+          <div className="mt-6">
+            <div className="flex justify-between items-center font-medium mb-3 text-gray-900 dark:text-white">
+              <span>{t("Total")}:</span>
+              <span>{cartData?.total_amount || 0}</span>
+            </div>
 
-          <div className="grid gap-2">
-            <Link
-              href="/cart"
-              className="w-full te-btn te-btn-default text-center block"
-            >
-              {t("View Cart")}
-            </Link>
-            <Link
-              href="/checkout"
-              className="w-full te-btn te-btn-primary text-center block"
-            >
-             {t("Checkout")}
-            </Link>
+            <div className="grid gap-2">
+              <Link
+                href="/cart"
+                className="w-full te-btn te-btn-default text-center block"
+              >
+                {t("View Cart")}
+              </Link>
+              <Link
+                href="/checkout"
+                className="w-full te-btn te-btn-primary text-center block"
+              >
+               {t("Checkout")}
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

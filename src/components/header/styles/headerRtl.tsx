@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from 'react'
 import Logo from '../logo'
 import HeaderSearch from '../headerSearch'
 import HeaderNotification from '../headerNotification'
@@ -13,6 +14,11 @@ import LanguageToggle from '../LanguageToggle'
 import LanguageToggleButton from '../LanguageToggleButton'
 function HeaderRtl( { menuData }: { menuData: any } ) {
   const { isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div>
@@ -41,13 +47,13 @@ function HeaderRtl( { menuData }: { menuData: any } ) {
 
 </div >
 
-{isAuthenticated && <HeaderCart />}
+{mounted && isAuthenticated && <HeaderCart />}
          
-{isAuthenticated && <HeaderWishList />} 
-             {isAuthenticated && <HeaderAccount   />}
+{mounted && isAuthenticated && <HeaderWishList />} 
+             {mounted && isAuthenticated && <HeaderAccount   />}
 
              {/* <!-- Notification --> */}
-             {!isAuthenticated && (
+             {mounted && !isAuthenticated && (
                  <a 
                      href="/auth/login" 
                      className="te-navbar-icon-button"

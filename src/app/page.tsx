@@ -23,7 +23,6 @@ export default  async function Home() {
     ...product,
     is_favourite: product.is_favourite || false
   }));
-  
   return (
 <div className='flex flex-col min-h-screen'>
 

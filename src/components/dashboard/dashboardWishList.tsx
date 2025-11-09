@@ -198,8 +198,7 @@ const MyWishlistPage: React.FC = () => {
 
                       {/* Add to Cart */}
                       <button
-
-className="te-btn te-btn-primary flex items-center justify-center gap-2 w-full mt-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition"
+                        className="te-btn te-btn-primary flex items-center justify-center gap-2 w-full mt-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition"
                       >
                         <svg
                           className="icon-cart w-5 h-5"

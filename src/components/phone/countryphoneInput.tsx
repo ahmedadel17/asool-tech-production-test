@@ -1,7 +1,7 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import * as countriesData from "country-codes-flags-phone-codes";
-//@ts-ignore
+//@ts-expect-error - react-world-flags doesn't have TypeScript definitions
 import Flag from 'react-world-flags'
 import { useTranslations, useLocale } from 'next-intl';  
 const countries = countriesData?.countries || [];
@@ -62,15 +62,25 @@ export default function CountryPhoneInput({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Filter countries based on search query
-  const filteredCountries = countries.filter(country =>
-    country.name.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-    country.code.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-    country.dialCode.includes(state.searchQuery)
-  );
+  // Memoize filtered countries - only calculate when dropdown is open and search query changes
+  const filteredCountries = useMemo(() => {
+    if (!state.isCountryDropdownOpen) return [];
+    
+    const query = state.searchQuery.toLowerCase().trim();
+    if (!query) {
+      // Return first 50 countries when no search query for faster initial render
+      return countries.slice(0, 50);
+    }
+    
+    return countries.filter(country =>
+      country.name.toLowerCase().includes(query) ||
+      country.code.toLowerCase().includes(query) ||
+      country.dialCode.includes(query)
+    );
+  }, [state.isCountryDropdownOpen, state.searchQuery]);
 
-  // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  // Handle keyboard navigation - memoized to prevent recreation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!state.isCountryDropdownOpen) return;
 
     switch (e.key) {
@@ -115,7 +125,7 @@ export default function CountryPhoneInput({
         }));
         break;
     }
-  };
+  }, [state.isCountryDropdownOpen, state.highlightedIndex, filteredCountries, value, onChange]);
 
   // Focus search input when dropdown opens
   useEffect(() => {
@@ -153,6 +163,7 @@ export default function CountryPhoneInput({
       }));
       onChange(value, country.code);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCountryCode]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,7 +172,7 @@ export default function CountryPhoneInput({
     onChange(phoneValue, state.selectedCountry.code);
   };
 
-  const handleCountrySelect = (country: Country) => {
+  const handleCountrySelect = useCallback((country: Country) => {
     setState(prev => ({
       ...prev,
       selectedCountry: country,
@@ -170,7 +181,32 @@ export default function CountryPhoneInput({
       highlightedIndex: -1
     }));
     onChange(value, country.code);
-  };
+  }, [value, onChange]);
+
+  // Memoized country item component to prevent unnecessary re-renders
+  const CountryItem = React.memo(({ 
+    country, 
+    isHighlighted, 
+    onSelect 
+  }: { 
+    country: Country; 
+    isHighlighted: boolean; 
+    onSelect: (country: Country) => void;
+  }) => (
+    <button
+      type="button"
+      onClick={() => onSelect(country)}
+      className={`w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors ${
+        isHighlighted ? 'bg-primary-50 dark:bg-primary-900' : ''
+      }`}
+    >
+      <Flag code={country.code} className="w-5 h-4 flex-shrink-0" />
+      <span className="text-sm flex-1">{country.name}</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400 ml-auto">{country.dialCode}</span>
+    </button>
+  ));
+  
+  CountryItem.displayName = 'CountryItem';
 
   return (
     <div className={className}>
@@ -188,9 +224,14 @@ export default function CountryPhoneInput({
         <div className="absolute inset-y-0 start-0 ps-3 flex items-center z-10 pointer-events-none">
           <button
             type="button"
-            onClick={() => setState(prev => ({ ...prev, isCountryDropdownOpen: !prev.isCountryDropdownOpen }))}
+            onClick={() => setState(prev => ({ 
+              ...prev, 
+              isCountryDropdownOpen: !prev.isCountryDropdownOpen,
+              searchQuery: !prev.isCountryDropdownOpen ? '' : prev.searchQuery,
+              highlightedIndex: !prev.isCountryDropdownOpen ? -1 : prev.highlightedIndex
+            }))}
             disabled={disabled}
-            className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto"
+            className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto transition-colors"
           >
             <Flag code={state.selectedCountry.code} className="w-4 h-3 flex-shrink-0" />
             <span className="text-sm font-medium whitespace-nowrap">{state.selectedCountry.dialCode}</span>
@@ -245,18 +286,12 @@ export default function CountryPhoneInput({
             <div className="max-h-48 overflow-auto">
               {filteredCountries.length > 0 ? (
                 filteredCountries.map((country, index) => (
-                  <button
+                  <CountryItem
                     key={country.code}
-                    type="button"
-                    onClick={() => handleCountrySelect(country)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 ${
-                      index === state.highlightedIndex ? 'bg-primary-50 dark:bg-primary-900' : ''
-                    }`}
-                  >
-                    <Flag code={country.code} className="w-5 h-4" />
-                    <span className="text-sm">{country.name}</span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-auto">{country.dialCode}</span>
-                  </button>
+                    country={country}
+                    isHighlighted={index === state.highlightedIndex}
+                    onSelect={handleCountrySelect}
+                  />
                 ))
               ) : (
                 <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">

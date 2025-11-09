@@ -2,9 +2,7 @@ import React from 'react'
 import { Product } from '../dummyData/products'
 import Breadcrumb from '@/components/header/headerBreadcrumb'
 import axios from "axios";
-import PriceFilterWidget from '@/components/product/widgets/priceWidget';
-import CategoryWidget from '@/components/product/widgets/categoryWidget';
-import SizeColorFilter from '@/components/product/widgets/variableWidget';
+
 import ProductSortControls from '@/components/product/widgets/filterform';
 import ProductPagination from '@/components/product/productPagination';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -12,7 +10,7 @@ import { cookies } from 'next/headers';
 import ProductCard2 from '@/components/product/productCard2';
 import FilterSidebar from '@/components/product/widgets/FilterSidebar';
 interface ProductsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     limit?: string;
     sort?: string;
@@ -27,7 +25,7 @@ interface ProductsPageProps {
     sizes?: string;
     colors?: string;
     attributes?: string;
-  };
+  }>;
 }
 
 async function Products({ searchParams }: ProductsPageProps) {
@@ -38,13 +36,15 @@ async function Products({ searchParams }: ProductsPageProps) {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value || null;
   
- 
-  const currentPage = parseInt(searchParams.page || '1');
-  const itemsPerPage = parseInt(searchParams.limit || searchParams.per_page || '12');
-  const sortBy = searchParams.sort || searchParams.order || 'newest';
+  // Await searchParams before using it
+  const params = await searchParams;
+
+  const currentPage = parseInt(params.page || '1');
+  const itemsPerPage = parseInt(params.limit || params.per_page || '12');
+  const sortBy = params.sort || params.order || 'newest';
   
   // Get grid columns based on per_page value
-  const perPage = parseInt(searchParams.per_page || '9');
+  const perPage = parseInt(params.per_page || '9');
   const getGridCols = (perPageValue: number) => {
     switch (perPageValue) {
       case 6:
@@ -58,24 +58,24 @@ async function Products({ searchParams }: ProductsPageProps) {
     }
   };
   const gridColsClass = getGridCols(perPage);
-  const category = searchParams.category;
+  const category = params.category;
   // Handle categories[] array format from URL
-  const categoriesParam = searchParams['categories[]'];
+  const categoriesParam = params['categories[]'];
   const categoriesArray = Array.isArray(categoriesParam)
     ? categoriesParam
     : categoriesParam
       ? [categoriesParam]
-      : Array.isArray(searchParams.categories)
-        ? searchParams.categories
-        : searchParams.categories
-          ? [searchParams.categories]
+      : Array.isArray(params.categories)
+        ? params.categories
+        : params.categories
+          ? [params.categories]
           : [];
-  const priceMin = searchParams.min_price;
-  const priceMax = searchParams.max_price;
-  const searchQuery = searchParams.keyword;
-  const sizes = searchParams.sizes;
-  const colors = searchParams.colors;
-  const attributes = searchParams.attributes;
+  const priceMin = params.min_price;
+  const priceMax = params.max_price;
+  const searchQuery = params.keyword;
+  const sizes = params.sizes;
+  const colors = params.colors;
+  const attributes = params.attributes;
 
   // console.log('Search params received:', {
   //   searchQuery,
@@ -209,7 +209,7 @@ async function Products({ searchParams }: ProductsPageProps) {
       ...product,
       is_favourite: product.is_favourite || false // Ensure is_favourite property exists
     }));
-    console.log('products', products);
+    // console.log('products', products);
     
     // Extract pagination data from the API response
     const paginationData = productsData.paginate || {};
@@ -264,17 +264,17 @@ async function Products({ searchParams }: ProductsPageProps) {
                       </h3>
                       <p className="text-gray-500 dark:text-gray-400">
                         {searchQuery 
-                          ? `No products found for "${searchQuery}". Try different keywords or browse all products.` 
+                          ? `${t('No products found for keyword')} "${searchQuery}". ${t('Try different keywords or browse all products')}.` 
                           : t('Try adjusting your search or filter criteria')
                         }
                       </p>
                       {searchQuery && (
-                        <button 
-                          onClick={() => window.location.href = '/products'}
-                          className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                        <a 
+                          href="/products"
+                          className="mt-4 inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
                         >
                           {t('Browse All Products')}
-                        </button>
+                        </a>
                       )}
                     </div>
                   </div>

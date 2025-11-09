@@ -35,10 +35,10 @@ const {token}= useAuth()
       const response = await postRequest('/payment/tamara/prepare-checkout', {
         order_id: cartData?.id,
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.id}`,
-        cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
+        failed_url: window.location.origin + `/checkoutConfirmation/failed`,
       }, {}, token, 'en');
       
-      console.log('Tamara response:', response);
+      // console.log('Tamara response:', response);
       
       if (response.data.status) {
         // Redirect to Tamara checkout
@@ -62,7 +62,7 @@ const {token}= useAuth()
       const response = await postRequest('/payment/tabby/prepare-checkout', {
         order_id: cartData?.id,
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.id}`,
-        cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
+        cancel: window.location.origin + `/checkoutConfirmation/failed`,
       }, {}, token, 'en');
       
       // console.log('Tabby response:', response);
@@ -245,7 +245,7 @@ const {token}= useAuth()
                       {option.icon}
                       <div>
                         <span className="font-medium text-gray-900 dark:text-white">{t(option.label)}</span>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{t(option.description)}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{(option.description)}</p>
                       </div>
                     </div>
                   </div>

@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast'
 
 interface ProductHoverButtonsProps {
   onQuickViewClick?: () => void
+  onOpenModal?: () => void
   product?: CompareProduct
   // Legacy props for backward compatibility
   productId?: number | string
@@ -17,6 +18,7 @@ interface ProductHoverButtonsProps {
 
 function ProductHoverButtons({ 
   onQuickViewClick, 
+  onOpenModal,
   product,
   productId, 
   productTitle, 
@@ -25,6 +27,10 @@ function ProductHoverButtons({
 }: ProductHoverButtonsProps) {
   const dispatch = useAppDispatch()
   const compareProducts = useAppSelector(state => state.compare.products)
+
+  const handleOpenModal = () => {
+    onOpenModal?.()
+  }
   
   // Use product object if provided, otherwise fall back to individual props
   const currentProductId = product?.id || productId
@@ -114,6 +120,7 @@ function ProductHoverButtons({
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()
+          handleOpenModal()
           onQuickViewClick?.()
         }}
       >
@@ -139,6 +146,7 @@ function ProductHoverButtons({
           />
         </svg>
       </button>
+
     </div>
   )
 }

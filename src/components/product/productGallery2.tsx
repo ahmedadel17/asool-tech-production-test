@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useSelector } from "react-redux";
+import { useAuth } from '@/app/hooks/useAuth';
+import { useLocale } from 'next-intl';
+import { useWishlist } from '@/app/hooks/useWishlist';
+import { useRTL } from '@/app/hooks/useRTL';
+import postRequest from '../../../helpers/post';
+import toast from 'react-hot-toast';
 import NavigationArrow from "./productGallery/NavigationArrows";
 import SaleBadge from "./productGallery/saleBadge";
 import Wishlist from "./productGallery/wishlist";
@@ -10,10 +16,37 @@ import GallerySlides from "./productGallery/GallerySlides";
 
 
 
-export default function ProductGallery({images}: {images: string[]}) {
-  const [mainRef, mainApi] = useEmblaCarousel();
-  const [thumbsRef, thumbsApi] = useEmblaCarousel({ containScroll: "keepSnaps", dragFree: true });
+interface ProductGalleryProps {
+  images: string[];
+  productId?: number | string;
+  product?: {
+    id: number;
+    name: string;
+    price?: string;
+    price_after_discount?: string;
+    min_price?: string;
+    default_variation_id?: string | number;
+    thumbnail?: string;
+    slug?: string;
+    category?: string;
+    variations?: unknown[];
+  };
+}
+
+export default function ProductGallery({images, productId, product}: ProductGalleryProps) {
+  const { isRTL } = useRTL();
+  const [mainRef, mainApi] = useEmblaCarousel({ direction: isRTL ? 'rtl' : 'ltr' });
+  const [thumbsRef, thumbsApi] = useEmblaCarousel({ 
+    containScroll: "keepSnaps", 
+    dragFree: true,
+    direction: isRTL ? 'rtl' : 'ltr'
+  });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isFavourite, setIsFavourite] = useState(false);
+  
+  const { token, isAuthenticated } = useAuth();
+  const locale = useLocale();
+  const { toggleProduct, isInWishlist } = useWishlist();
   
   // Get variation data from Redux store
   interface VariationData {
@@ -26,6 +59,77 @@ export default function ProductGallery({images}: {images: string[]}) {
   
   const variationData = useSelector((state: { product: { variationData: VariationData | null } }) => state.product.variationData);
   
+  // Check if product is in wishlist
+  useEffect(() => {
+    if (productId) {
+      const inWishlist = isInWishlist(Number(productId));
+      setIsFavourite(inWishlist || variationData?.data?.is_favourite || false);
+    } else if (variationData?.data?.is_favourite !== undefined) {
+      setIsFavourite(variationData.data.is_favourite);
+    }
+  }, [productId, variationData?.data?.is_favourite, isInWishlist]);
+  
+  // Handle wishlist toggle
+  const handleWishlistToggle = async () => {
+    if (!productId && !product?.id) {
+      toast.error('Product ID is required');
+      return;
+    }
+
+    if (!isAuthenticated) {
+      toast.error('Please login first to add items to wishlist');
+      return;
+    }
+
+    const currentProductId = productId || product?.id;
+    
+    try {
+      if (token) {
+        const response = await postRequest(
+          `/catalog/favorites/products/${currentProductId}/toggle`,
+          {},
+          {},
+          token,
+          locale
+        );
+        
+        if (response.data.status) {
+          const newFavoriteState = !isFavourite;
+          setIsFavourite(newFavoriteState);
+          
+          // Update Redux wishlist store if product data is available
+          if (product) {
+            toggleProduct({
+              id: product.id,
+              name: product.name,
+              min_price: parseFloat(product.min_price || product.price || '0') || 0,
+              price_after_discount: parseFloat(product.price_after_discount || product.price || '0') || 0,
+              default_variation_id: product.default_variation_id || null,
+              discount: 0,
+              is_favourite: newFavoriteState,
+              out_of_stock: false,
+              rate: "0.00",
+              short_description: product.name,
+              thumbnail: product.thumbnail || '',
+              slug: product.slug || '',
+              category: product.category || '',
+              variations: product.variations || []
+            });
+          }
+          
+          toast.success(isFavourite ? 'Product removed from favorites!' : 'Product added to favorites successfully!');
+        } else {
+          toast.error('Failed to update favorites');
+        }
+      } else {
+        toast.error('Authentication required. Please login again.');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast.error('Failed to update favorites');
+    }
+  };
+  
   // Use variation gallery images if available, otherwise use passed images prop
   let galleryImages = variationData?.data?.gallery || images;
   
@@ -35,7 +139,7 @@ export default function ProductGallery({images}: {images: string[]}) {
   }
   
  
- 
+
   const onThumbClick = useCallback(
     (index: number) => {
       if (!mainApi || !thumbsApi) return;
@@ -55,6 +159,17 @@ export default function ProductGallery({images}: {images: string[]}) {
     mainApi.on("select", onSelect);
     onSelect();
   }, [mainApi, thumbsApi]);
+
+  // Reinitialize Embla when direction changes
+  useEffect(() => {
+    if (!mainApi || !thumbsApi) return;
+    mainApi.reInit({ direction: isRTL ? 'rtl' : 'ltr' });
+    thumbsApi.reInit({ 
+      containScroll: "keepSnaps", 
+      dragFree: true,
+      direction: isRTL ? 'rtl' : 'ltr'
+    });
+  }, [mainApi, thumbsApi, isRTL]);
 
   // If no images at all, show a placeholder
   if (galleryImages.length === 0) {
@@ -84,12 +199,14 @@ export default function ProductGallery({images}: {images: string[]}) {
         {galleryImages.length > 1 && (
           <>
             <NavigationArrow 
-              onClick={() => mainApi?.scrollPrev()} 
+              onClick={() => isRTL ? mainApi?.scrollNext() : mainApi?.scrollPrev()} 
               direction="prev" 
+              isRTL={isRTL}
             />
             <NavigationArrow 
-              onClick={() => mainApi?.scrollNext()} 
+              onClick={() => isRTL ? mainApi?.scrollPrev() : mainApi?.scrollNext()} 
               direction="next" 
+              isRTL={isRTL}
             />
           </>
         )}
@@ -99,8 +216,8 @@ export default function ProductGallery({images}: {images: string[]}) {
 
         {/* Wishlist Button */}
         <Wishlist 
-          isFavourite={variationData?.data?.is_favourite || false} 
-          
+          isFavourite={isFavourite} 
+          onToggle={handleWishlistToggle}
         />
       </div>
 

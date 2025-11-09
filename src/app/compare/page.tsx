@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { removeFromCompare, clearCompare } from "../store/slices/compareSlice";
 import { CompareProduct } from "../store/slices/compareSlice";
-
+import { useTranslations } from "next-intl";
 interface VariationValue {
   id?: number;
   value?: string;
@@ -31,7 +31,7 @@ const CompareProducts: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const compareProducts = useAppSelector(state => state.compare.products);
-
+  const t = useTranslations();
   // Redirect to products if no items to compare
   React.useEffect(() => {
     if (compareProducts.length === 0) {
@@ -124,16 +124,16 @@ const CompareProducts: React.FC = () => {
           ></path>
         </svg>
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-          No products to compare
+          {t("No products to compare")}
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Select products from the catalog to start comparing.
+          {t("Select products from the catalog to start comparing")}.
         </p>
         <a
           href="/products"
           className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Browse Products
+        {t("Browse Products")}
         </a>
       </div>
     );
@@ -141,9 +141,9 @@ const CompareProducts: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Compare Products</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t("Compare Products")}</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Compare up to 4 products side by side
+          {t("Compare up to 4 products side by side")}
         </p>
       </div>
 
@@ -153,7 +153,7 @@ const CompareProducts: React.FC = () => {
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">
-                  Features
+                  {t("Features")}
                 </th>
                 {compareProducts.map((product) => (
                   <th
@@ -169,7 +169,7 @@ const CompareProducts: React.FC = () => {
               {/* Product Images */}
               <tr>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
-                  Product Image
+                  {t("Product Image")}
                 </td>
                 {compareProducts.map((product) => (
                   <td key={product.id} className="px-6 py-4 text-center">
@@ -205,7 +205,7 @@ const CompareProducts: React.FC = () => {
               {/* Product Names */}
               <tr className="bg-gray-50 dark:bg-gray-700">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600">
-                  Product Name
+                  {t("Product Name")}
                 </td>
                 {compareProducts.map((p) => (
                   <td key={p.id} className="px-6 py-4 text-center">
@@ -219,7 +219,7 @@ const CompareProducts: React.FC = () => {
               {/* Category */}
               <tr>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
-                  Category
+                  {t("Category")}
                 </td>
                 {compareProducts.map((p) => (
                   <td key={p.id} className="px-6 py-4 text-center text-sm text-gray-600 dark:text-gray-300">
@@ -231,7 +231,7 @@ const CompareProducts: React.FC = () => {
               {/* Price */}
               <tr className="bg-gray-50 dark:bg-gray-700">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600">
-                  Price
+                  {t("Price")}
                 </td>
                 
                 {compareProducts.map((p) => {
@@ -245,7 +245,7 @@ const CompareProducts: React.FC = () => {
                           <>
                             <p className="text-sm text-gray-500 line-through">${oldPrice}</p>
                             <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
-                              {Math.round(((oldPrice - price) / oldPrice) * 100)}% OFF
+                              {Math.round(((oldPrice - price) / oldPrice) * 100)}%{t("OFF")}
                             </span>
                           </>
                         )}
@@ -311,7 +311,7 @@ const CompareProducts: React.FC = () => {
               {/* Badges */}
               <tr>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
-                  Special Offers
+                  {t("Special Offers")}
                 </td>
                 {compareProducts.map((p) => (
                   <td key={p.id} className="px-6 py-4 text-center">
@@ -329,7 +329,7 @@ const CompareProducts: React.FC = () => {
                         ))}
                       </div>
                     ) : (
-                      <span className="text-gray-400">No special offers</span>
+                      <span className="text-gray-400">{t("No special offers")}</span>
                     )}
                   </td>
                 ))}
@@ -341,14 +341,14 @@ const CompareProducts: React.FC = () => {
               {/* Remove */}
               <tr className="bg-gray-50 dark:bg-gray-700">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600">
-                  Remove
+                  {t("Remove")}
                 </td>
                 {compareProducts.map((p) => (
                   <td key={p.id} className="px-6 py-4 text-center">
                     <button
                       onClick={() => removeProduct(p.id)}
                       className="text-red-600 hover:text-red-800 transition-colors"
-                      title="Remove from comparison"
+                      title={t("Remove from comparison")}
                     >
                       <svg
                         className="w-5 h-5 mx-auto"
@@ -375,10 +375,10 @@ const CompareProducts: React.FC = () => {
       {/* Action Buttons */}
       <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
         <button onClick={clearAll} className="te-btn te-btn-default">
-          Clear All
+          {t("Clear All")}
         </button>
         <a href="/products" className="te-btn te-btn-primary">
-          Continue Shopping
+          {t("Continue Shopping")}
         </a>
       </div>
     </div>

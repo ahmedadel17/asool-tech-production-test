@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation"; // if using Next.js
-
+import { useTranslations } from "next-intl";
 export default function ProductSortControls() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  const t = useTranslations();
   const [order, setOrder] = useState(searchParams.get("order") || "default");
   const [perPage, setPerPage] = useState(searchParams.get("per_page") || "9");
 
@@ -40,32 +40,32 @@ export default function ProductSortControls() {
     <div className="flex items-center space-x-1 rtl:space-x-reverse">
                     {/* <!-- Order Select --> */}
                     <form method="GET" className="flex items-center space-x-2 rtl:space-x-reverse">
-                        <label htmlFor="order" className="sr-only">Sort by:</label>
+                        <label htmlFor="order" className="sr-only">{t("Sort by")}:</label>
                         <select 
                           id="order" 
                           name="order"
                           value={order}
                           onChange={handleOrderChange}
                         >
-                            <option value="default">Default</option>
-                            <option value="price_asc">Price: Low to High</option>
-                            <option value="price_desc">Price: High to Low</option>
-                            <option value="newest">Newest</option>
+                            <option value="default">{t("Default")}</option>
+                            <option value="price_asc">{t("Price")} :{t("Low to High")}</option>
+                            <option value="price_desc">{t("Price")} :{t("High to Low")}</option>
+                            <option value="newest">{t("Newest")}</option>
                         </select>
                     </form>
 
                     {/* <!-- Products Per Page / Grid Columns Select --> */}
                     <form method="GET" className="hidden lg:flex items-center space-x-2 rtl:space-x-reverse">
-                        <label htmlFor="per_page" className="sr-only">Products per page / grid columns:</label>
+                        <label htmlFor="per_page" className="sr-only">{t("Products per page")} / {t("grid columns")}:</label>
                         <select 
                           id="per_page" 
                           name="per_page"
                           value={perPage}
                           onChange={handlePerPageChange}
                         >
-                            <option value="6">2 Columns</option>
-                            <option value="9">3 Columns</option>
-                            <option value="12">4 Columns</option>
+                            <option value="6">{t("2 Columns")}</option>
+                            <option value="9">{t("3 Columns")}</option>
+                            <option value="12">{t("4 Columns")}</option>
                         </select>
                     </form>
 

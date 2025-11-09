@@ -1,15 +1,16 @@
 import React from 'react'
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 function ActionButtons() {
   const t = useTranslations();
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-    <a href="dashboard-track.php" className="te-btn te-btn-primary">
+    <Link href="/dashboard/orders" className="te-btn te-btn-primary">
         {t('Track Your Order')}
-    </a>
-    <a href="index.php" className="te-btn te-btn-default">
+    </Link>
+    <Link href="/products" className="te-btn te-btn-default">
         {t('Continue Shopping')}
-    </a>
+    </Link>
 </div>
   )
 }

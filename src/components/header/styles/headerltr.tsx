@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from 'react'
 import Logo from '../logo'
 import HeaderSearch from '../headerSearch'
 import HeaderAccount from '../headerAccount'
@@ -12,6 +13,11 @@ import HeaderWishList from '../headerWishlist'
 
 function HeaderLtr({ menuData }: { menuData: any }) {
   const { isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div>
@@ -36,16 +42,16 @@ function HeaderLtr({ menuData }: { menuData: any }) {
                {/* {isAuthenticated && <HeaderNotification />} */}
 
                 {/* <!-- Wishlist --> */}
-                {isAuthenticated && <HeaderWishList />} 
+                {mounted && isAuthenticated && <HeaderWishList />} 
 
                 {/* <!-- Account --> */}
-                {isAuthenticated && <HeaderAccount   />}
+                {mounted && isAuthenticated && <HeaderAccount   />}
 
                 {/* <!-- Cart --> */}
-                {isAuthenticated && <HeaderCart />}
+                {mounted && isAuthenticated && <HeaderCart />}
 
                 {/* <!-- Login Icon (when not authenticated) --> */}
-                {!isAuthenticated && (
+                {mounted && !isAuthenticated && (
                     <a 
                         href="/auth/login" 
                         className="te-navbar-icon-button"

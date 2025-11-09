@@ -15,18 +15,20 @@ interface OtpState {
   otp: string[];
   registrationData: string | null;
   isSubmitting: boolean;
+  hasError: boolean;
 }
 
 export default function Otp2() {
   const [state, setState] = useState<OtpState>({
     otp: Array(5).fill(""), // 5-digit OTP
     registrationData: null,
-    isSubmitting: false
+    isSubmitting: false,
+    hasError: false
   });
   const searchParams = useSearchParams();
   const phone = searchParams.get('phone');
   const router = useRouter();
-  const { isLoading, error } = useAuth();
+  const { isLoading } = useAuth();
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const { isRTL, direction } = useRTL();
@@ -42,7 +44,7 @@ export default function Otp2() {
 
   
 const handleSubmit = useCallback(async () => {
-  setState(prev => ({ ...prev, isSubmitting: true }));
+  setState(prev => ({ ...prev, isSubmitting: true, hasError: false }));
   dispatch(setLoading(true));
   dispatch(clearError());
   
@@ -60,9 +62,18 @@ const handleSubmit = useCallback(async () => {
     }
 
     const response = await axios.post(process.env.NEXT_PUBLIC_API_BASE_URL+"/auth/login-or-register", requestData);
-    // console.log('Response:', response.data.data.token);
+    
+    // Check if response has status: false
+    if (response.data && response.data.status === false) {
+      const errorMessage = response.data.message || 'OTP verification failed';
+      dispatch(setError(errorMessage));
+      toast.error(errorMessage);
+      setState(prev => ({ ...prev, hasError: true }));
+      return;
+    }
+    
     // Handle successful response with token
-    if (response.data && response.data.data.token) {
+    if (response.data && response.data.data && response.data.data.token) {
       const { token, user } = response.data.data;
       
       // Store token and user data in both localStorage and cookies
@@ -88,14 +99,33 @@ const handleSubmit = useCallback(async () => {
       // console.log('Login successful, token stored:', token);
       router.push("/");
     } else {
-      toast.error('No token received from server');
-      throw new Error('No token received from server');
+      const errorMessage = 'No token received from server';
+      toast.error(errorMessage);
+      dispatch(setError(errorMessage));
+      setState(prev => ({ ...prev, hasError: true }));
     }
   } catch (error: unknown) {
     console.error('OTP verification failed:', error);
-    const errorMessage = error instanceof Error ? error.message : 'OTP verification failed';
+    let errorMessage = 'OTP verification failed';
+    
+    // Check if it's an axios error with response data
+    if (axios.isAxiosError(error) && error.response?.data) {
+      const responseData = error.response.data;
+      // Check for status: false in error response
+      if (responseData.status === false && responseData.message) {
+        errorMessage = responseData.message;
+      } else if (responseData.message) {
+        errorMessage = responseData.message;
+      } else if (typeof responseData === 'string') {
+        errorMessage = responseData;
+      }
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
     dispatch(setError(errorMessage));
-    toast.error('OTP verification failed');
+    toast.error(errorMessage);
+    setState(prev => ({ ...prev, hasError: true }));
   } finally {
     setState(prev => ({ ...prev, isSubmitting: false }));
     dispatch(setLoading(false));
@@ -127,7 +157,8 @@ const handleSubmit = useCallback(async () => {
             ...prev.otp.slice(0, index),
             "",
             ...prev.otp.slice(index + 1),
-          ]
+          ],
+          hasError: false // Clear error when user starts editing
         }));
       } else {
         // If current field is empty, move to the appropriate field based on direction
@@ -139,7 +170,8 @@ const handleSubmit = useCallback(async () => {
               ...prev.otp.slice(0, prevIndex),
               "",
               ...prev.otp.slice(prevIndex + 1),
-            ]
+            ],
+            hasError: false // Clear error when user starts editing
           }));
           inputRefs.current[prevIndex]?.focus();
         }
@@ -157,7 +189,8 @@ const handleSubmit = useCallback(async () => {
             ...prev.otp.slice(0, index),
             target.value,
             ...prev.otp.slice(index + 1),
-          ]
+          ],
+          hasError: false // Clear error when user starts typing
         }));
         // In RTL, move to the left (previous index), in LTR move to the right (next index)
         const nextIndex = isRTL ? index - 1 : index + 1;
@@ -178,8 +211,23 @@ const handleSubmit = useCallback(async () => {
       return;
     }
     const digits = text.split("");
-    setState(prev => ({ ...prev, otp: digits }));
+    setState(prev => ({ ...prev, otp: digits, hasError: false })); // Clear error on paste
   }, [state.otp.length]);
+
+  // Auto-submit when all OTP digits are filled
+  useEffect(() => {
+    const allFilled = state.otp.every(digit => digit !== '' && digit !== null && digit !== undefined);
+    const isComplete = allFilled && state.otp.length === 5;
+    
+    if (isComplete && !state.isSubmitting && !isLoading && !state.hasError) {
+      // Small delay to ensure state is updated
+      const timer = setTimeout(() => {
+        handleSubmit();
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [state.otp, state.isSubmitting, isLoading, state.hasError, handleSubmit]);
 
   return (
     <>
@@ -205,7 +253,11 @@ const handleSubmit = useCallback(async () => {
                 ref={(el) => {
                   inputRefs.current[index] = el;
                 }}
-                className={`shadow-xs flex h-12 w-12 items-center justify-center rounded-lg border border-stroke bg-white p-2 text-center text-2xl font-medium text-gray-5 outline-none sm:h-14 sm:w-14 sm:text-3xl md:h-16 md:w-16 md:text-4xl dark:border-dark-3 dark:bg-white/5 ${
+                className={`shadow-xs flex h-12 w-12 items-center justify-center rounded-lg border-2 p-2 text-center text-2xl font-medium text-gray-5 outline-none sm:h-14 sm:w-14 sm:text-3xl md:h-16 md:w-16 md:text-4xl transition-colors ${
+                  state.hasError 
+                    ? '!border-red-500 dark:!border-red-500 bg-red-50 dark:bg-red-900/20' 
+                    : 'border-stroke dark:border-dark-3 bg-white dark:bg-white/5'
+                } ${
                   (state.isSubmitting || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 dir={direction as 'ltr' | 'rtl'}

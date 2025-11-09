@@ -7,9 +7,36 @@
 
 
 :root {
-   
-    --apicolor-primary: #0A2463;
-    --apicolor-secondary: #CAA34E;
+    --apicolor-primary_50: hsl(222, 81.7%, 66.4%);
+    --apicolor-primary_100: hsl(222, 81.7%, 56.4%);
+    --apicolor-primary_200: hsl(222, 81.7%, 46.4%);
+    --apicolor-primary_300: hsl(222, 81.7%, 36.4%);
+    --apicolor-primary_400: hsl(222, 81.7%, 28.4%);
+    --apicolor-primary_500: hsl(222, 81.7%, 21.4%);
+    --apicolor-primary_600: hsl(222, 81.7%, 14.399999999999999%);
+    --apicolor-primary_700: hsl(222, 81.7%, 6.399999999999999%);
+    --apicolor-primary_800: hsl(222, 81.7%, 3%);
+    --apicolor-primary_900: hsl(222, 81.7%, 2%);
+    --apicolor-secondary_50: hsl(41, 53.9%, 95%);
+    --apicolor-secondary_100: hsl(41, 53.9%, 89.9%);
+    --apicolor-secondary_200: hsl(41, 53.9%, 79.9%);
+    --apicolor-secondary_300: hsl(41, 53.9%, 69.9%);
+    --apicolor-secondary_400: hsl(41, 53.9%, 60%);
+    --apicolor-secondary_500: hsl(41, 53.9%, 54.9%);
+    --apicolor-secondary_600: hsl(41, 53.9%, 47.9%);
+    --apicolor-secondary_700: hsl(41, 53.9%, 39.9%);
+    --apicolor-secondary_800: hsl(41, 53.9%, 29.9%);
+    --apicolor-secondary_900: hsl(41, 53.9%, 19.9%);
+    --apicolor-accent_50: hsl(32, 100%, 95%);
+    --apicolor-accent_100: hsl(32, 100%, 85%);
+    --apicolor-accent_200: hsl(32, 100%, 75%);
+    --apicolor-accent_300: hsl(32, 100%, 65%);
+    --apicolor-accent_400: hsl(32, 100%, 57%);
+    --apicolor-accent_500: hsl(32, 100%, 50%);
+    --apicolor-accent_600: hsl(32, 100%, 43%);
+    --apicolor-accent_700: hsl(32, 100%, 35%);
+    --apicolor-accent_800: hsl(32, 100%, 25%);
+    --apicolor-accent_900: hsl(32, 100%, 15%);
     --apicolor-gray_50: #f9fafb;
     --apicolor-gray_100: #f3f4f6;
     --apicolor-gray_200: #e5e7eb;
@@ -20,7 +47,6 @@
     --apicolor-gray_700: #374151;
     --apicolor-gray_800: #1f2937;
     --apicolor-gray_900: #111827;
-    --apicolor-accent: #ff8600;
     --apicolor-gradient_one: #111827;
     --apicolor-gradient_two: #1f2937;
     --apicolor-red: #AE1113;
@@ -131,9 +157,9 @@
     @apply !bg-green-500 !text-white !opacity-100 !border !border-transparent !cursor-not-allowed;
 }
 
-.product-add-to-wishlist.active {
+/* .product-add-to-wishlist.active {
     @apply bg-primary-500/20;
-}
+} */
 
 /* Sections */
 .te-section {
@@ -355,6 +381,7 @@ html.no-transition *:after {
 
  /* Base Input Styles - Light Mode */
  [type="text"],
+ 
  [type="email"],
  [type="url"],
  [type="password"],

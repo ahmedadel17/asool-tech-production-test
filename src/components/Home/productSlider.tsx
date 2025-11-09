@@ -3,8 +3,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ProductCard from './product/ProductCard';
 import { Product } from '@/app/dummyData/products';
 import { useTranslations } from 'next-intl';
 import ProductCard2 from '../product/productCard2';
@@ -78,29 +76,39 @@ export default function ProductSlider({ products }: { products: Product[] }) {
               </p>
             </div>
 
-            <div className="embla-control flex gap-1">
+            <div className="embla-control flex gap-1 rtl:flex-row-reverse">
               <button
                 onClick={scrollPrev}
-                className="embla-prev bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                className="embla-prev  dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 aria-label={isRTL ? "Next" : "Previous"}
               >
-                {isRTL ? (
-                  <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                ) : (
-                  <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                )}
+                <svg 
+                  className="w-5 h-5 text-gray-700 dark:text-gray-300" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="1.2"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
               </button>
 
               <button
                 onClick={scrollNext}
-                className="embla-next bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                className="embla-next  dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 aria-label={isRTL ? "Previous" : "Next"}
               >
-                {isRTL ? (
-                  <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                ) : (
-                  <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                )}
+                <svg 
+                  className="w-5 h-5 text-gray-700 dark:text-gray-300" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="1.2"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
               </button>
             </div>
           </div>

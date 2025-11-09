@@ -117,7 +117,7 @@ export default function RewardsWalletCenter() {
    <>
      <div className="lg:col-span-3 space-y-8">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm dark:border-gray-700">
           <h1 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
             Rewards & Wallet Center
           </h1>
@@ -291,7 +291,7 @@ export default function RewardsWalletCenter() {
       </div>
     </div>
         {/* Loyalty Progress */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
@@ -332,7 +332,7 @@ export default function RewardsWalletCenter() {
         {/* Conversion Section */}
         <div
           id="conversion-section"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700 p-6"
         >
           <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
             Convert Points to Wallet Balance
@@ -345,7 +345,7 @@ export default function RewardsWalletCenter() {
                 <div
                   key={i}
                   onClick={() => handleSelectTier(tier, i)}
-                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                  className={`border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer transition-all ${
                     selectedTier === i
                       ? "ring-2 ring-primary-500"
                       : tier.highlight
@@ -382,7 +382,7 @@ export default function RewardsWalletCenter() {
           </div>
 
           {/* Custom Conversion */}
-          <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+          <div className=" border-gray-200 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
             <h3 className="font-medium text-gray-900 dark:text-white mb-4">
               Custom Amount
             </h3>
@@ -409,7 +409,7 @@ export default function RewardsWalletCenter() {
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   You will receive
                 </label>
-                <div className="block w-full rounded-md border px-3 py-2 bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                <div className="block w-full rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
                   {resultAmount.toFixed(2)} SAR
                 </div>
               </div>
@@ -424,8 +424,8 @@ export default function RewardsWalletCenter() {
         </div>
 
         {/* Transactions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border">
-          <div className="p-6 border-b flex justify-between">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Recent Activity
             </h2>

@@ -82,7 +82,7 @@ function ProductDetailsWrapper({
       if (response.data.status && response.data.data?.id) {
         setVariationId(response.data.data.id);
         setVariationData(response.data.data);
-        console.log('variationData',response.data.data);
+        // console.log('variationData',response.data.data);
         setIsLoadingVariation(false);
       } else {
         console.error('Failed to get variation ID:', response.data);
@@ -101,7 +101,7 @@ function ProductDetailsWrapper({
   // Handle selection changes (optional, for tracking)
   const handleSelectionChange = (selections: Record<number, number>) => {
     // Optional: can track selections if needed
-    console.log('Selections changed:', selections);
+    // console.log('Selections changed:', selections);
   };
 
   return (

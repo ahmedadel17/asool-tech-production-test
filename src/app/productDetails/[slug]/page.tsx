@@ -19,7 +19,7 @@ async function ProductDetailsPage({ params }: { params: { slug: string } }) {
       'Accept-Language': locale
     }
   });
-  console.log('product', product.data.data);
+  // console.log('product', product.data.data);
   return (
     <>
       
@@ -35,7 +35,11 @@ async function ProductDetailsPage({ params }: { params: { slug: string } }) {
         <div>
             <div className="sticky top-8 space-y-6">
                 {/* <?php include 'template-parts/product/product-gallery.php'; ?> */}
-                <ProductGallery2 images={[product.data.data.thumbnail,...product.data.data.gallery]} />
+                <ProductGallery2 
+                  images={[product.data.data.thumbnail,...product.data.data.gallery]} 
+                  productId={product.data.data.id}
+                  product={product.data.data}
+                />
                 {/* <ProductGalleryCarousel images={[,product.data.data.thumbnail,...product.data.data.gallery]} discount="20% OFF" /> */}
             </div>
         </div>

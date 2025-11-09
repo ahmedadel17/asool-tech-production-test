@@ -2,19 +2,29 @@
 interface NavigationArrowProps {
     onClick: () => void;
     direction: 'prev' | 'next';
+    isRTL?: boolean;
   }
   
-  function NavigationArrow({ onClick, direction }: NavigationArrowProps) {
+  function NavigationArrow({ onClick, direction, isRTL = false }: NavigationArrowProps) {
     const isPrev = direction === 'prev';
     const arrowClass = isPrev ? 'embla__prev' : 'embla__next';
-    const positionClass = isPrev ? 'left-4' : 'right-4';
+    // Use logical properties for RTL support
+    const positionClass = isPrev 
+      ? (isRTL ? 'end-4' : 'start-4')
+      : (isRTL ? 'start-4' : 'end-4');
     
     return (
       <button
         onClick={onClick}
-        className={`${arrowClass} absolute ${positionClass} top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors`}
+        className={`${arrowClass} absolute ${positionClass} top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors z-10`}
+        aria-label={isPrev ? 'Previous image' : 'Next image'}
       >
-        <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg 
+          className={`w-5 h-5 text-gray-700 dark:text-gray-300 ${isRTL ? 'transform scale-x-[-1]' : ''}`} 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
           {isPrev ? (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           ) : (
@@ -24,5 +34,5 @@ interface NavigationArrowProps {
       </button>
     );
   }
-
+  
   export default NavigationArrow;

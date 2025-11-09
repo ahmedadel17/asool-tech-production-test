@@ -349,7 +349,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>');
               backgroundMap.set(slideIndex, imageUrl);
-              console.log(`📄 Extracted background for slide ${slideIndex + 1}:`, imageUrl);
+              // console.log(`📄 Extracted background for slide ${slideIndex + 1}:`, imageUrl);
             }
           }
           slideIndex++;
@@ -359,7 +359,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
       };
       
       const htmlBackgroundMap = extractBackgroundFromHTML();
-      console.log('📋 Extracted backgrounds from HTML:', htmlBackgroundMap);
+      // console.log('📋 Extracted backgrounds from HTML:', htmlBackgroundMap);
       
       // Force image loading for all images in slides
       const forceImageLoad = () => {
@@ -401,7 +401,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           // 0. First check if we extracted it from HTML
           if (htmlBackgroundMap.has(index)) {
             imageUrl = htmlBackgroundMap.get(index) || null;
-            console.log(`📄 Slide ${index + 1} - Found background from HTML:`, imageUrl);
+            // console.log(`📄 Slide ${index + 1} - Found background from HTML:`, imageUrl);
           }
           
           // 1. Check data attributes
@@ -493,7 +493,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           
           // Load and apply background image if found
           if (imageUrl && imageUrl !== 'none' && imageUrl !== 'undefined') {
-            console.log(`🖼️ Slide ${index + 1} - Loading background image:`, imageUrl);
+            // console.log(`🖼️ Slide ${index + 1} - Loading background image:`, imageUrl);
             
             // Ensure slide has proper classes and layout
             if (!slideElement.classList.contains('flex')) {
@@ -531,17 +531,17 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
               setTimeout(() => {
                 slideElement.style.opacity = '1';
               }, 10);
-              console.log(`✅ Slide ${index + 1} - Background image loaded:`, imageUrl);
+              // console.log(`✅ Slide ${index + 1} - Background image loaded:`, imageUrl);
             };
             
             img.onerror = () => {
-              console.warn(`❌ Slide ${index + 1} - Failed to load background image:`, imageUrl);
+              // console.warn(`❌ Slide ${index + 1} - Failed to load background image:`, imageUrl);
               // Keep the style even if preload fails
             };
             
             img.src = imageUrl;
           } else {
-            console.warn(`⚠️ Slide ${index + 1} - No background image URL found`);
+            // console.warn(`⚠️ Slide ${index + 1} - No background image URL found`);
           }
         });
       };
@@ -1248,7 +1248,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
         }
       }
 
-      console.log('💰 Price updated:', { priceBeforeDiscount, priceAfterDiscount });
+      // console.log('💰 Price updated:', { priceBeforeDiscount, priceAfterDiscount });
     };
 
     // Function to check if button should be enabled
@@ -1377,8 +1377,8 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
                 const variationData = response.data.data;
                 // Store variation data on the product card element
                 (productCard as HTMLElement & { variationData?: unknown }).variationData = variationData;
-                console.log('✅ Variation fetched:', variationData);
-                console.log('🎯 Variation ID:', variationData.variantId || variationData.id);
+                // console.log('✅ Variation fetched:', variationData);
+                // console.log('🎯 Variation ID:', variationData.variantId || variationData.id);
                 
                 // Update price container with new prices
                 updatePriceContainer(productCard, variationData);
@@ -1394,7 +1394,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
               if (productData.variantMap && productData.variantMap[variantKey]) {
                 const variant = productData.variantMap[variantKey];
                 (productCard as HTMLElement & { variationData?: unknown }).variationData = variant;
-                console.log('📦 Using variantMap fallback:', variant);
+                // console.log('📦 Using variantMap fallback:', variant);
                 
                 // Update price container with variant prices if available
                 if (variant.price_after_discount || variant.price) {
@@ -1447,7 +1447,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           const productData = JSON.parse(productDataStr);
           
           // Print product ID
-          console.log('🛒 Product ID:', productData.id);
+          // console.log('🛒 Product ID:', productData.id);
           
           // Get selected options or use default selection
           const selectedOptions: Record<string, number> = {};
@@ -1479,7 +1479,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           if (fetchedVariation) {
             // Use fetched variation data
             itemId = fetchedVariation.variantId || fetchedVariation.id || itemId;
-            console.log('✅ Using fetched variation ID:', itemId);
+            // console.log('✅ Using fetched variation ID:', itemId);
           } else if (productData.has_variation) {
             // Fallback: try variantMap or fetch from API
             const selections = Object.keys(selectedOptions).length > 0 
@@ -1522,7 +1522,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
                   itemId = variationData.variantId;
                   // Store variation data
                   (productCard as HTMLElement & { variationData?: unknown }).variationData = variationData;
-                  console.log('✅ Fetched variation on add to cart:', itemId);
+                  // console.log('✅ Fetched variation on add to cart:', itemId);
                   
                   // Update price container with new prices
                   updatePriceContainer(productCard, variationData);
@@ -1540,7 +1540,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
                   if (variant) {
                     itemId = variant.variantId;
                     (productCard as HTMLElement & { variationData?: unknown }).variationData = variant;
-                    console.log('✅ Using variantMap fallback:', variant.variantId);
+                    // console.log('✅ Using variantMap fallback:', variant.variantId);
                     
                     // Update price container with variant prices if available
                     if (variant.price_after_discount || variant.price) {
@@ -1567,7 +1567,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
               const variant = productData.variantMap[variantKey];
               if (variant) {
                 itemId = variant.variantId;
-                console.log('✅ Using variantMap:', variant.variantId);
+                // console.log('✅ Using variantMap:', variant.variantId);
                 
                 // Update price container with variant prices if available
                 if (variant.price_after_discount || variant.price) {

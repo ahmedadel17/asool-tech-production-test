@@ -27,7 +27,7 @@ function FilterSidebar() {
         // Fetch initial filter data (without categories) once
         const filterResponse = await getRequest(`/catalog/filter-data?`, {}, token, locale)
         setFormState(filterResponse)
-        console.log('filterResponse', filterResponse)
+        // console.log('filterResponse', filterResponse)
         
       
       } catch (error) {

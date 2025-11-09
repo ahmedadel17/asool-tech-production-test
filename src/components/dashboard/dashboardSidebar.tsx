@@ -191,13 +191,13 @@ const DashboardSidebar: React.FC = () => {
                   user?.name || 'User'
                 )}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
                 {!mounted ? (
                   <div className="animate-pulse bg-gray-300 dark:bg-gray-600 rounded h-3 w-40 mt-1"></div>
                 ) : (
                   user?.email || 'user@example.com'
                 )}
-              </p>
+              </div>
             </div>
           </div>
 

@@ -3,9 +3,11 @@ import { useEffect, useRef, useState } from "react";
 interface ZoomImageProps {
     src: string;
     alt: string;
+    onLoad?: () => void;
+    onError?: () => void;
   }
   
-  function ZoomImage({ src, alt }: ZoomImageProps) {
+  function ZoomImage({ src, alt, onLoad, onError }: ZoomImageProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
     const lensRef = useRef<HTMLDivElement>(null);
@@ -66,6 +68,9 @@ interface ZoomImageProps {
              transform: `scale(${isZoomed ? 2 : 1})`,
              imageRendering: '-webkit-optimize-contrast'
            }}
+           onLoad={onLoad}
+           onError={onError}
+           loading="eager"
          />
          <div ref={lensRef} className="zoom-lens absolute border-2 border-white rounded-full w-[150px] h-[150px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"></div>
        </div>
