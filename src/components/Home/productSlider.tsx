@@ -78,6 +78,7 @@ export default function ProductSlider({ products }: { products: Product[] }) {
 
             <div className="embla-control flex gap-1 rtl:flex-row-reverse">
               <button
+                type="button"
                 onClick={scrollPrev}
                 className="embla-prev  dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 aria-label={isRTL ? "Next" : "Previous"}
@@ -95,6 +96,7 @@ export default function ProductSlider({ products }: { products: Product[] }) {
               </button>
 
               <button
+                type="button"
                 onClick={scrollNext}
                 className="embla-next  dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 aria-label={isRTL ? "Previous" : "Next"}

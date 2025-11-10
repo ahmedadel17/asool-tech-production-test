@@ -2,6 +2,7 @@
 import { useEffect, useState, ReactNode, useRef } from 'react'
 import axios from 'axios'
 import { generatePaletteFromHex } from '../../tailwindPlugins/colors' // 👈 تأكد من المسار الصحيح
+import Spinner1 from './spinner'
 
 type Props = {
   children: ReactNode
@@ -104,9 +105,9 @@ export default function ColorProvider({ children }: Props) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500 text-xl">
-        Loading theme...
-      </div>
+        <div className="min-h-screen flex items-center justify-center text-gray-500 text-xl">
+        <Spinner1 />
+        </div>
     )
   }
 

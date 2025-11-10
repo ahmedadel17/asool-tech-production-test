@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useCart } from '@/app/hooks/useCart';
 import { useAuth } from '@/app/hooks/useAuth';
 import { setCartData } from '@/app/store/slices/cartSlice';
@@ -10,6 +10,7 @@ import postRequest from '../../../../helpers/post';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { useWishlist } from '@/app/hooks/useWishlist';
+import { useRouter } from 'next/navigation';
 import ProductTitle from "./productTitle";
 import ProductPrice from "./productPrice";
 import ProductFooter from "./productFooter";
@@ -71,16 +72,76 @@ function ProductDetails({ product }: ProductDetailsProps) {
     variationData: null as Variation | null,
   });
   
+  // Refs to track component mount status and cancel requests
+  const isMountedRef = useRef(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   const { loadCartFromStorage } = useCart();
   const { token, isAuthenticated } = useAuth();
   const dispatch = useAppDispatch();
   const locale = useLocale();   
   const t = useTranslations();
   const { toggleProduct } = useWishlist();
+  const router = useRouter();
+
+  // Reset state when product changes
+  useEffect(() => {
+    isMountedRef.current = true;
+    // Cancel any in-flight requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Reset state for new product
+    setState({
+      selectedColor: null,
+      selectedSize: null,
+      selectedColorId: null,
+      selectedSizeId: null,
+      variationId: null,
+      isAddingToCart: false,
+      isLoadingVariation: false,
+      selectedVariation: null,
+      isFavorite: product?.is_favourite || false,
+      isFavoriteLoading: false,
+      variationData: null,
+    });
+
+    // Cleanup on unmount
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [product.id, product?.is_favourite]);
 
   // Fetch variation ID when all attributes are selected
-  const fetchVariationId = async (attributes: Record<number, number>) => {
-    setState(prev => ({ ...prev, isLoadingVariation: true }));
+  // Memoize this function to prevent unnecessary re-renders in ProductVariations
+  const fetchVariationId = useCallback(async (attributes: Record<number, number>) => {
+    
+    // Check if component is still mounted
+    if (!isMountedRef.current) {
+      return;
+    }
+
+    // Cancel any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    setState(prev => {
+      // Prevent duplicate calls if already loading
+      if (prev.isLoadingVariation) {
+        return prev;
+      }
+      return { ...prev, isLoadingVariation: true };
+    });
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/catalog/products/get-variation-by-attribute`,
@@ -90,11 +151,16 @@ function ProductDetails({ product }: ProductDetailsProps) {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
+          signal: abortController.signal,
         }
       );
+
+      // Check if component is still mounted before updating state
+      if (!isMountedRef.current || abortController.signal.aborted) {
+        return;
+      }
 
       if (response.data.status && response.data.data?.id) {
         setState(prev => ({
@@ -106,7 +172,10 @@ function ProductDetails({ product }: ProductDetailsProps) {
         }));
         // console.log('variationData', response.data.data);
       } else {
-        console.error('Failed to get variation ID:', response.data);
+        const errorMessage = response.data.message || 'Failed to fetch variation';
+        if (isMountedRef.current) {
+          toast.error(errorMessage);
+        }
         setState(prev => ({
           ...prev,
           variationId: null,
@@ -116,7 +185,22 @@ function ProductDetails({ product }: ProductDetailsProps) {
         }));
       }
     } catch (error) {
+      // Don't show error if request was aborted or component unmounted
+      const errorObj = error as { name?: string; code?: string };
+      const isAborted = axios.isCancel(error) || 
+                       errorObj?.name === 'AbortError' || 
+                       errorObj?.name === 'CanceledError' ||
+                       errorObj?.code === 'ERR_CANCELED' ||
+                       abortController.signal.aborted;
+      
+      if (isAborted || !isMountedRef.current) {
+        return;
+      }
+
       console.error('Error fetching variation ID:', error);
+      if (isMountedRef.current) {
+        toast.error('Failed to fetch variation. Please try again.');
+      }
       setState(prev => ({
         ...prev,
         variationId: null,
@@ -124,8 +208,13 @@ function ProductDetails({ product }: ProductDetailsProps) {
         isLoadingVariation: false,
         variationData: null
       }));
+    } finally {
+      // Clear the abort controller reference if this request completed
+      if (abortControllerRef.current === abortController) {
+        abortControllerRef.current = null;
+      }
     }
-  };
+  }, [product.id]);
 
   // Handle selection changes
   const handleSelectionChange = (selections: Record<number, number>) => {
@@ -136,6 +225,19 @@ function ProductDetails({ product }: ProductDetailsProps) {
 
   // Handle favorite toggle
   const handleFavoriteToggle = async () => {
+    // Check authentication first
+    if (!isAuthenticated) {
+      toast.error('Please login first to add items to wishlist');
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!token) {
+      toast.error('Authentication required. Please login again.');
+      router.push('/auth/login');
+      return;
+    }
+
     setState(prev => ({ ...prev, isFavoriteLoading: true }));
     
     try {
@@ -180,23 +282,25 @@ function ProductDetails({ product }: ProductDetailsProps) {
     // Check authentication first
     if (!isAuthenticated) {
       toast.error('Please login first to add items to cart');
+      router.push('/auth/login');
       return;
     }
 
     if (!token) {
       toast.error('Authentication required. Please login again.');
+      router.push('/auth/login');
       return;
     }
 
     // If product has default_variation_id, skip variation validation
     if (!product?.default_variation_id) {
       if (!state.variationId && !state.variationData) {
-        toast.error('Please select all product variations');
+        toast.error(t('Please select all product variations'));
         return;
       }
 
       if (state.isLoadingVariation) {
-        toast.error('Please wait while we process your selection');
+        toast.error(t('Please wait while we process your selection'));
         return;
       }
     }
@@ -231,7 +335,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
           // Fallback: reload cart from storage if no data in response
           await loadCartFromStorage();
         }
-        toast.success('Product added to cart successfully!');
+        toast.success(response.data.message);
         
       } else {
         console.error('Add to cart failed:', response.data);
@@ -257,7 +361,12 @@ function ProductDetails({ product }: ProductDetailsProps) {
         {/* Variations */}
         {product.variations && product.variations.length > 0 && (
           <ProductVariations 
-            variations={product.variations as any} 
+            variations={product.variations as unknown as Array<{
+              attribute_id: number;
+              attribute_name: string;
+              attribute_type: string;
+              values: Array<{ id: number; value: string; color?: string }>;
+            }>} 
             onSelectionChange={handleSelectionChange}
             onVariationFetch={fetchVariationId}
           />

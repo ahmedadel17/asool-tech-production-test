@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from '@/app/hooks/useAuth';
 import getRequest from '../../../helpers/get';
 import { useLocale } from 'next-intl';
-
+import { useTranslations } from 'next-intl';
 interface ConversionTier {
   points: number;
   bonus: number;
@@ -24,6 +24,7 @@ interface Transaction {
 export default function RewardsWalletCenter() {
   const { user, token } = useAuth();
   const locale = useLocale();
+  const t = useTranslations();
   // Mirror dashboard wallet source
   const [walletState, setWalletState] = useState<{ balance: number } | null>(null);
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
@@ -119,10 +120,10 @@ export default function RewardsWalletCenter() {
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm dark:border-gray-700">
           <h1 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-            Rewards & Wallet Center
+            {t("Rewards")} & {t("Wallet Center")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage your points, track your progress, and maximize your rewards.
+            {t("Manage your points") }, {t("track your progress") }, {t("and maximize your rewards") }.
           </p>
         </div>
         <div className="space-y-8">
@@ -149,7 +150,7 @@ export default function RewardsWalletCenter() {
             </span>
           </div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Wallet Balance
+            {t("Wallet Balance")}
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
             {/* Match dashboard formatting */}
@@ -157,7 +158,7 @@ export default function RewardsWalletCenter() {
             {isLoadingWallet ? 'Loading' : `${walletState?.balance || 0}`}
           </p>
           <p className="text-sm text-purple-600 dark:text-purple-300">
-            Ready to spend
+            {t("Ready to spend")}
           </p>
         </div>
 
@@ -182,7 +183,7 @@ export default function RewardsWalletCenter() {
             </span>
           </div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Reward Points
+            {t("Reward Points")}
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
             {current_points.toLocaleString()}
@@ -219,10 +220,10 @@ export default function RewardsWalletCenter() {
             </div>
             <div className="ms-4">
               <h3 className="font-medium text-gray-900 dark:text-white">
-                Convert Points
+                {t("Convert Points")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Turn points into cash
+                {t("Turn points into cash")}
               </p>
             </div>
           </div>
@@ -251,10 +252,10 @@ export default function RewardsWalletCenter() {
             </div>
             <div className="ms-4">
               <h3 className="font-medium text-gray-900 dark:text-white">
-                View History
+                {t("View History")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Track all transactions
+                {t("Track all transactions")}
               </p>
             </div>
           </div>
@@ -280,10 +281,10 @@ export default function RewardsWalletCenter() {
             </div>
             <div className="ms-4">
               <h3 className="font-medium text-gray-900 dark:text-white">
-                Earn More
+                {t("Earn More")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Shop & earn points
+                {t("Shop & earn points")}
               </p>
             </div>
           </div>
@@ -295,14 +296,14 @@ export default function RewardsWalletCenter() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                Loyalty Progress
+                {t("Loyalty Progress")}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                You are currently a{" "}
+                {t("You are currently a")} {" "}
                 <span className="font-bold text-gray-500 dark:text-gray-300">
                   {current_tier}
                 </span>{" "}
-                member. Only{" "}
+                {t("member")}. {t("Only")}{" "}
                 <span className="font-bold text-yellow-500">
                   {points_to_next_tier} points
                 </span>{" "}
@@ -312,7 +313,7 @@ export default function RewardsWalletCenter() {
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold">{percentage}%</div>
-              <div className="text-xs text-gray-500">Complete</div>
+              <div className="text-xs text-gray-500">{t("Complete")}</div>
             </div>
           </div>
           <div className="w-full bg-gray-200 h-3 rounded-full mb-4">
@@ -322,9 +323,9 @@ export default function RewardsWalletCenter() {
             />
           </div>
           <div className="flex justify-between text-xs text-gray-600">
-            <span>{current_tier} (Current)</span>
+            <span>{current_tier} {t("Current")}</span>
             <span>
-              {next_tier} (+{points_to_next_tier} pts)
+              {next_tier} (+{points_to_next_tier} {t("pts")})
             </span>
           </div>
         </div>
@@ -335,7 +336,7 @@ export default function RewardsWalletCenter() {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700 p-6"
         >
           <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
-            Convert Points to Wallet Balance
+            {t("Convert Points to Wallet Balance")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -355,7 +356,7 @@ export default function RewardsWalletCenter() {
                 >
                   <div className="flex justify-between mb-2">
                     <h3 className="font-medium text-gray-900 dark:text-white">
-                      {tier.points} Points
+                      {tier.points} {t("Points")}
                     </h3>
                     {tier.highlight && (
                       <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
@@ -368,13 +369,13 @@ export default function RewardsWalletCenter() {
                   </div>
                   {tier.bonus > 0 && (
                     <div className="text-sm text-green-600 font-medium">
-                      +{tier.bonus}% Bonus!
+                      +{tier.bonus}% {t("Bonus")}!
                     </div>
                   )}
                   <div className="text-xs text-gray-500 mt-1">
                     {unavailable
-                      ? `Need ${tier.points - current_points} more points`
-                      : "Available"}
+                      ? `${t('Need')} ${tier.points - current_points} ${t("more points")}`
+                      : `${t('Available')}`}
                   </div>
                 </div>
               );
@@ -384,7 +385,7 @@ export default function RewardsWalletCenter() {
           {/* Custom Conversion */}
           <div className=" border-gray-200 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
             <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-              Custom Amount
+              {t("Custom Amount")}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
@@ -392,7 +393,7 @@ export default function RewardsWalletCenter() {
                   htmlFor="points"
                   className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
                 >
-                  Points to Convert
+                  {t("Points to Convert")}
                 </label>
                 <input
                   type="number"
@@ -407,10 +408,10 @@ export default function RewardsWalletCenter() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  You will receive
+                  {t("You will receive")}
                 </label>
                 <div className="block w-full rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                  {resultAmount.toFixed(2)} SAR
+                  {resultAmount.toFixed(2)} {t("SAR")}
                 </div>
               </div>
             </div>
@@ -418,7 +419,7 @@ export default function RewardsWalletCenter() {
               disabled={pointsToConvert < 100 || pointsToConvert > current_points}
               className="bg-primary-600 text-white px-4 py-2 rounded disabled:opacity-50"
             >
-              Convert Points
+              {t("Convert Points")}
             </button>
           </div>
         </div>
@@ -427,37 +428,37 @@ export default function RewardsWalletCenter() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Recent Activity
+              {t("Recent Activity")}
             </h2>
             <a href="#" className="text-sm text-primary-600 hover:underline">
-              View All
+              {t("View All")}
             </a>
           </div>
           <div className="p-6 space-y-4">
-            {recent_transactions.map((t, i) => (
+            {recent_transactions.map((transaction, i) => (
               <div
                 key={i}
                 className="flex justify-between p-4 border rounded-lg dark:border-gray-700"
               >
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {t.description}
+                    {transaction.description}
                   </p>
-                  <p className="text-sm text-gray-500">{t.date}</p>
+                  <p className="text-sm text-gray-500">{transaction.date}</p>
                 </div>
                 <div className="text-right">
                   <div
                     className={`font-semibold ${
-                      t.type === "earned"
+                      transaction.type === "earned"
                         ? "text-green-600"
                         : "text-red-600"
                     }`}
                   >
-                    {t.type === "earned" ? "+" : ""}
-                    {t.amount} points
+                    {transaction.type === "earned" ? "+" : ""}
+                    {transaction.amount} {t("points")}
                   </div>
                   <div className="text-xs text-gray-500">
-                    Balance: {t.balance_after}
+                    {t("Balance")}: {transaction.balance_after}
                   </div>
                 </div>
               </div>

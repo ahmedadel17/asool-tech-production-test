@@ -6,7 +6,7 @@ import { useLocale } from 'next-intl';
 import { useWishlist } from '@/app/hooks/useWishlist';
 import postRequest from '../../../helpers/post';
 import toast from 'react-hot-toast';
-
+  import { useTranslations } from 'next-intl';
 interface WishlistItem {
   id: number;
   title: string;
@@ -18,6 +18,7 @@ const MyWishlistPage: React.FC = () => {
   const { token } = useAuth();
   const locale = useLocale();
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
+  const t = useTranslations();
   const { 
     products: reduxWishlistProducts, 
     loadWishlist, 
@@ -92,11 +93,11 @@ const MyWishlistPage: React.FC = () => {
       } else {
         // If not authenticated, just remove from local storage
         removeProduct(productId);
-        toast.success('Product removed from wishlist!');
+        toast.success(t('Product removed from wishlist'));
       }
     } catch (error) {
       console.error('Error removing from favorites:', error);
-      toast.error('Failed to remove from favorites');
+      toast.error(t('Failed to remove from favorites'));
       // Still remove from local storage on error
       removeProduct(productId);
     } finally {
@@ -114,9 +115,11 @@ const MyWishlistPage: React.FC = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading wishlist...</span>
+      <div className="lg:col-span-3 flex items-center justify-center min-h-[400px] w-full">
+        <div className="flex flex-col items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <span className="mt-3 text-gray-600 dark:text-gray-400">{t("Loading wishlist")}...</span>
+        </div>
       </div>
     );
   }
@@ -142,7 +145,7 @@ const MyWishlistPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="p-6 border-b border-gray-200 dark:border-gray-600">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  My Wishlist
+                  {t("My Wishlist")}
                 </h1>
               </div>
 
@@ -213,7 +216,7 @@ const MyWishlistPage: React.FC = () => {
                           <path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z" />
                           <path d="M8 11V6a4 4 0 0 1 8 0v5" />
                         </svg>
-                        <span className="hidden lg:block">Add to Cart</span>
+                        <span className="hidden lg:block">{t("Add to Cart")}</span>
                       </button>
                     </div>
                   ))}

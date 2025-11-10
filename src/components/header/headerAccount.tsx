@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation"; // Remove if not using Next.js
 import { useAuth } from "../../app/hooks/useAuth";
 import { useTranslations } from 'next-intl';
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 interface MenuItem {
   title: string;
   //@ts-ignore
@@ -14,11 +15,29 @@ interface MenuItem {
 const AccountDropdown: React.FC = () => {
   const { user, logout: logoutUser } = useAuth();
   const t = useTranslations();
-  // console.log(user);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
+  
+  // Sync user data from localStorage if Redux doesn't have first_name
+  useEffect(() => {
+    if (user && !user.first_name && typeof window !== 'undefined') {
+      try {
+        const storedUserData = localStorage.getItem('userData');
+        if (storedUserData) {
+          const parsedUser = JSON.parse(storedUserData);
+          // If localStorage has first_name but Redux doesn't, we can log it for debugging
+          // The useAuth hook should handle this, but this is a fallback
+          if (parsedUser.first_name && !user.first_name) {
+            console.log('User data mismatch - localStorage has first_name but Redux does not');
+          }
+        }
+      } catch (error) {
+        console.error('Error reading user data from localStorage:', error);
+      }
+    }
+  }, [user]);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,7 +57,6 @@ const AccountDropdown: React.FC = () => {
 
   const handleLogout = () => {
     // Explicitly remove auth token from localStorage
-    if (typeof window !== 'undefined') {
       localStorage.removeItem('authToken');
       localStorage.removeItem('userData');
       localStorage.removeItem('cartData');
@@ -50,14 +68,13 @@ const AccountDropdown: React.FC = () => {
       localStorage.removeItem('returnOrderData');
       // Also clear cookie
       document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    }
     
     // Call logout function from useAuth hook (this also handles Redux store cleanup)
     logoutUser();
     // Close dropdown
     setIsOpen(false);
     // Redirect to home page or login page
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   };
 
   const menuItems: MenuItem[] = [
@@ -216,7 +233,7 @@ const AccountDropdown: React.FC = () => {
             {t("My Account")} 
           </span>
           <span className="text-gray-900 dark:text-gray-100 text-sm font-medium">
-           {t("Hi")}, {user?.first_name}
+           {t("Hi")}, {user?.first_name || user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
           </span>
         </div>
       </div>
@@ -225,7 +242,7 @@ const AccountDropdown: React.FC = () => {
         <div className="account-drop-down absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 mb-2">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
-              {user?.first_name} 
+              {user?.first_name || user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'} 
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-400">
               {user?.email}
@@ -265,6 +282,7 @@ const AccountDropdown: React.FC = () => {
                   key={item.url}
                   href={item.url}
                   className={`flex gap-2 items-center px-4 py-2 text-sm rounded-md transition ${activeClass}`}
+                  onClick={() => setIsOpen(false)}
                 >
                   <svg
                     className="w-4 h-4"

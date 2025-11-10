@@ -38,6 +38,38 @@ export function useCart() {
       });
       // console.log('🛒 Cart data fetched from API:', response.data);
 
+      // Check if cart is empty
+      if (response.data.status === false || (response.data.message && response.data.message.includes('Cart Is Empty'))) {
+        // Set empty cart structure
+        dispatch(setCartData({
+          id: 0,
+          type: '',
+          status: '',
+          status_value: '',
+          sub_total: '0',
+          vat_amount: '0',
+          total_amount: '0',
+          amount_to_pay: '0',
+          products: [],
+          offers: [],
+          voucher: null,
+          customer_note: null,
+          address: null,
+          use_wallet: false,
+          user_balance: '0',
+          allow_voucher: false,
+          allowed_payment_methods: [],
+          shipping_methods: [],
+          created_at: '',
+          cart_count: 0,
+          order_attributes: [],
+          can_cancel: false,
+          can_rate: false,
+          can_pay: false,
+        }));
+        return;
+      }
+
       if (response.data.status && response.data.data) {
         dispatch(setCartData(response.data.data));
         // console.log('🛒 Cart data fetched from API:', response.data.data);

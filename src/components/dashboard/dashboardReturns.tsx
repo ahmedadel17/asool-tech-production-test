@@ -1,5 +1,6 @@
 "use client";
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useTranslations } from "next-intl";
 
 interface Order {
   id: string;
@@ -30,6 +31,7 @@ interface ReturnRequest {
 }
 
 export default function ReturnPage() {
+  const t = useTranslations();
   const orders: Order[] = [
     { id: "ORD-2024-001234", date: "September 1, 2025", status: "Delivered" },
     { id: "ORD-2024-001233", date: "August 28, 2025", status: "Delivered" },
@@ -114,13 +116,13 @@ export default function ReturnPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!selectedOrder) return alert("Please select an order");
+    if (!selectedOrder) return alert(t("Please select an order"));
     if (selectedItems.length === 0)
-      return alert("Please select at least one item");
-    if (!returnReason) return alert("Please select a reason");
-    if (!returnType) return alert("Please select a return type");
+      return alert(t("Please select at least one item"));
+    if (!returnReason) return alert(t("Please select a reason"));
+    if (!returnType) return alert(t("Please select a return type"));
 
-    alert("Return request submitted successfully!");
+    alert(t("Return request submitted successfully!"));
   };
 
   return (
@@ -130,10 +132,10 @@ export default function ReturnPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-600">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Return Item
+              {t("Return Item")}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Request a return for your purchased items
+              {t("Request a return for your purchased items")}
             </p>
           </div>
 
@@ -145,7 +147,7 @@ export default function ReturnPage() {
                   htmlFor="orderSelect"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Select Order
+                  {t("Select Order")}
                 </label>
                 <select
                   id="orderSelect"
@@ -153,10 +155,10 @@ export default function ReturnPage() {
                   value={selectedOrder}
                   onChange={handleOrderChange}
                 >
-                  <option value="">Choose an order</option>
+                  <option value="">{t("Choose an order")}</option>
                   {orders.map((o) => (
                     <option key={o.id} value={o.id}>
-                      {o.id} - {o.date} ({o.status})
+                      {o.id} - {o.date} ({t(o.status)})
                     </option>
                   ))}
                 </select>
@@ -166,7 +168,7 @@ export default function ReturnPage() {
               {selectedOrder && (
                 <div className="space-y-4 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                    Select Items to Return
+                    {t("Select Items to Return")}
                   </h3>
 
                   {orderItems.map((item) => (
@@ -192,10 +194,10 @@ export default function ReturnPage() {
                           {item.name}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Size: {item.size}, Color: {item.color}
+                          {t("Size")}: {item.size}, {t("Color")}: {item.color}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Quantity: {item.quantity}
+                          {t("Quantity")}: {item.quantity}
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
                           {item.price.toFixed(2)}
@@ -214,7 +216,7 @@ export default function ReturnPage() {
                       htmlFor="returnReason"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Reason for Return *
+                      {t("Reason for Return")} *
                     </label>
                     <select
                       id="returnReason"
@@ -222,25 +224,23 @@ export default function ReturnPage() {
                       value={returnReason}
                       onChange={(e) => setReturnReason(e.target.value)}
                     >
-                      <option value="">Select a reason</option>
-                      <option value="defective">Defective/damaged</option>
-                      <option value="wrong_item">Wrong item</option>
-                      <option value="wrong_size">Wrong size/color</option>
-                      <option value="not_as_described">
-                        Item not as described
-                      </option>
-                      <option value="quality">Quality not expected</option>
-                      <option value="changed_mind">Changed my mind</option>
-                      <option value="other">Other</option>
+                      <option value="">{t("Select a reason")}</option>
+                      <option value="defective">{t("Defective")} / {t("Damaged")}</option>
+                      <option value="wrong_item">{t("Wrong item")}</option>
+                      <option value="wrong_size">{t("Wrong size")} / {t("Color")}</option>
+                      <option value="not_as_described">{t("Item not as described")}</option>
+                      <option value="quality">{t("Quality not expected")}</option>
+                      <option value="changed_mind">{t("Changed my mind")}</option>
+                      <option value="other">{t("Other")}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Return Type *
+                      {t("Return Type")} *
                     </label>
                     <div className="space-y-3">
-                      {["Refund", "Exchange", "Store Credit"].map((type) => (
+                      {[t("Refund"), t("Exchange"), t("Store Credit")].map((type) => (
                         <label key={type} className="flex items-center">
                           <input
                             type="radio"
@@ -263,7 +263,7 @@ export default function ReturnPage() {
                       htmlFor="comments"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Additional Comments
+                      {t("Additional Comments")}
                     </label>
                     <textarea
                       id="comments"
@@ -271,13 +271,13 @@ export default function ReturnPage() {
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Provide details about your return..."
+                      placeholder={t("Provide details about your return")}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Upload Photos (Optional)
+                      {t("Upload Photos")} ({t("Optional")})
                     </label>
                     <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
                       <input
@@ -290,12 +290,12 @@ export default function ReturnPage() {
                       />
                       <label htmlFor="photos" className="cursor-pointer">
                         <p className="text-sm text-gray-900 dark:text-white">
-                          Click to upload photos
+                          {t("Click to upload photos")}
                         </p>
                       </label>
                       {files.length > 0 && (
                         <p className="mt-2 text-sm text-primary-600 dark:text-primary-400">
-                          {files.length} file(s) selected
+                          {files.length} {t("files selected")}
                         </p>
                       )}
                     </div>
@@ -306,7 +306,7 @@ export default function ReturnPage() {
                       type="submit"
                       className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg"
                     >
-                      Submit Return Request
+                      {t("Submit Return Request")}
                     </button>
                   </div>
                 </div>
@@ -318,19 +318,19 @@ export default function ReturnPage() {
         {/* Return Policy */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Return Policy
+            {t("Return Policy")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-400">
             <ul className="space-y-2">
-              <li>30 days from delivery date</li>
-              <li>Items must be in original condition</li>
-              <li>Tags and packaging included</li>
+              <li>{t("30 days from delivery date")}</li>
+              <li>{t("Items must be in original condition")}</li>
+              <li>{t("Tags and packaging included")}</li>
             </ul>
             <ol className="space-y-2">
-              <li>Submit return request</li>
-              <li>Receive return label via email</li>
-              <li>Package and ship items back</li>
-              <li>Refund processed within 5-7 days</li>
+              <li>{t("Submit return request")}</li>
+              <li>{t("Receive return label via email")}</li>
+              <li>{t("Package and ship items back")}</li>
+              <li>{t("Refund processed within 5-7 days")}</li>
             </ol>
           </div>
         </div>
@@ -338,7 +338,7 @@ export default function ReturnPage() {
         {/* Active Return Requests */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            My Return Requests
+            {t("My Return Requests")}
           </h2>
           <div className="space-y-4">
             {activeReturns.map((ret) => (
@@ -349,10 +349,10 @@ export default function ReturnPage() {
                 <div className="flex flex-col sm:flex-row sm:justify-between mb-3">
                   <div>
                     <h3 className="font-medium text-gray-900 dark:text-white">
-                      Return Request #{ret.id}
+                      {t("Return Request")} #{ret.id}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Order #{ret.orderId} - Requested on {ret.date}
+                      {t("Order")} #{ret.orderId} - {t("Requested on")} {ret.date}
                     </p>
                   </div>
                   <span
@@ -376,7 +376,7 @@ export default function ReturnPage() {
                       {ret.productName}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Reason: {ret.reason}
+                      {t("Reason")}: {ret.reason}
                     </p>
                   </div>
                   <div className="text-right">
@@ -384,7 +384,7 @@ export default function ReturnPage() {
                       {ret.price.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {ret.type}
+                      {t(ret.type)}
                     </p>
                   </div>
                 </div>

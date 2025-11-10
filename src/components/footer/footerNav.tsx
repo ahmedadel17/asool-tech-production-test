@@ -37,7 +37,7 @@ function FooterNav() {
             <path d="M8 11V6a4 4 0 0 1 8 0v5"></path>
           </svg>
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+            <span className="absolute -top-1 -right-1 bg-primary-200 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
               {totalItems > 99 ? '99+' : totalItems}
             </span>
           )}

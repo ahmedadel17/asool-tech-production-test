@@ -60,36 +60,60 @@ function ProductVariations({
 
   // Check if all variations are selected and fetch variation data
   useEffect(() => {
-    if (sortedVariations.length > 0 && onVariationFetch) {
-      const allSelected = sortedVariations.every(attr => 
-        selections[attr.attribute_id] !== undefined && selections[attr.attribute_id] !== null
-      )
+    // Skip if no variations or no fetch function
+    if (sortedVariations.length === 0 || !onVariationFetch) {
+      return;
+    }
+
+    // Check if all required attributes have valid selections
+    const requiredAttributeIds = sortedVariations.map(attr => attr.attribute_id);
+    const allSelected = requiredAttributeIds.every(attrId => {
+      const value = selections[attrId];
+      return value !== undefined && value !== null && value !== 0;
+    });
+
+    // Also verify we have exactly the right number of selections (no extra, no missing)
+    const selectedCount = requiredAttributeIds.filter(attrId => 
+      selections[attrId] !== undefined && selections[attrId] !== null && selections[attrId] !== 0
+    ).length;
+
+    if (allSelected && selectedCount === sortedVariations.length) {
+      // Create a unique key for the current selections to prevent duplicate calls
+      // Sort keys to ensure consistent stringification
+      const sortedSelections = requiredAttributeIds.reduce((acc, attrId) => {
+        acc[attrId] = selections[attrId];
+        return acc;
+      }, {} as Record<number, number>);
       
-      if (allSelected && Object.keys(selections).length === sortedVariations.length) {
-        // Create a unique key for the current selections to prevent duplicate calls
-        const selectionsKey = JSON.stringify(selections)
+      const selectionsKey = JSON.stringify(sortedSelections);
+      
+      // Only fetch if this is a new selection combination
+      if (selectionsKey !== lastFetchedSelections.current) {
+        lastFetchedSelections.current = selectionsKey;
+        // Small delay to ensure state is fully updated
+        const timeoutId = setTimeout(() => {
+          onVariationFetch(sortedSelections);
+        }, 0);
         
-        // Only fetch if this is a new selection combination
-        if (selectionsKey !== lastFetchedSelections.current) {
-          lastFetchedSelections.current = selectionsKey
-          // All variations selected, fetch variation data
-          onVariationFetch(selections)
-        }
-      } else {
-        // If not all selected, clear the fetch tracking
-        lastFetchedSelections.current = ''
+        return () => clearTimeout(timeoutId);
       }
+    } else {
+      // If not all selected, clear the fetch tracking
+      lastFetchedSelections.current = '';
     }
   }, [selections, sortedVariations, onVariationFetch])
 
   // Handle value selection for any attribute
   const handleSelect = (attributeId: number, valueId: number) => {
+    // console.log('handle select', attributeId, valueId)
     const newSelections = {
       ...selections,
       [attributeId]: valueId
     }
     setSelections(newSelections)
     onSelectionChange?.(newSelections)
+    // Prevent any form submission or navigation
+    return false;
   }
 
   // Render attribute based on type
@@ -163,7 +187,11 @@ function ProductVariations({
         <select
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
           value={selectedValueId || ''}
-          onChange={(e) => handleSelect(attribute.attribute_id, Number(e.target.value))}
+          onChange={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSelect(attribute.attribute_id, Number(e.target.value));
+          }}
         >
           <option value="">Select {attribute.attribute_name}</option>
           {attribute.values.map((value) => (

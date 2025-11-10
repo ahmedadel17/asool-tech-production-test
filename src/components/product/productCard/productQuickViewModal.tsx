@@ -10,6 +10,7 @@ import { useAppDispatch } from '../../../app/store/hooks';
 import { setCartData, setCartLoading, setCartError } from '../../../app/store/slices/cartSlice';
 import { useCart } from '../../../app/hooks/useCart';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 type QuickViewProps = {
   product: CompareProduct;
   isOpen: boolean;
@@ -31,6 +32,7 @@ const QuickView: React.FC<QuickViewProps> = ({
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [customerNote, setCustomerNote] = useState('');
+  const router = useRouter();
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -116,11 +118,12 @@ const QuickView: React.FC<QuickViewProps> = ({
   // Handle add to cart
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error('Please login first to add items to cart');
+      router.push('/auth/login');
       return;
     }
 
     if (!token) {
+      router.push('/auth/login');
       toast.error('Authentication required. Please login again.');
       return;
     }

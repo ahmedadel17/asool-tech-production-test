@@ -157,7 +157,15 @@ export function SliderComponent({ slides }: SliderComponentProps) {
                         }`}>
                           {slide.description}
                         </p>
-                        <a href="#" className="te-btn te-btn-primary animated">
+                        <a 
+                          href="#" 
+                          className="te-btn te-btn-primary animated"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                          }}
+                        >
                           {slide.button_text || 'Shop Collection'}
                         </a>
                       </div>
@@ -174,6 +182,7 @@ export function SliderComponent({ slides }: SliderComponentProps) {
       {slides.length > 1 && (
         <>
           <button 
+            type="button"
             id="prev-slide"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
@@ -186,6 +195,7 @@ export function SliderComponent({ slides }: SliderComponentProps) {
           </button>
 
           <button 
+            type="button"
             id="next-slide"
             onClick={scrollNext}
             disabled={!canScrollNext}
@@ -204,6 +214,7 @@ export function SliderComponent({ slides }: SliderComponentProps) {
         <div id="pagination-dots" className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-30">
           {slides.map((_, index) => (
             <button
+              type="button"
               key={index}
               onClick={() => scrollTo(index)}
               className={`h-4 w-4 rounded-full transition-colors duration-300 ease-in-out ${

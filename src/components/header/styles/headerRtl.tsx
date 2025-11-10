@@ -47,10 +47,10 @@ function HeaderRtl( { menuData }: { menuData: any } ) {
 
 </div >
 
-{mounted && isAuthenticated && <HeaderCart />}
          
 {mounted && isAuthenticated && <HeaderWishList />} 
              {mounted && isAuthenticated && <HeaderAccount   />}
+             {mounted && isAuthenticated && <HeaderCart />}
 
              {/* <!-- Notification --> */}
              {mounted && !isAuthenticated && (

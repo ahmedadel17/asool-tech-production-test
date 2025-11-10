@@ -71,11 +71,11 @@ const MyAddressesPage: React.FC = () => {
             setSelectedAddressId(defaultAddress.id.toString());
           }
         } else {
-          setError("Failed to fetch addresses");
+          setError(t("Failed to fetch addresses"));
         }
       } catch (error) {
         console.error('❌ Error fetching addresses:', error);
-        setError("Failed to load addresses. Please try again.");
+        setError("Failed to load addresses Please try again");
       } finally {
         setIsLoading(false);
         isFetchingRef.current = false;
@@ -113,13 +113,13 @@ const MyAddressesPage: React.FC = () => {
           }
           return updated;
         });
-        toast.success("Address deleted successfully");
+        toast.success(t("Address deleted successfully"));
       } else {
-        toast.error("Failed to delete address");
+        toast.error(t("Failed to delete address"));
       }
     } catch (error) {
       console.error('❌ Error deleting address:', error);
-      toast.error("Failed to delete address");
+      toast.error(t("Failed to delete address"));
     }
   };
 
@@ -147,13 +147,12 @@ const MyAddressesPage: React.FC = () => {
         );
         
         setSelectedAddressId(addressId);
-        toast.success("Address set as default successfully");
+        toast.success(t("Address set as default successfully"));
       } else {
-        toast.error("Failed to set address as default");
+        toast.error(t("Failed to set address as default"));
       }
     } catch (error) {
-      console.error('❌ Error setting address as default:', error);
-      toast.error("Failed to set address as default");
+      toast.error(t("Failed to set address as default",));
     } finally {
       setSettingDefault(null);
     }
@@ -205,7 +204,7 @@ const MyAddressesPage: React.FC = () => {
                 <div className="p-6">
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span className="ml-2 text-gray-600 dark:text-gray-400">Loading addresses...</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">{t("Loading addresses")}...</span>
                   </div>
                 </div>
               )}
@@ -222,7 +221,7 @@ const MyAddressesPage: React.FC = () => {
                       </div>
                       <div className="ml-3">
                         <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                          Error loading addresses
+                          {t("Error loading addresses")}
                         </h3>
                         <div className="mt-2 text-sm text-red-700 dark:text-red-300">
                           {error}
@@ -237,7 +236,7 @@ const MyAddressesPage: React.FC = () => {
               {showCreateForm && !editingAddress && (
                 <div className="p-6 border-b border-gray-200 dark:border-gray-600">
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                    Create New Address
+                    {t("Create New Address")}
                   </h2>
                   <CreateNewAddressForm onAddressCreated={handleAddressCreated} />
                 </div>
@@ -248,7 +247,7 @@ const MyAddressesPage: React.FC = () => {
                 <div className="p-6 border-b border-gray-200 dark:border-gray-600">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      Edit Address
+                      {t("Edit Address")}
                     </h2>
                     <button
                       onClick={() => setEditingAddress(null)}

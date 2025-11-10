@@ -157,9 +157,9 @@
     @apply !bg-green-500 !text-white !opacity-100 !border !border-transparent !cursor-not-allowed;
 }
 
-/* .product-add-to-wishlist.active {
-    @apply bg-primary-500/20;
-} */
+.product-add-to-wishlist.active {
+    @apply bg-gray-200;
+}
 
 /* Sections */
 .te-section {

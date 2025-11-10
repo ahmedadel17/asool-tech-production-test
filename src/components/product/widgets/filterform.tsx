@@ -39,7 +39,15 @@ export default function ProductSortControls() {
   return (
     <div className="flex items-center space-x-1 rtl:space-x-reverse">
                     {/* <!-- Order Select --> */}
-                    <form method="GET" className="flex items-center space-x-2 rtl:space-x-reverse">
+                    <form 
+                      method="GET" 
+                      className="flex items-center space-x-2 rtl:space-x-reverse"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                      }}
+                    >
                         <label htmlFor="order" className="sr-only">{t("Sort by")}:</label>
                         <select 
                           id="order" 
@@ -55,7 +63,15 @@ export default function ProductSortControls() {
                     </form>
 
                     {/* <!-- Products Per Page / Grid Columns Select --> */}
-                    <form method="GET" className="hidden lg:flex items-center space-x-2 rtl:space-x-reverse">
+                    <form 
+                      method="GET" 
+                      className="hidden lg:flex items-center space-x-2 rtl:space-x-reverse"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                      }}
+                    >
                         <label htmlFor="per_page" className="sr-only">{t("Products per page")} / {t("grid columns")}:</label>
                         <select 
                           id="per_page" 

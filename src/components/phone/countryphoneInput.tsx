@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import * as countriesData from "country-codes-flags-phone-codes";
 //@ts-expect-error - react-world-flags doesn't have TypeScript definitions
 import Flag from 'react-world-flags'
-import { useTranslations, useLocale } from 'next-intl';  
+import { useTranslations, useLocale } from 'next-intl';
+import { getCountryTranslationKey } from '@/utils/countryTranslations';
 const countries = countriesData?.countries || [];
+console.log(countries)
 
 // Type for country object
 interface Country {
@@ -38,14 +40,38 @@ export default function CountryPhoneInput({
   error,
   touched,
   disabled = false,
-  placeholder = "XXXXXXXX (max 11 digits)",
-  label = "Phone Number",
+  placeholder,
+  label,
   required = false,
   className = "",
   initialCountryCode = 'SA'
 }: CountryPhoneInputProps) {
   const t = useTranslations();
   const locale = useLocale();
+  
+  // Use translation keys for default values
+  const defaultPlaceholder = placeholder || t("Phone Number Placeholder");
+  const defaultLabel = label || t("Phone Number");
+  
+  // Helper function to get translated country name
+  const getTranslatedCountryName = useCallback((country: Country): string => {
+    if (locale === 'ar') {
+      const translationKey = getCountryTranslationKey(country.code);
+      if (translationKey) {
+        try {
+          const translated = t(translationKey);
+          // If translation exists and is different from the key, use it
+          if (translated && translated !== translationKey) {
+            return translated;
+          }
+        } catch {
+          // Translation key doesn't exist, fall back to English
+        }
+      }
+    }
+    // Return English name for English locale or if translation not found
+    return country.name;
+  }, [locale, t]);
   
   // Consolidated state management
   const [state, setState] = useState(() => ({
@@ -72,12 +98,16 @@ export default function CountryPhoneInput({
       return countries.slice(0, 50);
     }
     
-    return countries.filter(country =>
-      country.name.toLowerCase().includes(query) ||
-      country.code.toLowerCase().includes(query) ||
-      country.dialCode.includes(query)
-    );
-  }, [state.isCountryDropdownOpen, state.searchQuery]);
+    return countries.filter(country => {
+      const translatedName = getTranslatedCountryName(country);
+      return (
+        country.name.toLowerCase().includes(query) ||
+        translatedName.toLowerCase().includes(query) ||
+        country.code.toLowerCase().includes(query) ||
+        country.dialCode.includes(query)
+      );
+    });
+  }, [state.isCountryDropdownOpen, state.searchQuery, getTranslatedCountryName]);
 
   // Handle keyboard navigation - memoized to prevent recreation
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -187,11 +217,13 @@ export default function CountryPhoneInput({
   const CountryItem = React.memo(({ 
     country, 
     isHighlighted, 
-    onSelect 
+    onSelect,
+    getTranslatedName
   }: { 
     country: Country; 
     isHighlighted: boolean; 
     onSelect: (country: Country) => void;
+    getTranslatedName: (country: Country) => string;
   }) => (
     <button
       type="button"
@@ -200,8 +232,8 @@ export default function CountryPhoneInput({
         isHighlighted ? 'bg-primary-50 dark:bg-primary-900' : ''
       }`}
     >
-      <Flag code={country.code} className="w-5 h-4 flex-shrink-0" />
-      <span className="text-sm flex-1">{country.name}</span>
+      <Flag code={country.code} className="w-5 h-4 flex-shrink-0 mx-2" />
+      <span className="text-sm flex-1">{getTranslatedName(country)}</span>
       <span className="text-sm text-gray-500 dark:text-gray-400 ml-auto">{country.dialCode}</span>
     </button>
   ));
@@ -211,9 +243,9 @@ export default function CountryPhoneInput({
   return (
     <div className={className}>
       {/* Label */}
-      {label && (
+      {defaultLabel && (
         <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-          {t(label)}
+          {label ? t(label) : defaultLabel}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
@@ -255,7 +287,7 @@ export default function CountryPhoneInput({
           className={`block w-full ps-28 pr-5 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white ${
             error && touched ? 'border-red-500 dark:border-red-500' : ''
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-          placeholder={placeholder}
+          placeholder={placeholder ? t(placeholder) : defaultPlaceholder}
           dir={locale === 'ar' ? 'rtl' : 'ltr'}
         />
         
@@ -291,6 +323,7 @@ export default function CountryPhoneInput({
                     country={country}
                     isHighlighted={index === state.highlightedIndex}
                     onSelect={handleCountrySelect}
+                    getTranslatedName={getTranslatedCountryName}
                   />
                 ))
               ) : (
@@ -305,7 +338,7 @@ export default function CountryPhoneInput({
       
       {/* Helper Text */}
       <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        {t("Enter your")} {state.selectedCountry.name} {t("phone number")} (7-11 {t("digits")})
+        {t("Enter your")} {getTranslatedCountryName(state.selectedCountry)} {t("phone number")} (7-11 {t("digits")})
       </p>
       
       {/* Error Message */}

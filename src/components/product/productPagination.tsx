@@ -130,6 +130,7 @@ function ProductPagination({
             {/* Previous Button */}
             <li>
               <button
+                type="button"
                 onClick={handlePrevious}
                 disabled={currentPage === 1}
                 className={`te-pagination-nav flex items-center justify-center gap-2 min-w-10 h-10 px-2 py-2 text-sm font-medium border rounded-md transition-all duration-200 ${
@@ -155,6 +156,7 @@ function ProductPagination({
                   </span>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => handlePageChange(page as number)}
                     className={`te-pagination-link flex items-center justify-center min-w-10 h-10 px-2 py-3 text-sm font-medium border rounded-md transition-all duration-200 ${
                       page === currentPage
@@ -180,6 +182,7 @@ function ProductPagination({
             {/* Next Button */}
             <li>
               <button
+                type="button"
                 onClick={handleNext}
                 disabled={currentPage === totalPages}
                 className={`te-pagination-nav flex items-center justify-center gap-2 min-w-10 h-10 px-2 py-2 text-sm font-medium border rounded-md transition-all duration-200 ${

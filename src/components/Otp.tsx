@@ -91,7 +91,8 @@ const handleSubmit = useCallback(async () => {
         user: {
           id: user.id || '',
           email: user.email || '',
-          name: user.name || user.first_name + ' ' + user.last_name || '',
+          name: user.name || (user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.last_name || ''),
+          first_name: user.first_name || '',
           phone: user.phone || phone || '',
         }
       }));

@@ -4,6 +4,7 @@ import getRequest from "../../../helpers/get";
 import { useAuth } from "../hooks/useAuth";
 import { useLocale, useTranslations } from "next-intl";
 import Breadcrumb from "../../components/header/headerBreadcrumb";
+import Link from "next/link";
 
 interface Order {
   id: string;
@@ -181,9 +182,9 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('Recent Orders')}</h2>
-            <a href="/dashboard-orders" className="text-sm font-medium text-primary-600 hover:text-primary-700">
-              View All
-            </a>
+            <Link href="/dashboard/orders" className="text-sm font-medium text-primary-600 hover:text-primary-700">
+            {t('View All')}
+            </Link>
           </div>
           <div className="p-6 overflow-x-auto">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

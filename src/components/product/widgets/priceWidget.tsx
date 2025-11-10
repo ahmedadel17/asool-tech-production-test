@@ -131,6 +131,7 @@ export default function PriceWidget({ min, max }: Props) {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t("Filter by Price")}</h3>
         {(minVal !== minPrice || maxVal !== maxPrice) && (
           <button 
+            type="button"
             onClick={handleClear}
             className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-100 dark:hover:text-primary-300 font-medium transition-colors"
           >
@@ -219,6 +220,7 @@ export default function PriceWidget({ min, max }: Props) {
         <div className="grid grid-cols-2 gap-2">
           {quickRanges.map((range, idx) => (
             <button
+              type="button"
               key={idx}
               onClick={() => handleQuickSelect(range.min, range.max)}
               className={`price-quick-btn px-3 py-2 text-sm border rounded-md transition-colors ${

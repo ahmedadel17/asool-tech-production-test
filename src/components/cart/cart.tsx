@@ -31,6 +31,39 @@ function Cart() {
     dispatch(setCartError(null));
     try {
       const response = await getRequest('/marketplace/cart/my-cart', {}, token, locale);
+      
+      // Check if cart is empty
+      if (response.status === false || (response.message && response.message.includes('Cart Is Empty'))) {
+        // Set empty cart structure
+        dispatch(setCartData({
+          id: 0,
+          type: '',
+          status: '',
+          status_value: '',
+          sub_total: '0',
+          vat_amount: '0',
+          total_amount: '0',
+          amount_to_pay: '0',
+          products: [],
+          offers: [],
+          voucher: null,
+          customer_note: null,
+          address: null,
+          use_wallet: false,
+          user_balance: '0',
+          allow_voucher: false,
+          allowed_payment_methods: [],
+          shipping_methods: [],
+          created_at: '',
+          cart_count: 0,
+          order_attributes: [],
+          can_cancel: false,
+          can_rate: false,
+          can_pay: false,
+        }));
+        return;
+      }
+      
       if (response.data) {
         dispatch(setCartData(response.data));
       } else {
@@ -65,7 +98,7 @@ function Cart() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <span className="ml-3 text-gray-600 dark:text-gray-400">{t('Loading cart...')}</span>
+        <span className="ml-3 text-gray-600 dark:text-gray-400">{t('Loading cart')}</span>
       </div>
     );
   }

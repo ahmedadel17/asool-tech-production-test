@@ -19,7 +19,6 @@ function ShippingInfo({address}: {address: any}) {
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{address?.name}</h3>
         <div className="text-gray-600 dark:text-gray-400 space-y-2">
-            <p>john.doe@example.com</p>
             <p>{address?.contact_phone}</p>
         </div>
 

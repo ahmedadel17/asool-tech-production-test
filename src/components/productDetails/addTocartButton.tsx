@@ -41,13 +41,13 @@ function AddToCartButton({
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error('Please login first to add items to cart');
       router.push('/auth/login');
       return;
     }
 
     if (!token) {
       setError('Authentication required. Please login again.');
+      router.push('/auth/login');
       return;
     }
 
