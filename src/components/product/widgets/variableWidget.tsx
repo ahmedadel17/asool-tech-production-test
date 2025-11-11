@@ -119,12 +119,12 @@ export default function VariableWidget({ attributes, onApplyAction }: Props) {
     <div className="variable-widget w-full max-w-sm mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t("Product Attributes")}</h3>
-        <button
+        {/* <button
           onClick={clearAll}
           className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
         >
           {t("Clear")}
-        </button>
+        </button> */}
       </div>
 
       {attributes && attributes.length > 0 ? (

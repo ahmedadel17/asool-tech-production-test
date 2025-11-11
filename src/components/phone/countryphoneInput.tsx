@@ -6,7 +6,6 @@ import Flag from 'react-world-flags'
 import { useTranslations, useLocale } from 'next-intl';
 import { getCountryTranslationKey } from '@/utils/countryTranslations';
 const countries = countriesData?.countries || [];
-console.log(countries)
 
 // Type for country object
 interface Country {

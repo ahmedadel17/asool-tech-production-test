@@ -6,9 +6,15 @@ import Autoplay from 'embla-carousel-autoplay';
 import { Product } from '@/app/dummyData/products';
 import { useTranslations } from 'next-intl';
 import ProductCard2 from '../product/productCard2';
-export default function ProductSlider({ products }: { products: Product[] }) {
+
+interface ProductSliderProps {
+  products: Product[];
+  initialIsRTL?: boolean;
+}
+
+export default function ProductSlider({ products, initialIsRTL = false }: ProductSliderProps) {
   // console.log('products',products);
-  const [isRTL, setIsRTL] = useState(false);
+  const [isRTL, setIsRTL] = useState(initialIsRTL);
   const t = useTranslations();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,

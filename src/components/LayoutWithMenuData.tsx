@@ -9,15 +9,11 @@ import FooterSkeleton from './skeleton/FooterSkeleton';
 import MarqueeSkeleton from './skeleton/MarqueeSkeleton';
 import { unstable_cache } from 'next/cache';
 
-// Server component that fetches menu data with caching
-async function MenuDataProvider({ children }: { children: React.ReactNode }) {
-  const { getLocale } = await import('next-intl/server');
+// Helper function to fetch menu data with caching
+async function getCachedMenus(locale: string) {
   const getRequest = (await import('../../helpers/get')).default;
   
-  const locale = await getLocale();
-  
-  // Fetch menus server-side with caching
-  const getCachedMenus = unstable_cache(
+  return unstable_cache(
     async (locale: string) => {
       try {
         const menuData = await getRequest('/core/menus', {}, null, locale);
@@ -32,42 +28,60 @@ async function MenuDataProvider({ children }: { children: React.ReactNode }) {
       revalidate: 300, // Cache for 5 minutes
       tags: ['menus', `menus-${locale}`]
     }
-  );
-  
+  )(locale);
+}
+
+// Separate async components for each section to enable Suspense
+async function HeaderTopBarWithData() {
+  const { getLocale } = await import('next-intl/server');
+  const locale = await getLocale();
   const menuData = await getCachedMenus(locale);
-  
+  return <HeaderTopBar menuData={menuData?.data?.top_menu} />;
+}
+
+async function HeaderWithData() {
+  const { getLocale } = await import('next-intl/server');
+  const locale = await getLocale();
+  const menuData = await getCachedMenus(locale);
+  return <HeaderStyle1 menuData={menuData?.data?.main_menu} />;
+}
+
+async function FooterWithData() {
+  const { getLocale } = await import('next-intl/server');
+  const locale = await getLocale();
+  const menuData = await getCachedMenus(locale);
+  return <FooterStyle1 menuData={menuData?.data?.footer_menus} />;
+}
+
+// Server component that provides menu data
+async function MenuDataProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Marquee />
-      <HeaderTopBar menuData={menuData?.data?.top_menu} />
-      <HeaderStyle1 menuData={menuData?.data?.main_menu} />
+      <Suspense fallback={<MarqueeSkeleton />}>
+        <Marquee />
+      </Suspense>
+      <Suspense fallback={<HeaderTopBarSkeleton />}>
+        <HeaderTopBarWithData />
+      </Suspense>
+      <Suspense fallback={<HeaderSkeleton />}>
+        <HeaderWithData />
+      </Suspense>
       {children}
-      <FooterStyle1 menuData={menuData?.data?.footer_menus} />
+      <Suspense fallback={<FooterSkeleton />}>
+        <FooterWithData />
+      </Suspense>
     </>
   );
 }
 
-// Loading fallback component
-function LoadingFallback({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <MarqueeSkeleton />
-      {/* <HeaderTopBarSkeleton /> */}
-      <HeaderSkeleton />
-      {children}
-      <FooterSkeleton />
-    </>
-  );
-}
+
 
 // Main component with Suspense boundary
 export default function LayoutWithMenuData({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<LoadingFallback>{children}</LoadingFallback>}>
       <MenuDataProvider>
         {children}
       </MenuDataProvider>
-    </Suspense>
   );
 }
 

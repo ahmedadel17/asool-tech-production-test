@@ -1,12 +1,8 @@
 'use client'
 import React from 'react'
-import FooterMenus from '../footerMenu'
-import FooterApp from '../footerApp'
-import FooterSocialMedia from '../footerSocialMedia'
 import { useTranslations } from 'next-intl'
 import FooterWidget from '../FooterWidget'
 function FooterStyle1({ menuData }: { menuData: any }) {
-// console.log('menuData ✅✅ footerStyle1', menuData);
     const t = useTranslations();
   return (
   <>
@@ -16,7 +12,7 @@ function FooterStyle1({ menuData }: { menuData: any }) {
         <div className="te-footer-content">
             <div className="te-footer-grid te-footer-grid-5">
                
-            {menuData[0]?.items?.map((menu: any) => (
+            {menuData && Array.isArray(menuData) && menuData[0]?.items?.map((menu: any) => (
                                             <FooterWidget key={menu.id} title={menu?.label} links={menu?.children} />
                                           ))} 
                                                    

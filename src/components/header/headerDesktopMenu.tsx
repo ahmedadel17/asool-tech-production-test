@@ -76,9 +76,9 @@ function HeaderDesktopMenu({ menuData }: { menuData: any }) {
         </div>
     </div> */}
     {/* <!-- .te-navbar-dropdown --> */}
-    {menuData.items.map((item: any) => (
-        item?.is_mega_menu ? <MegaMenu key={item.id} data={item} /> : 
-        <Link key={item.id} href={item.url} prefetch={false} className={`te-navbar-link ${pathname.startsWith(item.url) ? 'te-navbar-link-active' : ''}`}>{item.label}</Link>
+    {menuData?.items?.map((item: any) => (
+        item?.is_mega_menu ? <MegaMenu key={item?.id} data={item} /> : 
+        <Link key={item?.id} href={item?.url} prefetch={false} className={`te-navbar-link ${pathname.startsWith(item?.url) ? 'te-navbar-link-active' : ''}`}>{item?.label}</Link>
     ))}
     {/* <Link href="/products" className={`te-navbar-link ${pathname.startsWith('/products') ? 'te-navbar-link-active' : ''}`}>{t("Products")}</Link>
     <a href="cotton.php" className={`te-navbar-link ${pathname === '/cotton.php' ? 'te-navbar-link-active' : ''}`}>{t("Cotton")}</a>

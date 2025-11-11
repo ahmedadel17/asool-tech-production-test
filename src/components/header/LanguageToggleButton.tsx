@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 
 interface LanguageToggleButtonProps {
@@ -9,15 +9,23 @@ interface LanguageToggleButtonProps {
 
 const LanguageToggleButton: React.FC<LanguageToggleButtonProps> = ({ className = '' }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const currentLocale = useLocale();
+  
+  // Ensure component is mounted to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'ar', name: 'العربية', flag: '🇸🇦' },
   ];
 
-  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
-  const nextLanguage = languages.find(lang => lang.code !== currentLocale) || languages[1];
+  // Use fallback during SSR to prevent hydration mismatch
+  const nextLanguage = mounted
+    ? (languages.find(lang => lang.code !== currentLocale) || languages[1])
+    : languages[1];
 
   const handleLanguageToggle = async () => {
     const newLocale = nextLanguage.code;
@@ -53,13 +61,14 @@ const LanguageToggleButton: React.FC<LanguageToggleButtonProps> = ({ className =
         ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}
       `}
-      title={`Switch to ${nextLanguage.name}`}
-      aria-label={`Switch to ${nextLanguage.name}`}
+      title={mounted ? `Switch to ${nextLanguage.name}` : 'Switch language'}
+      aria-label={mounted ? `Switch to ${nextLanguage.name}` : 'Switch language'}
+      suppressHydrationWarning
     >
       {isLoading ? (
         <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent"></div>
       ) : (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1" suppressHydrationWarning>
           <span className="text-lg">{nextLanguage.flag}</span>
           
         </div>

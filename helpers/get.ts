@@ -85,27 +85,7 @@ const getRequest = async (
       const status = error.response?.status;
       const statusText = error.response?.statusText || error.message;
       
-      // Provide more specific error messages
-      if (status === 429) {
-        console.error("Rate limit exceeded (429): Too many requests. Please wait a moment and try again.");
-        throw new Error("Network Error: Too many requests. Please wait a moment and try again.");
-      } else if (status === 404) {
-        console.error("Axios error (404): Resource not found -", error.message);
-        throw new Error("Network Error: The requested resource was not found.");
-      } else if (status === 500) {
-        console.error("Axios error (500): Server error -", error.message);
-        throw new Error("Network Error: Something went wrong on the server. Please try again later.");
-      } else if (status && status >= 400) {
-        console.error(`Axios error (${status}): ${statusText} -`, error.message);
-        throw new Error(`Network Error: ${statusText || 'Something went wrong. Please try again.'}`);
-      } else if (!error.response) {
-        // Network error (no response)
-        console.error("Network error: No response from server -", error.message);
-        throw new Error("Network Error: Unable to connect to the server. Please check your internet connection.");
-      } else {
-        console.error("Axios error:", error.message);
-        throw new Error("Network Error: Something went wrong. Please try again.");
-      }
+    
     } else {
       console.error("Unexpected error:", error);
       throw new Error("Network Error: An unexpected error occurred. Please try again.");

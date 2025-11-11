@@ -14,11 +14,12 @@ interface Slide {
 
 interface SliderComponentProps {
   slides: Slide[]
+  initialIsRTL?: boolean
 }
 
-export function SliderComponent({ slides }: SliderComponentProps) {
+export function SliderComponent({ slides, initialIsRTL = false }: SliderComponentProps) {
   const [mounted, setMounted] = useState(false);
-  const [isRTL, setIsRTL] = useState(false);
+  const [isRTL, setIsRTL] = useState(initialIsRTL);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);

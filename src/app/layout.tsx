@@ -13,6 +13,7 @@ import NavProgress from "../components/navProgress";
 import LayoutWithMenuData from "../components/LayoutWithMenuData";
 import ScriptLoader from "../components/ScriptLoader";
 import ColorProvider from "../components/ColorProvider";
+import BackToTopButton from "../components/BackToTopButton";
 import CompareBar from "../components/footer/compareBar";
 import CompareInitializer from "../components/compare/CompareInitializer";
 import { ThemeProvider } from "../components/ThemeProvider";
@@ -63,8 +64,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <ReduxProvider>
             <ThemeProvider>
-              {/* <NetworkManager />
-              <NetworkStatus showDetails={true} autoHide={true} hideDelay={5000} /> */}
+            
               <div className="flex flex-col min-h-screen">
                 <NavProgress />
                 <CartInitializer />
@@ -77,13 +77,7 @@ export default async function RootLayout({
                   </main>
                   </ColorProvider>
                 </LayoutWithMenuData>
-                <button className="te-footer-back-to-top back-to-top hidden lg:flex show" aria-label="Back to top">
-                  <svg className="te-footer-back-to-top-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m5 9 7-7 7 7"></path>
-                      <path d="M12 16V2"></path>
-                      <circle cx="12" cy="21" r="1"></circle>
-                  </svg>
-              </button>
+                <BackToTopButton />
               </div>
               <CompareBar />
               <FooterNav />

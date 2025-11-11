@@ -1,23 +1,34 @@
 import { Suspense } from 'react';
 import { getLocale } from 'next-intl/server';
 import getRequest from '../../helpers/get';
-import dynamic from 'next/dynamic';
 import HomePageSkeleton from '@/components/skeleton/HomePageSkeleton';
 import { unstable_cache } from 'next/cache';
+import { SliderComponent } from '@/components/Home/sliderComponent';
+import ProductSlider from '@/components/Home/productSlider';
 
 // Enable caching for this page (revalidate every 60 seconds)
 export const revalidate = 60;
 
-// Dynamically import heavy components to reduce initial bundle size
-const ProductSlider = dynamic(() => import('@/components/Home/productSlider'), {
-  loading: () => <div className="py-16"><div className="container"><div className="animate-pulse space-y-4"><div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div><div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8"><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded hidden lg:block"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded hidden lg:block"></div></div></div></div></div>,
-  ssr: true,
-});
+// Type definitions for page data
+type Slide = {
+  id: string | number;
+  image: string;
+  title: string;
+  description: string;
+  button_text?: string;
+  hasGap?: boolean;
+};
 
-const SliderComponent = dynamic(() => import('@/components/Home/sliderComponent').then(mod => ({ default: mod.SliderComponent })), {
-  loading: () => <div className="h-[500px] bg-gray-200 dark:bg-gray-800 animate-pulse"></div>,
-  ssr: true,
-});
+type Product = {
+  id: string | number;
+  name: string;
+  price: number;
+  is_favourite?: boolean;
+  [key: string]: unknown;
+};
+
+// Dynamically import heavy components to reduce initial bundle size
+
 
 // Fetch home data with Next.js caching
 async function getHomeData(locale: string) {
@@ -44,6 +55,7 @@ async function getHomeData(locale: string) {
 // Separate component for home content to use Suspense
 async function HomeContent() {
   const locale = await getLocale();
+  const isRTL = locale === 'ar';
   const home = await getHomeData(locale);
   
   if (!home || !home.data) {
@@ -63,13 +75,6 @@ async function HomeContent() {
   }
 
   // Add is_favourite property to featured products
-  interface Product {
-    id: string | number;
-    name: string;
-    price: number;
-    is_favourite?: boolean;
-    [key: string]: unknown;
-  }
   
   const featuredProducts = home.data.sections?.featured_products?.data?.map((product: Product) => ({
     ...product,
@@ -84,14 +89,10 @@ async function HomeContent() {
         <div className='primary'>
           <div className="main">
             {slides.length > 0 && (
-              <Suspense fallback={<div className="h-[500px] bg-gray-200 dark:bg-gray-800 animate-pulse"></div>}>
-                <SliderComponent slides={slides} />
-              </Suspense>
+                <SliderComponent slides={slides} initialIsRTL={isRTL} />
             )}
             {featuredProducts.length > 0 && (
-              <Suspense fallback={<div className="py-16"><div className="container"><div className="animate-pulse space-y-4"><div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div><div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8"><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded hidden lg:block"></div><div className="h-64 bg-gray-200 dark:bg-gray-700 rounded hidden lg:block"></div></div></div></div></div>}>
-                <ProductSlider products={featuredProducts} />
-              </Suspense>
+                <ProductSlider products={featuredProducts} initialIsRTL={isRTL} />
             )}
           </div>
         </div>

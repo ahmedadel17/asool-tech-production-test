@@ -6,14 +6,18 @@ import VariableWidget from './variableWidget'
 import getRequest from '../../../../helpers/get'
 import { useLocale } from 'next-intl'
 import { useAuth } from '@/app/hooks/useAuth'
-import { transformCategories, createDefaultCategoryStructure, ApiCategory, Category } from '../../../app/utils/categoryMapper'
 function FilterSidebar() {
   const locale = useLocale()
   const {token} = useAuth()
+  const [mounted, setMounted] = useState(false)
   const [formState, setFormState] = useState<{data?: {price_range?: {min: number, max: number}, attributes?: Array<{id: number, name: string, type: 'multi' | 'color', values: Array<{id: number, value: string, color?: string}>}>, categories?: Array<{id: number, name: string, slug: string, count: number, image: string}>}}>()
-  const [categories, setCategories] = useState<Category[]>([])
   const [error, setError] = useState<string | null>(null)
   const hasFetched = useRef(false)
+  
+  // Ensure component is mounted to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     // Only fetch once on initial page load, never again
@@ -39,7 +43,22 @@ function FilterSidebar() {
     // Empty dependency array ensures this only runs once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-//  console.log('formState', formState)
+  
+  // Don't render widgets until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="lg:col-span-1 hidden xl:block">
+        <div className="sticky top-8 space-y-6">
+          {/* Placeholder skeleton to maintain layout */}
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div className="lg:col-span-1 hidden xl:block">
       <div className="sticky top-8 space-y-6">
