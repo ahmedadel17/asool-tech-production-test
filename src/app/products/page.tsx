@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { Product } from '../dummyData/products'
 import Breadcrumb from '@/components/header/headerBreadcrumb'
@@ -148,7 +149,7 @@ async function Products({ searchParams }: ProductsPageProps) {
     );
 
     const response = await getCachedProducts();
-    const productsData = response.data;
+    const productsData = response?.data;
     const products = (productsData.items || []).map((product: Product & { is_favourite?: boolean }) => ({
       ...product,
       is_favourite: product.is_favourite || false // Ensure is_favourite property exists

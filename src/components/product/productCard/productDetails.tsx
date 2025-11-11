@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useCart } from '@/app/hooks/useCart';
 import { useAuth } from '@/app/hooks/useAuth';
 import { setCartData } from '@/app/store/slices/cartSlice';
@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import ProductTitle from "./productTitle";
 import ProductPrice from "./productPrice";
 import ProductFooter from "./productFooter";
-import ProductVariations from "./productVariations";
 import ProductCategory from "./productCategory";
 
 interface Badge {
@@ -53,6 +52,19 @@ interface Variation {
   price_after_discount?: string | number;
 }
 
+type VariationValue = {
+  id: number;
+  value: string;
+  color?: string;
+};
+
+type Attribute = {
+  attribute_id: number;
+  attribute_name: string;
+  attribute_type: string;
+  values: VariationValue[];
+};
+
 interface ProductDetailsProps {
   product: Product;
 }
@@ -73,6 +85,11 @@ function ProductDetails({ product }: ProductDetailsProps) {
     price_befor_discount: null as string | null,
     variationData: null as Variation | null,
   });
+
+  // Variations state
+  const [variationSelections, setVariationSelections] = useState<Record<number, number>>({});
+  const [userHasSelected, setUserHasSelected] = useState(false);
+  const lastFetchedSelections = useRef<string>('');
   
   // Refs to track component mount status and cancel requests
   const isMountedRef = useRef(true);
@@ -109,6 +126,11 @@ function ProductDetails({ product }: ProductDetailsProps) {
       isFavoriteLoading: false,
       variationData: null,
     });
+    
+    // Reset variation selections
+    setVariationSelections({});
+    setUserHasSelected(false);
+    lastFetchedSelections.current = '';
 
     // Cleanup on unmount
     return () => {
@@ -119,8 +141,28 @@ function ProductDetails({ product }: ProductDetailsProps) {
     };
   }, [product.id, product?.is_favourite]);
 
+  // Convert product.variations to Attribute[] format
+  const variations = useMemo(() => {
+    if (!product.variations) return [];
+    return product.variations as unknown as Attribute[];
+  }, [product.variations]);
+
+  // Sort variations: color first, then others
+  const sortedVariations = useMemo(() => {
+    if (!variations || variations.length === 0) return [];
+    const colorAttrs = variations.filter(v => 
+      v.attribute_name?.toLowerCase().includes('color') || 
+      v.attribute_type === 'color'
+    );
+    const otherAttrs = variations.filter(v => 
+      !v.attribute_name?.toLowerCase().includes('color') && 
+      v.attribute_type !== 'color'
+    );
+    return [...colorAttrs, ...otherAttrs];
+  }, [variations]);
+
   // Fetch variation ID when all attributes are selected
-  // Memoize this function to prevent unnecessary re-renders in ProductVariations
+  // Memoize this function to prevent unnecessary re-renders
   const fetchVariationId = useCallback(async (attributes: Record<number, number>) => {
     
     // Check if component is still mounted
@@ -232,6 +274,98 @@ function ProductDetails({ product }: ProductDetailsProps) {
     }
   }, [product.id, token]);
 
+  // Check if all variations are selected and fetch variation data
+  useEffect(() => {
+    if (sortedVariations.length === 0 || !fetchVariationId) return;
+    if (!userHasSelected) return; // Don't fetch until user selects
+
+    const allSelected = sortedVariations.every(attr => variationSelections[attr.attribute_id]);
+    if (!allSelected) return;
+
+    const selectionsKey = JSON.stringify(variationSelections);
+    if (selectionsKey !== lastFetchedSelections.current) {
+      lastFetchedSelections.current = selectionsKey;
+      fetchVariationId(variationSelections);
+    }
+  }, [variationSelections, sortedVariations, userHasSelected, fetchVariationId]);
+
+  // Handle variation selection
+  const handleVariationSelect = (attributeId: number, valueId: number) => {
+    const newSelections = { ...variationSelections, [attributeId]: valueId };
+    setVariationSelections(newSelections);
+    setUserHasSelected(true);
+  };
+
+  // Render attribute based on type
+  const renderAttribute = (attribute: Attribute) => {
+    const selectedValueId = variationSelections[attribute.attribute_id];
+    const isColorAttribute = attribute.attribute_name?.toLowerCase().includes('color') || attribute.attribute_type === 'color';
+
+    if (attribute.attribute_type === 'multi' || attribute.attribute_type === 'color') {
+      return (
+        <div key={attribute.attribute_id} className="product-attribute mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {attribute.attribute_name}
+          </label>
+
+          {isColorAttribute ? (
+            <div className="flex flex-wrap gap-1 items-center">
+              {attribute.values.map((value) => {
+                const isSelected = selectedValueId === value.id;
+                return (
+                  <button
+                    key={value.id}
+                    type="button"
+                    className={`color-option ${isSelected ? 'active' : ''}`}
+                    style={{ backgroundColor: value.color || value.value }}
+                    title={value.value}
+                    onClick={() => handleVariationSelect(attribute.attribute_id, value.id)}
+                  >
+                    <span className="sr-only">{value.value}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {attribute.values.map((value) => {
+                const isSelected = selectedValueId === value.id;
+                return (
+                  <button
+                    key={value.id}
+                    type="button"
+                    className={`size-option ${isSelected ? 'active' : ''}`}
+                    onClick={() => handleVariationSelect(attribute.attribute_id, value.id)}
+                  >
+                    {value.value}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div key={attribute.attribute_id} className="product-attribute mb-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          {attribute.attribute_name}
+        </label>
+        <select
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+          value={selectedValueId || ''}
+          onChange={(e) => handleVariationSelect(attribute.attribute_id, Number(e.target.value))}
+        >
+          {attribute.values.map((value) => (
+            <option key={value.id} value={value.id}>
+              {value.value}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
 
   // Handle favorite toggle
   const handleFavoriteToggle = async () => {
@@ -369,16 +503,10 @@ function ProductDetails({ product }: ProductDetailsProps) {
         {/* Price */}
         <ProductPrice min_price={parseFloat((state.variationData?.price_befor_discount || product.price_befor_discount || product.min_price || '0').toString())} price_after_discount={parseFloat((state.variationData?.price_after_discount || product.price_after_discount || '0').toString())} />
         {/* Variations */}
-        {product.variations && product.variations.length > 0 && (
-          <ProductVariations 
-            variations={product.variations as unknown as Array<{
-              attribute_id: number;
-              attribute_name: string;
-              attribute_type: string;
-              values: Array<{ id: number; value: string; color?: string }>;
-            }>} 
-            onVariationFetch={fetchVariationId}
-          />
+        {variations && variations.length > 0 && (
+          <div className="product-options space-y-3 mt-4">
+            {sortedVariations.map((attr) => renderAttribute(attr))}
+          </div>
         )}
       </div>
       {/* Footer */}

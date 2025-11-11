@@ -1,8 +1,6 @@
 import React from 'react';
 import ProductImage from "./productCard/productImage";
 import ProductDetails from "./productCard/productDetails";
-import ProductQuickViewModal from './productCard/productQuickViewModal';
-
 interface Badge {
   type: string;
   text: string;

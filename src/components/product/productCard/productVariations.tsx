@@ -18,21 +18,14 @@ type Attribute = {
 type ProductVariationsProps = {
   variations?: Attribute[]
   onSelectionChange?: (selections: Record<number, number>) => void
-  onVariationFetch?: (attributes: Record<number, number>) => void
-  initialSelections?: Record<number, number>
+  onVariationFetch?: (selections: Record<number, number>) => void
 }
 
-function ProductVariations({ 
-  variations = [], 
-  onSelectionChange,
-  onVariationFetch,
-  initialSelections
-}: ProductVariationsProps) {
-  // State to track selected values for each attribute
-  const [selections, setSelections] = useState<Record<number, number>>(initialSelections || {})
+function ProductVariations({ variations = [], onSelectionChange, onVariationFetch }: ProductVariationsProps) {
+  const [selections, setSelections] = useState<Record<number, number>>({})
+  const [userHasSelected, setUserHasSelected] = useState(false) // Track user interaction
   const lastFetchedSelections = useRef<string>('')
 
-  // Sort variations: color first, then others
   const sortedVariations = useMemo(() => {
     const colorAttrs = variations.filter(v => 
       v.attribute_name?.toLowerCase().includes('color') || 
@@ -45,116 +38,59 @@ function ProductVariations({
     return [...colorAttrs, ...otherAttrs]
   }, [variations])
 
-  // Update selections when initialSelections prop changes
+  // fetch effect - only fire if user has interacted
   useEffect(() => {
-    if (initialSelections) {
-      setSelections(initialSelections)
-      lastFetchedSelections.current = '' // Reset fetch tracking when selections reset
+    if (!onVariationFetch || sortedVariations.length === 0) return
+    if (!userHasSelected) return // Don't fetch until user selects
+
+    const allSelected = sortedVariations.every(attr => selections[attr.attribute_id])
+    if (!allSelected) return
+
+    const selectionsKey = JSON.stringify(selections)
+    if (selectionsKey !== lastFetchedSelections.current) {
+      lastFetchedSelections.current = selectionsKey
+      onVariationFetch(selections)
     }
-  }, [initialSelections])
+  }, [selections, sortedVariations, onVariationFetch, userHasSelected])
 
-  // Reset fetch tracking when variations change
-  useEffect(() => {
-    lastFetchedSelections.current = ''
-  }, [variations])
-
-  // Check if all variations are selected and fetch variation data
-  useEffect(() => {
-    // Skip if no variations or no fetch function
-    if (sortedVariations.length === 0 || !onVariationFetch) {
-      return;
-    }
-
-    // Check if all required attributes have valid selections
-    const requiredAttributeIds = sortedVariations.map(attr => attr.attribute_id);
-    const allSelected = requiredAttributeIds.every(attrId => {
-      const value = selections[attrId];
-      return value !== undefined && value !== null && value !== 0;
-    });
-
-    // Also verify we have exactly the right number of selections (no extra, no missing)
-    const selectedCount = requiredAttributeIds.filter(attrId => 
-      selections[attrId] !== undefined && selections[attrId] !== null && selections[attrId] !== 0
-    ).length;
-
-    if (allSelected && selectedCount === sortedVariations.length) {
-      // Create a unique key for the current selections to prevent duplicate calls
-      // Sort keys to ensure consistent stringification
-      const sortedSelections = requiredAttributeIds.reduce((acc, attrId) => {
-        acc[attrId] = selections[attrId];
-        return acc;
-      }, {} as Record<number, number>);
-      
-      const selectionsKey = JSON.stringify(sortedSelections);
-      
-      // Only fetch if this is a new selection combination
-      if (selectionsKey !== lastFetchedSelections.current) {
-        lastFetchedSelections.current = selectionsKey;
-        // Small delay to ensure state is fully updated
-        const timeoutId = setTimeout(() => {
-          onVariationFetch(sortedSelections);
-        }, 0);
-        
-        return () => clearTimeout(timeoutId);
-      }
-    } else {
-      // If not all selected, clear the fetch tracking
-      lastFetchedSelections.current = '';
-    }
-  }, [selections, sortedVariations, onVariationFetch])
-
-  // Handle value selection for any attribute
-  const handleSelect = (e: React.MouseEvent<HTMLButtonElement> | React.ChangeEvent<HTMLSelectElement>, attributeId: number, valueId: number) => {
- 
-    const newSelections = {
-      ...selections,
-      [attributeId]: valueId
-    }
+  // handleSelect - mark that user has interacted
+  const handleSelect = (attributeId: number, valueId: number) => {
+    const newSelections = { ...selections, [attributeId]: valueId }
     setSelections(newSelections)
+    setUserHasSelected(true)
     onSelectionChange?.(newSelections)
   }
 
-  // Render attribute based on type
   const renderAttribute = (attribute: Attribute) => {
     const selectedValueId = selections[attribute.attribute_id]
-    const isColorAttribute = attribute.attribute_name?.toLowerCase().includes('color') || 
-                             attribute.attribute_type === 'color'
-    
+    const isColorAttribute = attribute.attribute_name?.toLowerCase().includes('color') || attribute.attribute_type === 'color'
+
     if (attribute.attribute_type === 'multi' || attribute.attribute_type === 'color') {
       return (
         <div key={attribute.attribute_id} className="product-attribute mb-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {attribute.attribute_name}
           </label>
-          
+
           {isColorAttribute ? (
-            // Render as color swatches (original style)
             <div className="flex flex-wrap gap-1 items-center">
-              {attribute.values.slice(0, 4).map((value) => {
+              {attribute.values.map((value) => {
                 const isSelected = selectedValueId === value.id
-                const colorValue = value.color || value.value
                 return (
                   <button
                     key={value.id}
                     type="button"
                     className={`color-option ${isSelected ? 'active' : ''}`}
-                    style={{ backgroundColor: value.color }}
-                    title={colorValue}
-                    aria-label={`Select color ${colorValue}`}
-                    onClick={(e) => handleSelect(e, attribute.attribute_id, value.id)}
+                    style={{ backgroundColor: value.color || value.value }}
+                    title={value.value}
+                    onClick={() => handleSelect(attribute.attribute_id, value.id)}
                   >
-                    <span className="sr-only">{colorValue}</span>
+                    <span className="sr-only">{value.value}</span>
                   </button>
                 )
               })}
-              {attribute.values.length > 4 && (
-                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                  +{attribute.values.length - 4}
-                </span>
-              )}
             </div>
           ) : (
-            // Render as size/text buttons
             <div className="flex flex-wrap gap-2">
               {attribute.values.map((value) => {
                 const isSelected = selectedValueId === value.id
@@ -163,8 +99,7 @@ function ProductVariations({
                     key={value.id}
                     type="button"
                     className={`size-option ${isSelected ? 'active' : ''}`}
-                    aria-label={`Select ${attribute.attribute_name}: ${value.value}`}
-                    onClick={(e) => handleSelect(e, attribute.attribute_id, value.id)}
+                    onClick={() => handleSelect(attribute.attribute_id, value.id)}
                   >
                     {value.value}
                   </button>
@@ -176,7 +111,6 @@ function ProductVariations({
       )
     }
 
-    // Default fallback for other attribute types
     return (
       <div key={attribute.attribute_id} className="product-attribute mb-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -185,11 +119,8 @@ function ProductVariations({
         <select
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
           value={selectedValueId || ''}
-          onChange={(e) => {
-            handleSelect(e, attribute.attribute_id, Number(e.target.value));
-          }}
+          onChange={(e) => handleSelect(attribute.attribute_id, Number(e.target.value))}
         >
-          <option value="">Select {attribute.attribute_name}</option>
           {attribute.values.map((value) => (
             <option key={value.id} value={value.id}>
               {value.value}
@@ -200,13 +131,11 @@ function ProductVariations({
     )
   }
 
-  if (!variations || variations.length === 0) {
-    return null
-  }
+  if (!variations || variations.length === 0) return null
 
   return (
     <div className="product-options space-y-3 mt-4">
-      {sortedVariations.map((attribute) => renderAttribute(attribute))}
+      {sortedVariations.map((attr) => renderAttribute(attr))}
     </div>
   )
 }

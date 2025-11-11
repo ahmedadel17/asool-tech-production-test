@@ -34,29 +34,7 @@ export default async function RootLayout({
   return (
     <html dir={isRTL ? 'rtl' : 'ltr'} lang={locale} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const savedMode = localStorage.getItem('darkMode');
-                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  const shouldBeDark = savedMode === 'true' ? true : savedMode === 'false' ? false : prefersDark;
-                  if (shouldBeDark) {
-                    document.documentElement.classList.add('dark');
-                    document.documentElement.classList.remove('light');
-                  } else {
-                    document.documentElement.classList.add('light');
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {
-                  document.documentElement.classList.add('light');
-                  document.documentElement.classList.remove('dark');
-                }
-              })();
-            `,
-          }}
-        />
+        
       </head>
       <body
         className={`bg-gray-50 text-base font-ltr rtl:font-rtl dark:text-white dark:bg-gray-900 min-h-screen flex flex-col ${isRTL ? 'font-rtl' : 'font-inter'}  ${isRTL ? 'rtl' : 'ltr'}`}
