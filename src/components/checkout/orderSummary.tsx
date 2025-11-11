@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import OrderAttribute from './orderAttribute';
 import Image from 'next/image';
 import { useCart } from '@/app/hooks/useCart';
@@ -16,12 +16,13 @@ function OrderSummary() {
   const { token } = useAuth();
   const t = useTranslations();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
+
   const locale = useLocale(); 
   // Prevent hydration mismatch by only rendering after client mount
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+
+  // Redirect to checkout if status is shippingAddress and user is on shipping method or payment method pages
+ 
+
   const settingShippingMethod = async () => {
     const response = await postRequest('/marketplace/cart/cart-details/' + cartData?.id, { shipping_method_slug: order.shipping_method_slug,user_address_id: order.shipping_address_id }, {}, token, locale);
 
@@ -49,28 +50,7 @@ else{
   }
 }
  }
-  // Show loading state during hydration
-  if (!isClient) {
-    return (
-      <div className="lg:col-span-1">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('Order Summary')}</h2>
-          <div className="animate-pulse">
-            <div className="space-y-4 mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gray-300 dark:bg-gray-600 rounded-md"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
-                </div>
-                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Show loading state during hydration  
 
   return (
     <div className="lg:col-span-1">
@@ -79,7 +59,7 @@ else{
 
       {/* Order Items */}
       <div className="space-y-4 mb-6">
-        {isClient && cartData?.products && cartData.products.length > 0 ? cartData.products.map((item: any, index: number) => (
+        {cartData?.products && cartData.products.length > 0 ? cartData.products.map((item: any, index: number) => (
           <div key={item.id || `product-${index}`} className="flex items-center space-x-4 rtl:space-x-reverse">
             <Image 
               src={item.image || '/placeholder.jpg'} 
@@ -118,7 +98,7 @@ else{
               <span>{(cartData as { sub_total?: string })?.sub_total || '0'}</span>
             </span>
         </div>
-      {isClient && cartData?.order_attributes && cartData.order_attributes.length > 0 && cartData.order_attributes.map((item: any, index: number) => (
+      {cartData?.order_attributes && cartData.order_attributes.length > 0 && cartData.order_attributes.map((item: any, index: number) => (
         <OrderAttribute key={item.id || `attribute-${index}`} {...item} />
       ))}
         <div className="border-t border-gray-200 dark:border-gray-600 pt-2">

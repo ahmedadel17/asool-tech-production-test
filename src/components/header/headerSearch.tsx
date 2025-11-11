@@ -1,11 +1,16 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 function HeaderSearch() {
     const t = useTranslations();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,12 +45,13 @@ function HeaderSearch() {
             id="navbar-search-ecommerce" 
             name="product_search" 
             className="ps-10 pe-12 text-sm rounded-lg" 
-            placeholder={t("Search products")} 
+            placeholder={mounted ? t("Search products") : ""} 
             autoComplete="off" 
             aria-label="Search products"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
+            suppressHydrationWarning
         />
 
         {searchQuery && (
@@ -66,8 +72,9 @@ function HeaderSearch() {
         )}
         <button 
             type="submit"
-            className="hs-btn absolute end-1 top-1/2 transform -translate-y-1/2 p-2 bg-primary-200 hover:bg-primary-500 dark:bg-primary-400 dark:hover:bg-primary-300 text-white rounded-lg transition-colors duration-200" 
+            className="hs-btn absolute end-1 top-1/2 transform -translate-y-1/2 p-2 bg-primary-500 hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-300 text-white rounded-lg transition-colors duration-200" 
             aria-label="Search"
+            suppressHydrationWarning
         >
             <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m21 21-4.34-4.34"></path>

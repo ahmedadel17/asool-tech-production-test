@@ -783,6 +783,29 @@
    "Return request submitted successfully!":"تم إرسال طلب الإرجاع بنجاح!",
    "Upload Photos":"رفع الصور",
    "Optional":"اختياري",
-   "Order":"الطلب"
+   "Order":"الطلب",
+   "Create Your Account":"إنشاء حسابك",
+   "We need a few more details to get started":"نحتاج بعض التفاصيل الإضافية للبدء",
+   "First Name":"الاسم الأول",
+   "Last Name":"الاسم الأخير",
+   "Phone Number":"رقم الهاتف",
+   "Prefilled from login":"معبأ من تسجيل الدخول",
+   "Back":"السابق",
+   "Creating Account":"إنشاء الحساب",
+   "Create Account":"إنشاء الحساب",
+   "Enter your First name":"أدخل الاسم الأول",
+   "Enter your Last name":"أدخل الاسم الأخير",
+   "Enter your email address":"أدخل عنوان البريد الإلكتروني",
+   "Enter your phone number":"أدخل رقم الهاتف",
+   "I agree to the":"أوافق على",
+   "Terms of Service":"سياسة الخدمة",
+   "Privacy Policy":"سياسة الخصوصية",
+   "and":"و",
+   "Phone Number":"رقم الهاتف",
+   "Prefilled from login":"معبأ من تسجيل الدخول",
+   "Change Payment Method":"تغيير طريقة الدفع",
+   "Preparing payment with":"جاري التحضير باستخدام",
+   "Updating":"جاري التحديث"
+
   
 }

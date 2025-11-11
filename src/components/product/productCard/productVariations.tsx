@@ -104,16 +104,14 @@ function ProductVariations({
   }, [selections, sortedVariations, onVariationFetch])
 
   // Handle value selection for any attribute
-  const handleSelect = (attributeId: number, valueId: number) => {
-    // console.log('handle select', attributeId, valueId)
+  const handleSelect = (e: React.MouseEvent<HTMLButtonElement> | React.ChangeEvent<HTMLSelectElement>, attributeId: number, valueId: number) => {
+ 
     const newSelections = {
       ...selections,
       [attributeId]: valueId
     }
     setSelections(newSelections)
     onSelectionChange?.(newSelections)
-    // Prevent any form submission or navigation
-    return false;
   }
 
   // Render attribute based on type
@@ -143,7 +141,7 @@ function ProductVariations({
                     style={{ backgroundColor: value.color }}
                     title={colorValue}
                     aria-label={`Select color ${colorValue}`}
-                    onClick={() => handleSelect(attribute.attribute_id, value.id)}
+                    onClick={(e) => handleSelect(e, attribute.attribute_id, value.id)}
                   >
                     <span className="sr-only">{colorValue}</span>
                   </button>
@@ -166,7 +164,7 @@ function ProductVariations({
                     type="button"
                     className={`size-option ${isSelected ? 'active' : ''}`}
                     aria-label={`Select ${attribute.attribute_name}: ${value.value}`}
-                    onClick={() => handleSelect(attribute.attribute_id, value.id)}
+                    onClick={(e) => handleSelect(e, attribute.attribute_id, value.id)}
                   >
                     {value.value}
                   </button>
@@ -188,9 +186,7 @@ function ProductVariations({
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
           value={selectedValueId || ''}
           onChange={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleSelect(attribute.attribute_id, Number(e.target.value));
+            handleSelect(e, attribute.attribute_id, Number(e.target.value));
           }}
         >
           <option value="">Select {attribute.attribute_name}</option>

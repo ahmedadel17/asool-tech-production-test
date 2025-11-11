@@ -228,14 +228,14 @@ const AccountDropdown: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid">
+        {/* <div className="grid">
           <span className="text-gray-600 dark:text-gray-400 text-sm">
             {t("My Account")} 
           </span>
           <span className="text-gray-900 dark:text-gray-100 text-sm font-medium">
            {t("Hi")}, {user?.first_name || user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
           </span>
-        </div>
+        </div> */}
       </div>
 
       {isOpen && (

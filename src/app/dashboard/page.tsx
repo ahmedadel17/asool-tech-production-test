@@ -206,7 +206,7 @@ export default function Dashboard() {
                       <span
                         className={`px-3 py-1 bg-${order.status.color}-100 dark:bg-${order.status.color}-900 text-${order.status.color}-800 dark:text-${order.status.color}-200 text-xs font-medium rounded-full`}
                       >
-                        {order.status.text}
+                        {t(order.status.text)}
                       </span>
                     </td>
                     <td className="px-6 py-4">﷼ {order.total}</td>

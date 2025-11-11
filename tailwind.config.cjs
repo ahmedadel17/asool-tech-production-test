@@ -75,7 +75,7 @@ module.exports = {
                     100: 'var(--apicolor-gray_100)',
                     200: 'var(--apicolor-gray_200)',
                     300: 'var(--apicolor-gray_300)',
-                    400: 'var(--apicolor-gray-400)',
+                    400: 'var(--apicolor-gray_400)',
                     500: 'var(--apicolor-gray_500)',
                     600: 'var(--apicolor-gray_600)',
                     700: 'var(--apicolor-gray_700)',

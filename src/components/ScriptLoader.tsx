@@ -124,20 +124,7 @@ export default function ScriptLoader({ scripts = [] }: ScriptLoaderProps) {
         strategy="afterInteractive"
         // onLoad={() => console.log('Embla init script loaded')}
       />
-      <Script
-        src="/js/slider.min.js"
-        strategy="afterInteractive"
-        onLoad={() => {
-          // console.log('Custom slider script loaded')
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (typeof (window as any).initSiteSlider === 'function') {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ;(window as any).initSiteSlider()
-            }
-          } catch {}
-        }}
-      />
+      
       <Script
         src="/js/navigation.js"
         strategy="afterInteractive"

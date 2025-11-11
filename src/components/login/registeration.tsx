@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import {getCountryDialCodeFromCountryCodeOrNameOrFlagEmoji} from "country-codes-flags-phone-codes";
 import CountryPhoneInput from '../phone/countryphoneInput';
+import { useTranslations } from 'next-intl';
 function Registeration() {
+    const t = useTranslations();
     interface RegisterFormValues {
         phone: string;
         countryCode: string;
@@ -41,8 +43,8 @@ function Registeration() {
           {/* <!-- Registration Step (Hidden by default) --> */}
         <div id="register-step" className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 ">
             <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create Your Account</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">We need a few more details to get started</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('Create Your Account')}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('We need a few more details to get started')}</p>
             </div>
 
             <Formik<RegisterFormValues>
@@ -57,30 +59,30 @@ function Registeration() {
       validate={(values: RegisterFormValues) => {
         const errors: Partial<Record<keyof RegisterFormValues, string>> = {};
         if (!values.first_name) {
-          errors.first_name = 'First name is required';
+          errors.first_name = ('validation.first_name_required');
         }
         if (!values.last_name) {
-          errors.last_name = 'Last name is required';
+          errors.last_name = ('validation.last_name_required');
         }
         if (!values.email) {
-          errors.email = 'Email is required';
+          errors.email = ('validation.email_required');
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
-          errors.email = 'Invalid email address';
+          errors.email = ('validation.email_invalid');
         }
         if (!values.phone) {
-          errors.phone = 'Phone number is required';
+          errors.phone = ('validation.phone_required');
         } else {
           // Check if phone contains only digits
           if (!/^\d+$/.test(values.phone)) {
-            errors.phone = 'Phone number must contain only digits';
+            errors.phone = ('validation.phone_digits_only');
           } else if (values.phone.length < 7) {
-            errors.phone = 'Phone number must be at least 7 digits';
+            errors.phone = 'Phone number must be at least 7 digits'
           } else if (values.phone.length > 11) {
-            errors.phone = 'Phone number must not exceed 11 digits';
+            errors.phone = 'Phone number must not exceed 11 digits'
           }
         }
         if (!values.terms) {
-          errors.terms = 'You must agree to the terms';
+          errors.terms = ('validation.must_accept_terms');
         }
         return errors;
       }}
@@ -134,7 +136,7 @@ function Registeration() {
        <div className='flex flex-row gap-4'>
        <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                First Name
+                {t('First Name')}
             </label>
             <input
                 type="text"
@@ -145,7 +147,7 @@ function Registeration() {
                 className={`block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-3 py-2 ${
                   isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
-                placeholder="Enter your First name"
+                placeholder={t('Enter your First name')}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.first_name}
@@ -154,7 +156,7 @@ function Registeration() {
         </div>
         <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Last Name
+                {t('Last Name')}
             </label>
             <input
                 type="text"
@@ -165,7 +167,7 @@ function Registeration() {
                 className={`block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-3 py-2 ${
                   isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
-                placeholder="Enter your Last name"
+                placeholder={t('Enter your Last name')}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.last_name}
@@ -176,7 +178,7 @@ function Registeration() {
 
         <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Email Address *
+               {t("Email Address")} *
             </label>
             <input
                 type="email"
@@ -187,7 +189,7 @@ function Registeration() {
                   isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 required
-                placeholder="Enter your email address"
+                placeholder={t('Enter your email address')}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.email}
@@ -202,7 +204,7 @@ function Registeration() {
           error={errors.phone}
           touched={touched.phone}
           disabled={isSubmitting}
-          label={`Phone Number ${phone ? '(Pre-filled from login)' : ''}`}
+          label={`${t('Phone Number')} ${phone ? `(${t('Prefilled from login')})` : ''}`}
           required
           initialCountryCode={countryCode || 'SA'}
         />
@@ -226,8 +228,8 @@ function Registeration() {
             <div className="ml-3 text-sm">
                 {errors.terms && touched.terms && <p className="text-sm text-red-500">{errors.terms}</p>}
                 <label htmlFor="terms" className="text-gray-700 dark:text-gray-200">
-                    I agree to the <a href="#" className="text-primary-600 hover:text-primary-500">Terms of Service</a>
-                    and <a href="#" className="text-primary-600 hover:text-primary-500">Privacy Policy</a>
+                    {t('I agree to the')} <a href="#" className="text-primary-600 hover:text-primary-500">{t('Terms of Service')}</a>
+                    {t('and')} <a href="#" className="text-primary-600 hover:text-primary-500">{t('Privacy Policy')}</a>
                 </label>
             </div>
         </div>
@@ -238,7 +240,7 @@ function Registeration() {
                 type="button"
                 id="back-to-phone"
                 className="te-btn te-btn-default">
-                Back
+                {t('Back')}
             </Link>
             <button
                 type="submit"
@@ -250,10 +252,10 @@ function Registeration() {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    <span>Creating Account...</span>
+                    <span>{t('Creating Account')}...</span>
                   </>
                 ) : (
-                  <span>Create Account</span>
+                  <span>{t('Create Account')}</span>
                 )}
             </button>
         </div>

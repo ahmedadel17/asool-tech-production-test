@@ -38,7 +38,7 @@ interface Product {
   badges?: Badge[];
   variations?: Variation[];
   min_price?: string;
-  price_before_discount?: string;
+  price_befor_discount?: string;
   price_after_discount?: string;
   default_variation_id?: string | number;
   is_favourite?: boolean;
@@ -49,6 +49,7 @@ interface Variation {
   name: string;
   values: { id: number; value: string }[];
   price_before_discount?: string | number;
+  price_befor_discount?: string | number;
   price_after_discount?: string | number;
 }
 
@@ -69,6 +70,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
     selectedVariation: null as Variation | null,
     isFavorite: product?.is_favourite,
     isFavoriteLoading: false,
+    price_befor_discount: null as string | null,
     variationData: null as Variation | null,
   });
   
@@ -103,6 +105,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
       isLoadingVariation: false,
       selectedVariation: null,
       isFavorite: product?.is_favourite || false,
+      price_befor_discount: null,
       isFavoriteLoading: false,
       variationData: null,
     });
@@ -143,16 +146,29 @@ function ProductDetails({ product }: ProductDetailsProps) {
     });
 
     try {
+      // Convert attribute keys from numbers to strings (API expects string keys)
+      const attributesWithStringKeys: Record<string, number> = {};
+      Object.keys(attributes).forEach(key => {
+        attributesWithStringKeys[String(key)] = attributes[Number(key)];
+      });
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add Authorization header if token is available
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/catalog/products/get-variation-by-attribute`,
         {
           product_id: product.id,
-          attributes: attributes // Maps attribute_id to value_id
+          attributes: attributesWithStringKeys // Maps attribute_id (string) to value_id (number)
         },
         {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           signal: abortController.signal,
         }
       );
@@ -214,14 +230,8 @@ function ProductDetails({ product }: ProductDetailsProps) {
         abortControllerRef.current = null;
       }
     }
-  }, [product.id]);
+  }, [product.id, token]);
 
-  // Handle selection changes
-  const handleSelectionChange = (selections: Record<number, number>) => {
-    // Update state based on selections for backward compatibility
-    // This is optional, mainly for tracking selected values if needed
-    // console.log('Selections changed:', selections);
-  };
 
   // Handle favorite toggle
   const handleFavoriteToggle = async () => {
@@ -357,7 +367,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
         <ProductTitle name={product.name} slug={product.slug} />
         {state.variationData && <ProductTitle name={state.variationData.name} slug={product.slug} />}
         {/* Price */}
-        <ProductPrice min_price={parseFloat((state.variationData?.price_before_discount || product.price_before_discount || product.min_price || '0').toString())} price_after_discount={parseFloat((state.variationData?.price_after_discount || product.price_after_discount || product.price || '0').toString())} />
+        <ProductPrice min_price={parseFloat((state.variationData?.price_befor_discount || product.price_befor_discount || product.min_price || '0').toString())} price_after_discount={parseFloat((state.variationData?.price_after_discount || product.price_after_discount || '0').toString())} />
         {/* Variations */}
         {product.variations && product.variations.length > 0 && (
           <ProductVariations 
@@ -367,7 +377,6 @@ function ProductDetails({ product }: ProductDetailsProps) {
               attribute_type: string;
               values: Array<{ id: number; value: string; color?: string }>;
             }>} 
-            onSelectionChange={handleSelectionChange}
             onVariationFetch={fetchVariationId}
           />
         )}

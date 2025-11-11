@@ -244,7 +244,7 @@ export default function CountryPhoneInput({
       {/* Label */}
       {defaultLabel && (
         <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-          {label ? t(label) : defaultLabel}
+          {label ? (label) : defaultLabel}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}

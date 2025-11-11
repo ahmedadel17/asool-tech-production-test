@@ -64,12 +64,12 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <ReduxProvider>
             <ThemeProvider>
-            
-              <div className="flex flex-col min-h-screen">
+              <div className="flex flex-col min-h-screen" suppressHydrationWarning>
                 <NavProgress />
                 <CartInitializer />
                 <WishlistInitializer />
                 <CompareInitializer />
+                {/* <HeaderStyle2 /> */}
                 <LayoutWithMenuData>
                 <ColorProvider>
                   <main className="flex-1 pb-16 lg:pb-0">

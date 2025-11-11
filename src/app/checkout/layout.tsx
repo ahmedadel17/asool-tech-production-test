@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
-import OrderSummary from '../../components/checkout/orderSummary'
 import { useTranslations } from 'next-intl';  
+import dynamic from 'next/dynamic'
 
+const OrderSummary = dynamic(() => import('@/components/checkout/orderSummary'), { ssr: false })
 const CheckoutLayout = ({children}: {children: React.ReactNode}) => {
   const t = useTranslations();
   return (

@@ -8,18 +8,30 @@ const NavProgress: React.FC = () => {
   const [activeMegaMenu, setActiveMegaMenu] = useState<number | null>(null);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
   const [progressWidth, setProgressWidth] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // 🔹 Mount check to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 🔹 Scroll progress bar effect
   useEffect(() => {
+    if (!mounted) return;
+    
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.body.scrollHeight - window.innerHeight;
       const scrolled = (scrollTop / docHeight) * 100;
       setProgressWidth(scrolled);
     };
+    
+    // Initial calculation
+    handleScroll();
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [mounted]);
 
   // 🔹 Close all dropdowns and menus
   const closeAll = () => {
@@ -52,13 +64,14 @@ const NavProgress: React.FC = () => {
   return (
     <>
       {/* ✅ Scroll progress bar */}
-      <div
-        id="navbar-progress"
-        className="te-navbar-progress fixed top-0 left-0 h-[2px] z-50 transition-[width] ease-out duration-150 bg-gradient-to-r from-primary-500 to-secondary-500"
-        style={{ width: `${progressWidth}%` }}
-      ></div>
-
-     
+      {mounted && (
+        <div
+          id="navbar-progress"
+          className="te-navbar-progress fixed top-0 left-0 h-[2px] z-50 transition-[width] ease-out duration-150 bg-gradient-to-r from-primary-500 to-secondary-500"
+          style={{ width: `${progressWidth}%` }}
+          suppressHydrationWarning
+        ></div>
+      )}
     </>
   );
 };

@@ -10,6 +10,7 @@ import HeaderDesktopMenu from '../headerDesktopMenu'
 import { useAuth } from '@/app/hooks/useAuth'
 import LanguageToggleButton from '../LanguageToggleButton'
 import HeaderWishList from '../headerWishlist'
+import HeaderNotification from '../headerNotification'
 
 function HeaderLtr({ menuData }: { menuData: any }) {
   const { isAuthenticated } = useAuth();
@@ -21,11 +22,11 @@ function HeaderLtr({ menuData }: { menuData: any }) {
 
   return (
     <div>
-         <nav className="te-navbar flex rtl:flex-row-reverse whitespace-nowrap mx-auto shadow-sm w-full relative bg-white dark:bg-gray-800" role="navigation" aria-label="Main Navigation">
+         <nav className="te-navbar flex  whitespace-nowrap mx-auto shadow-sm w-full relative bg-white dark:bg-gray-800" role="navigation" aria-label="Main Navigation">
 
-<div className="te-navbar-container container rtl:flex-row-reverse">
+<div className="te-navbar-container container ">
 
-    <div className="te-navbar-content flex justify-between items-center min-h-20 relative  rtl:flex-row-reverse">
+    <div className="te-navbar-content flex justify-between items-center min-h-20 relative  ">
 
         {/* <!-- Logo and Search Section --> */}
         <div className="flex items-center gap-4">
@@ -34,12 +35,12 @@ function HeaderLtr({ menuData }: { menuData: any }) {
             <HeaderSearch />
 
         {/* <!-- Header Actions --> */}
-        <div className="header-actions flex items-center gap-1 lg:gap-6 w-auto shrink-0 rtl:flex-row-reverse">
+        <div className="header-actions flex items-center gap-1 lg:gap-6 w-auto shrink-0 ">
 
-            <div className="items-center hidden lg:flex gap-2 rtl:flex-row-reverse">
+            <div className="items-center hidden lg:flex gap-2 ">
 
                 {/* <!-- Notification --> */}
-               {/* {isAuthenticated && <HeaderNotification />} */}
+               {mounted && isAuthenticated && <HeaderNotification  />}
 
                 {/* <!-- Wishlist --> */}
                 {mounted && isAuthenticated && <HeaderWishList />} 

@@ -9,7 +9,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import postRequest from '../../../../helpers/post';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
-
+import { useRouter } from 'next/navigation';
 interface ShippingMethod {
   id: number;
   name: string;
@@ -26,7 +26,7 @@ const ShippingMethod = () => {
   const { token } = useAuth();
   const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
   const locale = useLocale();
-  
+  const router = useRouter();
   // Helper function to extract cart data for updateShippingMethod
   const getCartDataForUpdate = useCallback(() => {
     return cartData ? {
@@ -34,15 +34,27 @@ const ShippingMethod = () => {
       amount_to_pay: cartData.amount_to_pay
     } : undefined;
   }, [cartData]); 
+  useEffect(() => {
+    if (order.status === 'shippingAddress' ) {
+      setTimeout(() => {
+        router.push('/checkout');
+      }, 2000);
+    }
+  }, []);
   const getshippingRates = useCallback(async () => {
     const response =await postRequest(`/marketplace/cart/shipping-rates`, { order_id: cartData?.id,user_address_id: order.shipping_address_id},{},token,locale  );
 
     const methods = response.data.data.shipping_methods || [];
+
     setShippingMethods(methods);
   }, [cartData?.id, order.shipping_address_id, token, locale])
   useEffect(() => {
-    getshippingRates();
+    console.log('order.status',order.status)
+    if(order.status=='ShippingMethod'){
+      getshippingRates();
+    }
   }, [getshippingRates]);
+
 
   // Auto-select first shipping method when methods are loaded
   useEffect(() => {
@@ -50,7 +62,7 @@ const ShippingMethod = () => {
       const firstMethod = shippingMethods[0];
       updateShippingMethod(firstMethod.slug, getCartDataForUpdate());
     }
-  }, [shippingMethods, order.shipping_method_slug, updateShippingMethod, getCartDataForUpdate]);
+  }, [shippingMethods, order.shipping_method_slug, updateShippingMethod]);
 
   const validationSchema = Yup.object({
     shipping: Yup.string().required('Please select a shipping method')

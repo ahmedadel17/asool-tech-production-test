@@ -1,14 +1,13 @@
 'use client'
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
-
-import { useLocale } from 'next-intl';
 import { useCart } from '@/app/hooks/useCart';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useOrder } from '@/app/hooks/useOrder';
 import postRequest from '../../../../helpers/post';
 import HyperPayPayment from './hyperpay';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 interface PaymentMethodsProps {
   allowedPaymentMethods?: string[];
 }
@@ -22,6 +21,14 @@ const {token}= useAuth()
   const [showPaymentOptions, setShowPaymentOptions] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const t = useTranslations();
+  const router = useRouter();
+  useEffect(() => {
+    if (order.status === 'shippingAddress' ) {
+      setTimeout(() => {
+        router.push('/checkout');
+      }, 2000);
+    }
+  }, []);
   // Check if browser is Safari
   const isSafari = () => {
     if (typeof window === 'undefined') return false;
@@ -35,7 +42,8 @@ const {token}= useAuth()
       const response = await postRequest('/payment/tamara/prepare-checkout', {
         order_id: cartData?.id,
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.id}`,
-        failed_url: window.location.origin + `/checkoutConfirmation/failed`,
+        failure_url: window.location.origin + `/checkoutConfirmation/failed`,
+        cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
       }, {}, token, 'en');
       
       // console.log('Tamara response:', response);
@@ -62,7 +70,8 @@ const {token}= useAuth()
       const response = await postRequest('/payment/tabby/prepare-checkout', {
         order_id: cartData?.id,
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.id}`,
-        cancel: window.location.origin + `/checkoutConfirmation/failed`,
+        failure_url: window.location.origin + `/checkoutConfirmation/failed`,
+        cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
       }, {}, token, 'en');
       
       // console.log('Tabby response:', response);

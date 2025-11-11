@@ -3,7 +3,7 @@ import React from 'react'
 function ProductPrice({ min_price, price_after_discount }: { min_price: number, price_after_discount: number }) {
   return (
     <div className="product-price flex items-center gap-1">
-            {min_price && (
+            {min_price != price_after_discount && (
               <p className="text-gray-500 line-through text-sm flex items-center gap-1">
                 <span className="icon-riyal-symbol"></span>
                 {min_price}
