@@ -28,7 +28,7 @@ function HeaderStyle1({ menuData }: { menuData: any }) {
   const locale = useLocale();
   return (
     <div>
-   {locale === 'ar' ? <HeaderRtl menuData={menuData} /> : <HeaderLtr menuData={menuData} />}
+      <HeaderLtr menuData={menuData} />
     </div>
   )
 }

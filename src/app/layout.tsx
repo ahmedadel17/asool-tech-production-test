@@ -41,6 +41,14 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <ReduxProvider>
+          <ThemeProvider>
+          <NavProgress />
+          <CartInitializer />
+          <WishlistInitializer />
+          <CompareInitializer />
+
+        {/* <NextIntlClientProvider messages={messages}>
+          <ReduxProvider>
             <ThemeProvider>
               <div className="flex flex-col min-h-screen" suppressHydrationWarning>
                 <NavProgress />
@@ -49,11 +57,16 @@ export default async function RootLayout({
                 <CompareInitializer />
                 {/* <HeaderStyle2 /> */}
                 <LayoutWithMenuData>
-                <ColorProvider>
+                <ColorProvider> 
                   <main className="flex-1 pb-16 lg:pb-0">
                     {children}
                   </main>
                   </ColorProvider>
+                  </LayoutWithMenuData>
+          <Toaster position="top-center" /> 
+          <CompareBar />
+          <FooterNav />
+                  {/* </ColorProvider>
                 </LayoutWithMenuData>
                 <BackToTopButton />
               </div>
@@ -63,7 +76,11 @@ export default async function RootLayout({
           </ReduxProvider>
           <Toaster position="top-center" /> 
         </NextIntlClientProvider>
-        <ScriptLoader />
+        <ScriptLoader /> */}
+          </ThemeProvider>
+          </ReduxProvider>
+          </NextIntlClientProvider>
+
       </body>
     </html>
   );

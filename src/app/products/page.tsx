@@ -195,7 +195,7 @@ async function Products({ searchParams }: ProductsPageProps) {
                     className={`grid gap-3 ${gridColsClass} lg:gap-6`}
                   >
                     {products?.map((product: Product) => (
-                    <ProductCard2 key={product.id} product={product} />
+                      <ProductCard2 key={product.id} product={product} />
                     ))}
                   </div>
                 ) : (

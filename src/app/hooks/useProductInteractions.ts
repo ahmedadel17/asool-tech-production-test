@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { toast } from 'react-hot-toast';
-
+import { useRouter } from 'next/navigation';
 interface Product {
   id: string;
   title: string;
@@ -16,7 +16,7 @@ export function useProductInteractions() {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [wishlistItems, setWishlistItems] = useState<string[]>([]);
   const { isAuthenticated } = useAuth();
-
+  const router = useRouter();
   // Initialize wishlist count
   useEffect(() => {
     // In a real app, you'd fetch from your API
@@ -76,6 +76,7 @@ export function useProductInteractions() {
     // Check authentication first
     if (!isAuthenticated) {
       toast.error('Please login first to add items to cart');
+      router.push('/auth/login');
       return;
     }
 

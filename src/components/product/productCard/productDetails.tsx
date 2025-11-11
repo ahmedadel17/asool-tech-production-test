@@ -294,6 +294,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
     const newSelections = { ...variationSelections, [attributeId]: valueId };
     setVariationSelections(newSelections);
     setUserHasSelected(true);
+    console.log('Selected variations:', newSelections);
   };
 
   // Render attribute based on type
@@ -371,13 +372,11 @@ function ProductDetails({ product }: ProductDetailsProps) {
   const handleFavoriteToggle = async () => {
     // Check authentication first
     if (!isAuthenticated) {
-      toast.error('Please login first to add items to wishlist');
       router.push('/auth/login');
       return;
     }
 
     if (!token) {
-      toast.error('Authentication required. Please login again.');
       router.push('/auth/login');
       return;
     }
