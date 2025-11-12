@@ -57,22 +57,23 @@ async function HomeContent() {
   const locale = await getLocale();
   const isRTL = locale === 'ar';
   const home = await getHomeData(locale);
+
   
-  if (!home || !home.data) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <div id="content" className="flex-1 site-content" role="main">
-          <div className="primary">
-            <div className="main">
-              <div className="container py-16 text-center">
-                <p className="text-gray-600 dark:text-gray-400">Failed to load content. Please try again later.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (!home || !home.data) {
+  //   return (
+  //     <div className="flex flex-col min-h-screen">
+  //       <div id="content" className="flex-1 site-content" role="main">
+  //         <div className="primary">
+  //           <div className="main">
+  //             <div className="container py-16 text-center">
+  //               <p className="text-gray-600 dark:text-gray-400">Failed to load content. Please try again later.</p>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Add is_favourite property to featured products
   

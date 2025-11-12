@@ -267,3 +267,4 @@ Success Response (example):
 This contract enables the Page Builder to power product cards with variations purely from the HTML the backend generates.
 
 
+

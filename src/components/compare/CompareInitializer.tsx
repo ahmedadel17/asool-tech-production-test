@@ -21,3 +21,4 @@ function CompareInitializer() {
 
 export default CompareInitializer;
 
+
