@@ -86,14 +86,14 @@ const MyWishlistPage: React.FC = () => {
             });
           }
           
-          toast.success('Product removed from favorites!');
+          toast.success(t('Product removed from favorites')+'!');
         } else {
-          toast.error('Failed to remove from favorites');
+          toast.error(t('Failed to remove from favorites')+'!');
         }
       } else {
         // If not authenticated, just remove from local storage
         removeProduct(productId);
-        toast.success(t('Product removed from wishlist'));
+        toast.success(t('Product removed from wishlist')+'!');
       }
     } catch (error) {
       console.error('Error removing from favorites:', error);
@@ -228,12 +228,12 @@ const MyWishlistPage: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Your wishlist is empty</h3>
+                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">{t("Your wishlist is empty")}</h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                      Save items you love by clicking the heart icon on any product. We&apos;ll keep them safe here for you.
+                    {t("Save items you love by clicking the heart icon on any product")}. {t("We will keep them safe here for you")}.
                     </p>
                     <div>
-                      <Link href="/products" className="te-btn te-btn-primary">Start Shopping</Link>
+                      <Link href="/products" className="te-btn te-btn-primary">{t("Start Shopping")}</Link>
                     </div>
                   </div>
                 )}

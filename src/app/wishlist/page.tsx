@@ -6,8 +6,9 @@ import { useWishlist } from '@/app/hooks/useWishlist';
 import postRequest from '../../../helpers/post';
 import toast from 'react-hot-toast';
 import ProductCard2 from '@/components/product/productCard2';
-
+import {useTranslations} from 'next-intl';
 const Wishlist: React.FC = () => {
+  const t = useTranslations();
   const { token } = useAuth();
   const locale = useLocale();
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
@@ -122,18 +123,18 @@ const Wishlist: React.FC = () => {
             });
           }
           
-          toast.success('Product removed from favorites!');
+          toast.success(t('Product removed from favorites'));
         } else {
-          toast.error('Failed to remove from favorites');
+          toast.error(t('Failed to remove from favorites'));
         }
       } else {
         // If not authenticated, just remove from local storage
         removeProduct(productId);
-        toast.success('Product removed from wishlist!');
+        toast.success(t('Product removed from wishlist'));
       }
     } catch (error) {
       console.error('Error removing from favorites:', error);
-      toast.error('Failed to remove from favorites');
+      toast.error(t('Failed to remove from favorites'));
       // Still remove from local storage on error
       removeProduct(productId);
     } finally {
@@ -151,7 +152,7 @@ const Wishlist: React.FC = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading wishlist...</span>
+        <span className="ml-3 text-gray-600 dark:text-gray-400">{t("Loading wishlist")}...</span>
       </div>
     );
   }
@@ -165,7 +166,7 @@ const Wishlist: React.FC = () => {
           onClick={() => window.location.reload()}
           className="mt-2 text-xs text-red-500 hover:text-red-700"
         >
-          Retry
+          {t("Retry")}
         </button>
       </div>
     );
@@ -175,10 +176,10 @@ const Wishlist: React.FC = () => {
     <div className="container mx-auto py-8">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          My Wishlist
+          {t("My Wishlist")}
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          {reduxWishlistProducts.length} items saved for later
+          {reduxWishlistProducts.length} {t("items saved for later")}
         </p>
       </div>
 
@@ -189,11 +190,11 @@ const Wishlist: React.FC = () => {
             <div className="flex gap-2">
               {!isAllSelected ? (
                 <button onClick={selectAll} className="te-btn te-btn-default te-btn-sm">
-                  Select All
+                  {t("Select All")}
                 </button>
               ) : (
                 <button onClick={deselectAll} className="te-btn te-btn-default te-btn-sm">
-                  Deselect All
+                  {t("Deselect All")}
                 </button>
               )}
             </div>
@@ -203,17 +204,17 @@ const Wishlist: React.FC = () => {
                 className="te-btn te-btn-primary te-btn-sm"
                 disabled={selectedIds.length === 0}
               >
-                Add Selected to Cart
+                {t("Add Selected to Cart")}
               </button>
               <button
                 onClick={removeSelected}
                 className="te-btn te-btn-danger te-btn-sm"
                 disabled={selectedIds.length === 0}
               >
-                Remove Selected
+                {t("Remove Selected")}
               </button>
               <button onClick={clearWishlist} className="te-btn te-btn-default te-btn-sm">
-                Clear Wishlist
+                {t("Clear Wishlist")}
               </button>
             </div>
           </div>
@@ -274,7 +275,7 @@ const Wishlist: React.FC = () => {
           {/* Continue Shopping */}
           <div className="mt-8 text-center">
             <a href="/products" className="te-btn te-btn-primary">
-              Continue Shopping
+              {t("Continue Shopping")}
             </a>
           </div>
         </>
@@ -294,12 +295,12 @@ const Wishlist: React.FC = () => {
               d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
             />
           </svg>
-          <h3 className="text-2xl font-semibold mt-4">Your wishlist is empty</h3>
+          <h3 className="text-2xl font-semibold mt-4">{t("Your wishlist is empty")}</h3>
           <p className="text-gray-600 mt-2">
-            Save items you love by clicking the heart icon on any product.
+            {t("Save items you love by clicking the heart icon on any product.")}
           </p>
           <a href="/products" className="mt-4 inline-block te-btn te-btn-primary">
-            Start Shopping
+            {t("Start Shopping")}
           </a>
         </div>
       )}

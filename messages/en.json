@@ -816,5 +816,17 @@
    "Product added to cart successfully":"Product added to cart successfully",
    "Failed to add product to cart":"Failed to add product to cart",
    "No image available":"No image available",
-   "Filter":"Filter"
+   "Filter":"Filter",
+   "Your wishlist is empty":"Your wishlist is empty",
+   "Save items you love by clicking the heart icon on any product":"Save items you love by clicking the heart icon on any product",
+   "We will keep them safe here for you":"We will keep them safe here for you",
+   "Start Shopping":"Start Shopping",
+   "Continue Shopping":"Continue Shopping",
+   "Retry":"Retry",
+   "Product removed from wishlist":"Product removed from wishlist",
+   "Failed to remove from favorites":"Failed to remove from favorites",
+   "Add to Cart":"Add to Cart",
+   "Select All":"Select All",
+   "Deselect All":"Deselect All",
+   "We will keep them safe here for you":"We will keep them safe here for you"
 }
