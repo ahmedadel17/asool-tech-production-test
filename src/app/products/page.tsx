@@ -81,17 +81,7 @@ async function Products({ searchParams }: ProductsPageProps) {
   const colors = params.colors;
   const attributes = params.attributes;
 
-  // console.log('Search params received:', {
-  //   searchQuery,
-  //   category,
-  //   categoriesArray,
-  //   priceMin,
-  //   priceMax,
-  //   sizes,
-  //   colors,
-  //   attributes,
-  //   allSearchParams: searchParams
-  // });
+
 
   // Build query parameters for API
   const queryParams = new URLSearchParams({
@@ -116,11 +106,7 @@ async function Products({ searchParams }: ProductsPageProps) {
   if (colors) queryParams.append('colors', colors);
   if (attributes) queryParams.append('attributes', attributes);
 
-  // console.log('API Query Parameters:', queryParams.toString());
-  // console.log('Category parameters being sent to API:', { category, categoriesArray });
-  // console.log('Price parameters being sent to API:', { priceMin, priceMax });
-  // console.log('Size and color parameters being sent to API:', { sizes, colors });
-  // console.log('Attributes parameter being sent to API:', { attributes });
+
 
   try {
     // Create cache key from query parameters
@@ -153,7 +139,6 @@ async function Products({ searchParams }: ProductsPageProps) {
       ...product,
       is_favourite: product.is_favourite || false // Ensure is_favourite property exists
     }));
-    // console.log('products', products);
     
     // Extract pagination data from the API response
     const paginationData = productsData.paginate || {};

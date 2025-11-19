@@ -6,6 +6,8 @@ import { setCartData } from '@/app/store/slices/cartSlice';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import HTMLReactParser from "html-react-parser";
+
 // Extend Window interface to include initHeroSlider and Embla
 interface EmblaCarouselType {
   (node: HTMLElement, options?: object, plugins?: unknown[]): {
@@ -90,8 +92,14 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
     const loadScripts = async () => {
       if (scriptsLoadedRef.current) return;
 
-      const scriptPromises = scripts.map(script => {
-        return new Promise((resolve, reject) => {
+      // Filter out embla-carousel scripts as they're handled separately
+      const scriptsToLoad = scripts.filter(script => 
+        !script.type.includes('embla-carousel') && 
+        !script.type.includes('embla-autoplay')
+      );
+
+      const scriptPromises = scriptsToLoad.map(script => {
+        return new Promise((resolve) => {
           // Check if script already loaded
           const scriptId = `pb-${script.type}`;
           if (document.getElementById(scriptId)) {
@@ -104,26 +112,39 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           scriptElement.src = `/js/page-builder/${script.type}.js`;
           scriptElement.async = true;
           scriptElement.onload = () => resolve(true);
-          scriptElement.onerror = () => reject(new Error(`Failed to load ${script.type}`));
+          scriptElement.onerror = () => {
+            console.warn(`Failed to load script: ${script.type}. Continuing without it.`);
+            resolve(false); // Resolve instead of reject to prevent blocking other scripts
+          };
           document.body.appendChild(scriptElement);
         });
       });
 
-      await Promise.all(scriptPromises);
-      scriptsLoadedRef.current = true;
+      try {
+        await Promise.all(scriptPromises);
+        scriptsLoadedRef.current = true;
+      } catch (error) {
+        console.error('Error loading scripts:', error);
+        scriptsLoadedRef.current = true; // Set to true to prevent retry loops
+      }
     };
 
     loadScripts();
 
     // Cleanup
     return () => {
-      scripts.forEach(script => {
-        const scriptId = `pb-${script.type}`;
-        const existingScript = document.getElementById(scriptId);
-        if (existingScript) {
-          existingScript.remove();
-        }
-      });
+      scripts
+        .filter(script => 
+          !script.type.includes('embla-carousel') && 
+          !script.type.includes('embla-autoplay')
+        )
+        .forEach(script => {
+          const scriptId = `pb-${script.type}`;
+          const existingScript = document.getElementById(scriptId);
+          if (existingScript) {
+            existingScript.remove();
+          }
+        });
     };
   }, [scripts]);
 
@@ -785,12 +806,18 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
 
       try {
         await Promise.all(scripts.map(loadScript));
-        // Wait a bit for scripts to initialize
+        // Wait a bit for scripts to initialize and DOM to be ready
         setTimeout(() => {
           initializeCarousels();
-        }, 100);
+        }, 300);
       } catch (error) {
         console.error('Error loading Embla scripts:', error);
+        // Even if scripts fail, try to initialize if they're already loaded
+        if (window.EmblaCarousel) {
+          setTimeout(() => {
+            initializeCarousels();
+          }, 300);
+        }
       }
     };
 
@@ -914,13 +941,36 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
       });
     };
 
-    // Small delay to ensure HTML is rendered
+    // Use MutationObserver to detect when carousels are added to DOM
+    const observer = new MutationObserver(() => {
+      const carousels = container.querySelectorAll('.te-carousel .embla');
+      if (carousels.length > 0 && window.EmblaCarousel && window.EmblaCarouselAutoplay) {
+        // Check if there are any uninitialized carousels
+        const uninitialized = Array.from(carousels).some((emblaNodeElement) => {
+          const emblaNode = emblaNodeElement as HTMLElement;
+          return !emblaNode.emblaApi;
+        });
+        
+        if (uninitialized) {
+          // Carousels found and scripts loaded, initialize
+          initializeCarousels();
+        }
+      }
+    });
+
+    observer.observe(container, {
+      childList: true,
+      subtree: true
+    });
+
+    // Also try loading scripts and initializing after a delay
     const timeoutId = setTimeout(() => {
       loadEmblaScripts();
     }, 100);
 
     return () => {
       clearTimeout(timeoutId);
+      observer.disconnect();
       // Cleanup carousels
       const carousels = container.querySelectorAll('.embla');
       carousels.forEach((emblaNodeElement) => {

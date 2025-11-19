@@ -25,6 +25,7 @@ module.exports = {
         'md:grid-cols-3',
         'md:grid-cols-4',
     ],
+  
     theme: {
         extend: {
             translate: {

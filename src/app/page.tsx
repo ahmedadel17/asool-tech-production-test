@@ -5,6 +5,7 @@ import HomePageSkeleton from '@/components/skeleton/HomePageSkeleton';
 import { unstable_cache } from 'next/cache';
 import { SliderComponent } from '@/components/Home/sliderComponent';
 import ProductSlider from '@/components/Home/productSlider';
+import HomeBuilder from '@/components/Home/homeBuilder';
 
 // Enable caching for this page (revalidate every 60 seconds)
 export const revalidate = 60;
@@ -85,20 +86,21 @@ async function HomeContent() {
   const slides = home.data.sections?.sliders?.data || [];
 
   return (
-    <div className='flex flex-col min-h-screen'>
-      <div id="content" className="flex-1 site-content" role="main">
-        <div className='primary'>
-          <div className="main">
-            {slides.length > 0 && (
-                <SliderComponent slides={slides} initialIsRTL={isRTL} />
-            )}
-            {featuredProducts.length > 0 && (
-                <ProductSlider products={featuredProducts} initialIsRTL={isRTL} />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    <HomeBuilder />
+    // <div className='flex flex-col min-h-screen'>
+    //   <div id="content" className="flex-1 site-content" role="main">
+    //     <div className='primary'>
+    //       <div className="main">
+    //         {slides.length > 0 && (
+    //             <SliderComponent slides={slides} initialIsRTL={isRTL} />
+    //         )}
+    //         {featuredProducts.length > 0 && (
+    //             <ProductSlider products={featuredProducts} initialIsRTL={isRTL} />
+    //         )}
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
   );
 }
 

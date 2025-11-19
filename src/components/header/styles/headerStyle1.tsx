@@ -26,11 +26,22 @@ const HeaderDarkMode = dynamic(() => import('../headerDarkMode'), {
 
 function HeaderStyle1({ menuData }: { menuData: any }) {
   const locale = useLocale();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null; // يمنع SSR/CSR mismatch
+
   return (
     <div>
-   {locale === 'ar' ? <HeaderRtl menuData={menuData} /> : <HeaderLtr menuData={menuData} />}
+      {locale === 'ar' ? (
+        <HeaderRtl menuData={menuData} />
+      ) : (
+        <HeaderLtr menuData={menuData} />
+      )}
     </div>
-  )
+  );
 }
-
-export default HeaderStyle1
+export default HeaderStyle1;

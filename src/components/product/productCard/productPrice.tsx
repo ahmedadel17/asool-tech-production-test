@@ -1,6 +1,8 @@
 import React from 'react'
 
 function ProductPrice({ min_price, price_after_discount }: { min_price: number, price_after_discount: number }) {
+  // console.log('min_price', min_price);
+  // console.log('price_after_discount', price_after_discount);
   return (
     <div className="product-price flex items-center gap-1">
             {min_price != price_after_discount && (

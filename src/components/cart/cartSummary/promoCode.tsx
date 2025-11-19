@@ -33,8 +33,12 @@ import postRequest from '../../../../helpers/post';
           const cartId = cartData?.id;
           const response = await postRequest('/marketplace/cart/apply-voucher/'+cartId, { promo_code_id: values.promo_code_id }, {},token,locale);
           // toastHelper(response.data.status,response.data.message);
-          setCartData(response.data.data);
-          resetForm();
+          if(response.data.status){
+            setCartData(response.data.data);
+            resetForm();
+          }else{
+            setFieldError('promo_code_id', response.data.message);
+          }
         } catch {
           setFieldError('promo_code_id', t('Invalid promo code'));
         } finally {

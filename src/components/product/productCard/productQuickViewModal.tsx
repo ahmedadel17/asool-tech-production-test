@@ -11,6 +11,7 @@ import { setCartData, setCartLoading, setCartError } from '../../../app/store/sl
 import { useCart } from '../../../app/hooks/useCart';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import ProductPrice from './productPrice';
 type QuickViewProps = {
   product: CompareProduct;
   isOpen: boolean;
@@ -91,7 +92,6 @@ const QuickView: React.FC<QuickViewProps> = ({
         setVariationData(response.data.data);
         setIsLoadingVariation(false);
       } else {
-        console.error('Failed to get variation ID:', response.data);
         setVariationId(null);
         setVariationData(null);
         setIsLoadingVariation(false);
@@ -172,7 +172,7 @@ const QuickView: React.FC<QuickViewProps> = ({
         onClose(); // Close modal after successful add to cart
       } else {
         console.error('Add to cart failed:', response.data);
-        toast.error(response.data.message || 'Failed to add product to cart');
+        toast.error(response.data.message || t('Failed to add product to cart'));
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -208,8 +208,8 @@ const QuickView: React.FC<QuickViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="product-image">
               <img
-                src={product?.image || product?.thumbnail || '/images/product-1.jpg'}
-                alt={product?.title || product?.name || 'product'}
+                src={product?.image || product?.thumbnail}
+                alt={product?.title || product?.name}
                 className="w-full h-64 object-cover rounded-lg"
               />
             </div>
@@ -217,20 +217,7 @@ const QuickView: React.FC<QuickViewProps> = ({
               <h3 className="text-lg font-semibold mb-2">
                 {variationData?.name || product?.title || product?.name || 'Product Title'}
               </h3>
-              <div className="product-price flex items-center gap-2 mb-4">
-                {/* Old Price */}
-                {(variationData?.price_before_discount || product?.price_before_discount || product?.min_price || product?.old_price) && (
-                  <p className="text-lg text-gray-500 dark:text-gray-400 line-through flex items-center gap-1">
-                    <span className="icon-riyal-symbol text-xs"></span>
-                    <span>{variationData?.price_before_discount || product?.price_before_discount || product?.min_price || product?.old_price}</span>
-                  </p>
-                )}
-                {/* New Price */}
-                <p className="text-2xl font-bold text-blue-600 dark:text-primary-400 flex items-center gap-1">
-                  <span className="icon-riyal-symbol text-sm"></span>
-                  <span>{variationData?.price_after_discount || product?.price_after_discount || product?.price || '100'}</span>
-                </p>
-              </div>
+             <ProductPrice min_price={parseFloat(variationData?.price_befor_discount? variationData?.price_befor_discount : product.min_price)} price_after_discount={variationData?.price_after_discount ? parseFloat(variationData?.price_after_discount) : product.price_after_discount} />
 
               {/* Product Variations */}
               {product.variations && product.variations.length > 0 && (

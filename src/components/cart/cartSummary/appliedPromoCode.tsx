@@ -4,6 +4,7 @@ import { useCart } from '@/app/hooks/useCart';
 import { useAuth } from '@/app/hooks/useAuth';
 import postRequest from '../../../../helpers/post';
 import { CheckCircle2, X } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 function AppliedPromoCode() {
   const { cartData,setCartData } = useCart();
   const { token } = useAuth();
@@ -16,7 +17,11 @@ function AppliedPromoCode() {
       const cartId = cartData?.id;
       const response = await postRequest('/marketplace/cart/delete-voucher/'+cartId, {}, {}, token);
       // toastHelper(response.data.status,response.data.message);
-      setCartData(response.data.data);
+      if(response.data.status){
+        setCartData(response.data.data);
+      }else{
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error('Failed to remove promo code:', error);
     } finally {

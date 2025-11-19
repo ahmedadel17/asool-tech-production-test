@@ -49,7 +49,7 @@ const ShippingMethod = () => {
     setShippingMethods(methods);
   }, [cartData?.id, order.shipping_address_id, token, locale])
   useEffect(() => {
-    console.log('order.status',order.status)
+    // console.log('order.status',order.status)
     if(order.status=='ShippingMethod'){
       getshippingRates();
     }
