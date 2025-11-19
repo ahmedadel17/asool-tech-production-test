@@ -6,6 +6,7 @@ import { setCartData } from '@/app/store/slices/cartSlice';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import HTMLReactParser from "html-react-parser";
 
 // Extend Window interface to include initHeroSlider and Embla
@@ -87,6 +88,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
   const { getToken } = useAuth();
   const dispatch = useAppDispatch();
   const t = useTranslations();
+  const router = useRouter();
   useEffect(() => {
     // Load required scripts based on component types
     const loadScripts = async () => {
@@ -1071,41 +1073,18 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
       }
     };
 
-    // Set default selections for all product cards
+    // Clear any pre-selected variations - user must select manually
     const productCards = container.querySelectorAll('[data-product]');
     productCards.forEach((card) => {
-      const productDataStr = (card as HTMLElement).getAttribute('data-product');
-      if (!productDataStr) return;
-
-      try {
-        const productData = JSON.parse(productDataStr);
-        
-        if (productData.defaultSelection) {
-          Object.keys(productData.defaultSelection).forEach((attrId) => {
-            const valueId = productData.defaultSelection[attrId];
-            const attributeContainer = card.querySelector(`.product-attribute[data-attribute-id="${attrId}"]`);
-            
-            if (attributeContainer) {
-              const option = attributeContainer.querySelector(
-                `[data-attribute-id="${attrId}"][data-value-id="${valueId}"]`
-              ) as HTMLElement;
-              
-              if (option) {
-                // Remove active from all options in this group
-                attributeContainer.querySelectorAll('.size-option.active, .color-option.active').forEach(btn => {
-                  btn.classList.remove('active');
-                });
-                // Add active to default option
-                option.classList.add('active');
-              }
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error initializing default selection:', error);
-      }
+      // Remove active class from all variation options
+      card.querySelectorAll('.size-option.active, .color-option.active').forEach(option => {
+        option.classList.remove('active');
+      });
       
-      // Check and update button state after initialization
+      // Clear any variation data
+      delete (card as HTMLElement & { variationData?: unknown }).variationData;
+      
+      // Check and update button state after clearing
       checkButtonState(card as HTMLElement);
     });
   }, [html]);
@@ -1299,6 +1278,18 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
       }
 
       // console.log('💰 Price updated:', { priceBeforeDiscount, priceAfterDiscount });
+    };
+
+    // Function to clear all active variations
+    const clearAllVariations = () => {
+      container.querySelectorAll('.size-option.active, .color-option.active').forEach(option => {
+        option.classList.remove('active');
+      });
+      // Clear variation data from all product cards
+      container.querySelectorAll('[data-product]').forEach(card => {
+        delete (card as HTMLElement & { variationData?: unknown }).variationData;
+        checkButtonState(card as HTMLElement);
+      });
     };
 
     // Function to check if button should be enabled
@@ -1516,7 +1507,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           // Check button state - if disabled, don't proceed
           const button = addToCartButton as HTMLButtonElement;
           if (button.disabled) {
-            toast.error('Please select all variations and wait for them to load');
+            toast.error(t('Please select all variations and wait for them to load'));
             return;
           }
 
@@ -1634,7 +1625,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
           // Get auth token
           const authToken = getToken();
           if (!authToken) {
-            toast.error('Please login to add items to cart');
+            router.push('/auth/login');
             return;
           }
           
@@ -1663,7 +1654,6 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
               }
               toast.success(t('Product added to cart successfully'));
             } else {
-              console.error('Add to cart failed:', response.data);
               toast.error(response.data.message || 'Failed to add to cart');
             }
           } catch (error) {
@@ -1686,7 +1676,7 @@ export default function PageBuilder({ html, css, scripts }: PageBuilderProps) {
     return () => {
       container.removeEventListener('click', handleClick);
     };
-  }, [html, getToken, dispatch]);
+  }, [html, getToken, dispatch, router]);
 
   // Fix gradient syntax in dynamically injected HTML
   useEffect(() => {

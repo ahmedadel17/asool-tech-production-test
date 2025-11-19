@@ -86,21 +86,21 @@ async function HomeContent() {
   const slides = home.data.sections?.sliders?.data || [];
 
   return (
-    <HomeBuilder />
-    // <div className='flex flex-col min-h-screen'>
-    //   <div id="content" className="flex-1 site-content" role="main">
-    //     <div className='primary'>
-    //       <div className="main">
-    //         {slides.length > 0 && (
-    //             <SliderComponent slides={slides} initialIsRTL={isRTL} />
-    //         )}
-    //         {featuredProducts.length > 0 && (
-    //             <ProductSlider products={featuredProducts} initialIsRTL={isRTL} />
-    //         )}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
+    // <HomeBuilder />
+    <div className='flex flex-col min-h-screen'>
+      <div id="content" className="flex-1 site-content" role="main">
+        <div className='primary'>
+          <div className="main">
+            {slides.length > 0 && (
+                <SliderComponent slides={slides} initialIsRTL={isRTL} />
+            )}
+            {featuredProducts.length > 0 && (
+                <ProductSlider products={featuredProducts} initialIsRTL={isRTL} />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
