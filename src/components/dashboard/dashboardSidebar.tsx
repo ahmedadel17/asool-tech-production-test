@@ -23,6 +23,17 @@ const menuItems: MenuItem[] = [
     ),
     url: "/dashboard",
   },
+  {
+
+    title: "Notifications",
+    icon: (
+      <>
+        <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+        <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+      </>
+    ),
+    url: "/dashboard/notifications",
+  },
   // {
   //   title: "Notification",
   //   icon: (
@@ -55,30 +66,8 @@ const menuItems: MenuItem[] = [
     ),
     url: "/dashboard/orders",
   },
-  // {
-  //   title: "Track Order",
-  //   icon: (
-  //     <path
-  //       strokeLinecap="round"
-  //       strokeLinejoin="round"
-  //       strokeWidth="2"
-  //       d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-  //     />
-  //   ),
-  //   url: "/dashboard/track",
-  // },
-  {
-    title: "Return Items",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-      />
-    ),
-    url: "/dashboard/returns",
-  },
+ 
+ 
   {
     title: "Wishlist",
     icon: (
@@ -111,26 +100,27 @@ const menuItems: MenuItem[] = [
     ),
     url: "/dashboard/addresses",
   },
-  // {
-  //   title: "Account Settings",
-  //   icon: (
-  //     <>
-  //       <path
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //         strokeWidth="2"
-  //         d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-  //       />
-  //       <path
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //         strokeWidth="2"
-  //         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-  //       />
-  //     </>
-  //   ),
-  //   url: "/dashboard/settings",
-  // },
+
+  {
+    title: "Account Settings",
+    icon: (
+      <>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </>
+    ),
+    url: "/dashboard/settings",
+  },
   {
     title: "Logout",
     icon: (
@@ -174,11 +164,11 @@ const DashboardSidebar: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           {/* User Profile */}
           <div className="flex items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-600">
-            <div className="w-16 h-16 capitalize bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+            <div className="w-16 h-16 uppercase bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg shrink-0">
               {!mounted ? (
                 <div className="animate-pulse bg-white/20 rounded-full w-8 h-8"></div>
               ) : (
-                user?.name?.split(' ').map((name) => name.charAt(0)).join('') || 'U'
+                user?.name?.split(' ').map((name) => name.charAt(0)).join('') || user?.first_name?.charAt(0) || 'U'
               )}
             </div>
             <div className="ms-4">

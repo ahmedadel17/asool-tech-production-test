@@ -25,7 +25,7 @@ async function getCachedMenus(locale: string) {
     },
     ['menus', locale],
     {
-      revalidate: 300, // Cache for 5 minutes
+      revalidate: 10800, // Cache for 3 hours (3 * 60 * 60 seconds)
       tags: ['menus', `menus-${locale}`]
     }
   )(locale);
@@ -50,7 +50,7 @@ async function FooterWithData() {
   const { getLocale } = await import('next-intl/server');
   const locale = await getLocale();
   const menuData = await getCachedMenus(locale);
-  return <FooterStyle1 menuData={menuData?.data?.footer_menus} />;
+  return <FooterStyle1 menuData={menuData?.data} />;
 }
 
 // Server component that provides menu data

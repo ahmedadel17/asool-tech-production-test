@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import OrderAttribute from './orderAttribute';
 import Image from 'next/image';
 import { useCart } from '@/app/hooks/useCart';
@@ -7,24 +7,78 @@ import { useOrder } from '@/app/hooks/useOrder';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/app/hooks/useAuth';
 import getRequest from '../../../helpers/get';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import postRequest from '../../../helpers/post';
 function OrderSummary() {
   const { cartData,setCartData } = useCart();
-  const { order, updateOrderStatus } = useOrder();
+  const { order, updateOrderStatus, updateOrderData } = useOrder();
   const { token } = useAuth();
   const t = useTranslations();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const locale = useLocale(); 
   // Prevent hydration mismatch by only rendering after client mount
+
+  // Restore order state from localStorage on refresh
+  useEffect(() => {
+    const shippingAddressId = localStorage.getItem('shippingAddressId');
+    const shippingMethodSlug = localStorage.getItem('shippingMethodSlug');
+    
+    if (shippingAddressId || shippingMethodSlug) {
+      const updates: Partial<typeof order> = {};
+      let hasUpdates = false;
+      
+      if (shippingAddressId && !order.shipping_address_id) {
+        updates.shipping_address_id = shippingAddressId;
+        hasUpdates = true;
+      }
+      
+      if (shippingMethodSlug && !order.shipping_method_slug) {
+        updates.shipping_method_slug = shippingMethodSlug;
+        hasUpdates = true;
+      }
+      
+      // Determine status based on what's available
+      if (hasUpdates) {
+        if (shippingAddressId && shippingMethodSlug) {
+          // Both are set, check if payment is needed
+          const amount_to_pay = parseFloat(cartData?.amount_to_pay || '0');
+          if (amount_to_pay === 0) {
+            updates.status = 'PlaceOrder';
+          } else {
+            updates.status = 'shippingMethod';
+          }
+        } else if (shippingAddressId) {
+          // Only address is set
+          updates.status = 'shippingAddress';
+        } else if (shippingMethodSlug) {
+          // Only shipping method is set (shouldn't happen normally, but handle it)
+          updates.status = 'shippingMethod';
+        }
+        
+        if (Object.keys(updates).length > 0) {
+          updateOrderData(updates);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only on mount to restore from localStorage
+
+  // Update order status when navigating to shipping method page
+  useEffect(() => {
+    if (pathname === '/checkout/shippingMethod' && order.shipping_address_id && order.status !== 'shippingMethod') {
+      updateOrderData({ status: 'shippingMethod' });
+    }
+  }, [pathname, order.shipping_address_id, order.status, updateOrderData]);
 
   // Redirect to checkout if status is shippingAddress and user is on shipping method or payment method pages
  
 
   const settingShippingMethod = async () => {
-    const response = await postRequest('/marketplace/cart/cart-details/' + cartData?.id, { shipping_method_slug: order.shipping_method_slug,user_address_id: order.shipping_address_id }, {}, token, locale);
+    const response = await postRequest('/marketplace/cart/cart-details/' + cartData?.id, { shipping_slug: order.shipping_method_slug,user_address_id: order.shipping_address_id }, {}, token, locale);
 
     if(response.status){
       toast.success(response.data.message);
@@ -32,23 +86,36 @@ function OrderSummary() {
     }
   }
  const  placeOrder = async () => {
-    if ( parseFloat(cartData?.amount_to_pay||'0')==0){
-    const response = await postRequest(`/order/orders/change-cart-to-order/ ${cartData?.id}`,{},{},token,locale);
-    if(response.status){
-      router.push('/checkoutConfirmation?orderId='+cartData?.id );
+    setIsPlacingOrder(true);
+    try {
+      if ( parseFloat(cartData?.amount_to_pay||'0')==0){
+        const response = await postRequest(`/order/orders/change-cart-to-order/ ${cartData?.id}`,{},{},token,locale);
+        if(response.status){
+          localStorage.removeItem('shippingAddressId');
+          localStorage.removeItem('shippingMethodSlug');
+          localStorage.removeItem('paymentMethodId');
+          router.push('/checkoutConfirmation?orderId='+cartData?.id );
+        } else {
+          setIsPlacingOrder(false);
+        }
+      }
+      else{
+        const response = await getRequest('/payment/cash-on-delivery/' + cartData?.id, { 'Content-Type': 'application/json' }, token, locale);
+        if(response.status){
+          // Update order status to confirmation
+          updateOrderStatus('PlaceOrder');
+          toast.success(response.data.message);
+          // Navigate to confirmation page
+          router.push('/checkoutConfirmation?orderId='+cartData?.id );
+        } else {
+          setIsPlacingOrder(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error placing order:', error);
+      setIsPlacingOrder(false);
+      toast.error(t('Failed to place order'));
     }
-   
-}
-else{
-  const response = await getRequest('/payment/cash-on-delivery/' + cartData?.id, { 'Content-Type': 'application/json' }, token, locale);
-  if(response.status){
-    // Update order status to confirmation
-    updateOrderStatus('PlaceOrder');
-    toast.success(response.data.message);
-    // Navigate to confirmation page
-    router.push('/checkoutConfirmation?orderId='+cartData?.id );
-  }
-}
  }
   // Show loading state during hydration  
 
@@ -84,7 +151,7 @@ else{
           </div>
         )) : (
           <div className="text-center text-gray-500 dark:text-gray-400 py-4">
-            {('No items in cart')}
+            {t('No items in cart')}
           </div>
         )}
       </div>
@@ -113,16 +180,16 @@ else{
       </div>
 
       {/* Order State Debug */}
-      {/* <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-md text-xs">
+      <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-md text-xs">
         <div className="font-semibold mb-2">Order State:</div>
         <div>Address ID: {order.shipping_address_id || 'Not selected'}</div>
         <div>Shipping: {order.shipping_method_slug || 'Not selected'}</div>
         <div>Payment: {order.payment_method_id || 'Not selected'}</div>
         <div>Status: {order.status || 'Not selected'}</div>
         <div className="mt-2 font-semibold">
-          Status: {order.status == 'paymentMethod' ? '✅ Complete' : '❌ Incomplete'}
+          Status: {order.status == 'PlaceOrder' ? '✅ Complete' : '❌ Incomplete'}
         </div>
-      </div> */}
+      </div>
 
       {/* Conditional Buttons */}
       
@@ -146,7 +213,7 @@ else{
       )}
       
       {/* 2. Shipping Method page - Show Go to Payment button */}
-      {order.status == 'shippingMethod' && (
+      {order.status == 'shippingMethod' && pathname !== '/checkout/paymentMethod' && (
         <button
             onClick={() => {
               settingShippingMethod();
@@ -161,13 +228,18 @@ else{
       )}
       
       {/* 3. Payment page - Show Place Order button */}
-      {order.status === 'PlaceOrder' && (
+      {pathname === '/checkout/paymentMethod' && (order.status === 'PlaceOrder' || order.payment_method_id === 'cod') && (
         <button
           onClick={placeOrder}
-          disabled={!order.shipping_address_id || !order.shipping_method_slug}
-          className="w-full mt-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors font-medium text-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={!order.shipping_address_id || !order.shipping_method_slug || isPlacingOrder}
+          className="w-full mt-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors font-medium text-center disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {t('Place Order')}
+          {isPlacingOrder && (
+            <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          )}
+          {isPlacingOrder ? t('Placing Order') : t('Place Order')}
         </button>
       )}
 

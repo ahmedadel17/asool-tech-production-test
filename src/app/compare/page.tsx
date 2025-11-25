@@ -9,6 +9,7 @@ interface VariationValue {
   id?: number;
   value?: string;
   name?: string;
+  color?: string;
 }
 
 interface Variation {
@@ -96,7 +97,6 @@ const CompareProducts: React.FC = () => {
     const variation = (product.variations as Variation[]).find(
       (v) => (v.name || v.attribute_name) === variationName
     );
-    
     return variation || null;
   };
 
@@ -280,7 +280,7 @@ const CompareProducts: React.FC = () => {
                                     <div
                                       key={valIdx}
                                       className="w-6 h-6 rounded-full border-2 border-gray-300"
-                                      style={{ backgroundColor: colorValue }}
+                                      style={{ backgroundColor: val.color }}
                                       title={colorValue}
                                     />
                                   );

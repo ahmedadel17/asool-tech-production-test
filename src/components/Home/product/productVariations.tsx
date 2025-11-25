@@ -212,7 +212,6 @@ function ProductVariations({
           },
         }
       );
-
       if (response.data.status) {
         // Update cart store directly with the response data
         // console.log('Add to cart response:', response.data);
@@ -232,8 +231,8 @@ function ProductVariations({
         toast.error(t('Failed to add product to cart'));
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
-      toast.error(t('An error occurred while adding to cart'));
+      console.log('error', error.response.data);
+      // toast.error(t('An error occurred while adding to cart'));
     } finally {
       setState(prev => ({ ...prev, isAddingToCart: false }));
     }

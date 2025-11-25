@@ -14,8 +14,8 @@ import postRequest from '../../../../helpers/post';
     const locale = useLocale();
     const promoCodeSchema = Yup.object({
         promo_code_id: Yup.string()
-          .min(3, 'Promo code must be at least 3 characters')
-          .max(20, 'Promo code must be less than 20 characters')
+          .min(3, t('Promo code must be at least 3 characters'))
+          .max(20, t('Promo code must be less than 20 characters'))
       });
       const [isApplyingPromo, setIsApplyingPromo] = useState(false);
       const handlePromoCodeSubmit = async (

@@ -5,6 +5,11 @@ import { useAuth } from '@/app/hooks/useAuth';
 import getRequest from '../../../helpers/get';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
+import Wallet from './dashboardRewards/wallet';
+import Points from "./dashboardRewards/points";
+import History from "./dashboardRewards/History";
+import ConversionSection from "./dashboardRewards/conversionSection";
+import StatsSection from "./dashboardRewards/statsOverView";
 interface ConversionTier {
   points: number;
   bonus: number;
@@ -28,13 +33,18 @@ export default function RewardsWalletCenter() {
   // Mirror dashboard wallet source
   const [walletState, setWalletState] = useState<{ balance: number } | null>(null);
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
+  const[recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
+  const [isLoadingRecentTransactions, setIsLoadingRecentTransactions] = useState(false);
 
   const fetchWallet = useCallback(async () => {
     if (!token) return;
     setIsLoadingWallet(true);
     try {
-      const response = await getRequest('/customer/wallet', { 'Content-Type': 'application/json' }, token, locale);
+      
+      const response = await getRequest('/customer/points-history', { 'Content-Type': 'application/json' }, token, locale);
+      console.log('response', response);
       setWalletState(response?.data ?? null);
+      setRecentTransactions(response?.data.transactions.items ?? []);
     } catch (e) {
       // noop
     } finally {
@@ -61,36 +71,7 @@ export default function RewardsWalletCenter() {
     { points: 1000, bonus: 10, value: 110.0, label: "Best Value" },
   ];
 
-  const recent_transactions: Transaction[] = [
-    {
-      type: "earned",
-      description: "Purchase Reward - Order #ORD-001234",
-      amount: 250,
-      date: "Sep 1, 2025",
-      balance_after: 1250,
-    },
-    {
-      type: "converted",
-      description: "Converted to wallet balance",
-      amount: -500,
-      date: "Aug 28, 2025",
-      balance_after: 1000,
-    },
-    {
-      type: "earned",
-      description: "Welcome Bonus",
-      amount: 100,
-      date: "Aug 25, 2025",
-      balance_after: 1500,
-    },
-    {
-      type: "earned",
-      description: "Purchase Reward - Order #ORD-001230",
-      amount: 180,
-      date: "Aug 20, 2025",
-      balance_after: 1400,
-    },
-  ];
+ 
 
   const [pointsToConvert, setPointsToConvert] = useState<number>(0);
   const [resultAmount, setResultAmount] = useState<number>(0);
@@ -130,69 +111,9 @@ export default function RewardsWalletCenter() {
       {/* Current Balances */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Wallet Balance */}
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 flex justify-center items-center bg-purple-100 dark:bg-purple-800 rounded-full">
-              <svg
-                className="w-6 h-6 text-purple-600 dark:text-purple-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
-                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-purple-600 dark:text-purple-300 bg-purple-200 dark:bg-purple-800 px-2 py-1 rounded-full">
-              Available
-            </span>
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {t("Wallet Balance")}
-          </h2>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            {/* Match dashboard formatting */}
-            <span className="text-lg mr-1">$</span>
-            {isLoadingWallet ? 'Loading' : `${walletState?.balance || 0}`}
-          </p>
-          <p className="text-sm text-purple-600 dark:text-purple-300">
-            {t("Ready to spend")}
-          </p>
-        </div>
-
-        {/* Reward Points */}
-        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 rounded-lg shadow-sm border border-green-200 dark:border-green-700 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 flex justify-center items-center bg-green-100 dark:bg-green-800 rounded-full">
-              <svg
-                className="w-6 h-6 text-green-600 dark:text-green-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path d="M11.051 7.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.867l-1.156-1.152a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z" />
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-green-600 dark:text-green-300 bg-green-200 dark:bg-green-800 px-2 py-1 rounded-full">
-              Active
-            </span>
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {t("Reward Points")}
-          </h2>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            {current_points.toLocaleString()}
-          </p>
-          <p className="text-sm text-green-600 dark:text-green-300">
-            Worth <span className="text-xs">﷼</span>
-            {(current_points / 10).toFixed(2)}
-          </p>
-        </div>
+        <Wallet balance={walletState?.balance || 0} isLoadingWallet={isLoadingWallet} />
+        <Points current_points={current_points} />
+        
       </div>
 
       {/* Quick Actions */}
@@ -292,179 +213,12 @@ export default function RewardsWalletCenter() {
       </div>
     </div>
         {/* Loyalty Progress */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                {t("Loyalty Progress")}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t("You are currently a")} {" "}
-                <span className="font-bold text-gray-500 dark:text-gray-300">
-                  {current_tier}
-                </span>{" "}
-                {t("member")}. {t("Only")}{" "}
-                <span className="font-bold text-yellow-500">
-                  {points_to_next_tier} points
-                </span>{" "}
-                away from{" "}
-                <span className="font-bold text-yellow-500">{next_tier}</span>!
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold">{percentage}%</div>
-              <div className="text-xs text-gray-500">{t("Complete")}</div>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 h-3 rounded-full mb-4">
-            <div
-              className="bg-gradient-to-r from-primary-500 to-yellow-500 h-3 rounded-full"
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>{current_tier} {t("Current")}</span>
-            <span>
-              {next_tier} (+{points_to_next_tier} {t("pts")})
-            </span>
-          </div>
-        </div>
 
         {/* Conversion Section */}
-        <div
-          id="conversion-section"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700 p-6"
-        >
-          <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
-            {t("Convert Points to Wallet Balance")}
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {conversion_tiers.map((tier, i) => {
-              const unavailable = tier.points > current_points;
-              return (
-                <div
-                  key={i}
-                  onClick={() => handleSelectTier(tier, i)}
-                  className={`border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedTier === i
-                      ? "ring-2 ring-primary-500"
-                      : tier.highlight
-                      ? "border-primary-500 bg-primary-50/20"
-                      : "border-gray-200 hover:border-primary-300"
-                  } ${unavailable ? "opacity-50 cursor-not-allowed" : ""}`}
-                >
-                  <div className="flex justify-between mb-2">
-                    <h3 className="font-medium text-gray-900 dark:text-white">
-                      {tier.points} {t("Points")}
-                    </h3>
-                    {tier.highlight && (
-                      <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
-                        {tier.label}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                    {tier.value.toFixed(2)} SAR
-                  </div>
-                  {tier.bonus > 0 && (
-                    <div className="text-sm text-green-600 font-medium">
-                      +{tier.bonus}% {t("Bonus")}!
-                    </div>
-                  )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {unavailable
-                      ? `${t('Need')} ${tier.points - current_points} ${t("more points")}`
-                      : `${t('Available')}`}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Custom Conversion */}
-          <div className=" border-gray-200 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
-            <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-              {t("Custom Amount")}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label
-                  htmlFor="points"
-                  className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
-                >
-                  {t("Points to Convert")}
-                </label>
-                <input
-                  type="number"
-                  id="points"
-                  min={100}
-                  max={current_points}
-                  step={10}
-                  value={pointsToConvert || ""}
-                  onChange={handleCustomChange}
-                  className="w-full rounded-md border-gray-300 dark:bg-gray-600 dark:border-gray-500 dark:text-white px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  {t("You will receive")}
-                </label>
-                <div className="block w-full rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                  {resultAmount.toFixed(2)} {t("SAR")}
-                </div>
-              </div>
-            </div>
-            <button
-              disabled={pointsToConvert < 100 || pointsToConvert > current_points}
-              className="bg-primary-600 text-white px-4 py-2 rounded disabled:opacity-50"
-            >
-              {t("Convert Points")}
-            </button>
-          </div>
-        </div>
-
+      <ConversionSection conversion_tiers={conversion_tiers} current_points={current_points} selectedTier={selectedTier} handleSelectTier={handleSelectTier} pointsToConvert={pointsToConvert} resultAmount={resultAmount} handleCustomChange={handleCustomChange} />
+      <StatsSection totalEarnedLifetime={walletState?.total_earned_points || 0} totalConvertedLifetime={walletState?.redeemed_points || 0} totalValueEarned={walletState?.total_value_earned || 0} />
         {/* Transactions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {t("Recent Activity")}
-            </h2>
-            <a href="#" className="text-sm text-primary-600 hover:underline">
-              {t("View All")}
-            </a>
-          </div>
-          <div className="p-6 space-y-4">
-            {recent_transactions.map((transaction, i) => (
-              <div
-                key={i}
-                className="flex justify-between p-4 border rounded-lg dark:border-gray-700"
-              >
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {transaction.description}
-                  </p>
-                  <p className="text-sm text-gray-500">{transaction.date}</p>
-                </div>
-                <div className="text-right">
-                  <div
-                    className={`font-semibold ${
-                      transaction.type === "earned"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {transaction.type === "earned" ? "+" : ""}
-                    {transaction.amount} {t("points")}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {t("Balance")}: {transaction.balance_after}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <History recent_transactions={recentTransactions} walletLoading={isLoadingWallet} />
       </div>
    </>
   );

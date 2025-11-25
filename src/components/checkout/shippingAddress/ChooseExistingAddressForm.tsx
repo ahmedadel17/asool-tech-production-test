@@ -54,6 +54,7 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
         setSelectedAddressId(defaultAddress.id.toString())
         dispatch(setShippingAddressId(defaultAddress.id.toString()));
         dispatch(setOrderStatus('shippingAddress'));
+        localStorage.setItem('shippingAddressId', defaultAddress.id.toString());
         onAddressSelected?.(defaultAddress.id.toString());
       }
     }
@@ -90,6 +91,7 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
     setSelectedAddressId(addressId);
     // Save the address ID to the order store
     dispatch(setShippingAddressId(addressId));
+    localStorage.setItem('shippingAddressId', addressId);
     dispatch(setOrderStatus('shippingAddress'));
     onAddressSelected?.(addressId);
   };

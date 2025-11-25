@@ -78,7 +78,7 @@ async function HomeContent() {
 
   // Add is_favourite property to featured products
   
-  const featuredProducts = home.data.sections?.featured_products?.data?.map((product: Product) => ({
+  const featuredProducts = home?.data?.sections?.featured_products?.data?.map((product: Product) => ({
     ...product,
     is_favourite: product.is_favourite || false
   })) || [];

@@ -27,8 +27,9 @@ import getRequest from "../../../helpers/get";
                 return;
             }
             
-            // console.log('Token:', token);
-            // console.log('Order ID:', orderId);
+            localStorage.removeItem('shippingAddressId');
+            localStorage.removeItem('shippingMethodSlug');
+            localStorage.removeItem('paymentMethodId');
             
             const orderData = await getRequest(`/order/orders/${orderId}`, { 'Content-Type': 'application/json' }, token, locale);
             setOrderData(orderData);

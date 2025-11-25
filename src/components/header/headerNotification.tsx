@@ -1,9 +1,10 @@
 import React from 'react'
+import Link from 'next/link'
 
 function HeaderNotification() {
   return (
    <div className="te-navbar-dropdown">
-    <a href="dashboard-notification.php" className="header-notification relative flex items-center gap-3 cursor-pointer">
+    <Link href="/dashboard/notifications" className="header-notification relative flex items-center gap-3 cursor-pointer">
         <div className="cart-icon">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-900 dark:text-white flex justify-center items-center rounded-full relative">
                 <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,7 +18,7 @@ function HeaderNotification() {
                 </span>
             </div>
         </div>
-    </a>
+    </Link>
 </div>
   )
 }

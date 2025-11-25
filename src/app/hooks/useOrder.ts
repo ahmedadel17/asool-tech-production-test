@@ -19,6 +19,7 @@ export const useOrder = () => {
 
   const updateShippingAddress = (addressId: string) => {
     dispatch(setShippingAddressId(addressId));
+    localStorage.setItem('shippingAddressId', addressId);
     dispatch(setOrderStatus('shippingAddress'));
   };
 
@@ -26,7 +27,7 @@ export const useOrder = () => {
 
   const updateShippingMethod = (shippingMethodSlug: string, cartData?: { total_amount?: string; amount_to_pay?: string }) => {
     dispatch(setShippingMethodSlug(shippingMethodSlug));
-    
+    localStorage.setItem('shippingMethodSlug', shippingMethodSlug);
     // Check if total amount is zero
     const amount_to_pay = parseFloat(cartData?.amount_to_pay || '0');
     if (amount_to_pay == 0) {
@@ -39,6 +40,7 @@ export const useOrder = () => {
   };
   const updatePaymentMethod = (paymentMethodId: string) => {
     dispatch(setPaymentMethodId(paymentMethodId));
+    localStorage.setItem('paymentMethodId', paymentMethodId);
     if(paymentMethodId == 'cod'){
     dispatch(setOrderStatus('PlaceOrder'));}
     else{

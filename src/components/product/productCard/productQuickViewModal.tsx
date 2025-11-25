@@ -124,7 +124,7 @@ const QuickView: React.FC<QuickViewProps> = ({
 
     if (!token) {
       router.push('/auth/login');
-      toast.error('Authentication required. Please login again.');
+      toast.error(`${t('Authentication required')}. ${t('Please login again')}`);
       return;
     }
 

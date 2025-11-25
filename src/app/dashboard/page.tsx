@@ -3,8 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import getRequest from "../../../helpers/get";
 import { useAuth } from "../hooks/useAuth";
 import { useLocale, useTranslations } from "next-intl";
-import Breadcrumb from "../../components/header/headerBreadcrumb";
-import Link from "next/link";
+import DashboardOrders from "@/components/dashboard/dashboardOrders";
 
 interface Order {
   id: string;
@@ -23,18 +22,9 @@ interface WishlistItem {
 }
 
 export default function Dashboard() {
-  const orders: Order[] = [
-    { id: "ORD-2024-001234", date: "September 1, 2025", status: { text: "Delivered", color: "green" }, total: "65.00" },
-    { id: "ORD-2024-001233", date: "August 28, 2025", status: { text: "Shipped", color: "blue" }, total: "85.00" },
-    { id: "ORD-2024-001232", date: "August 20, 2025", status: { text: "Processing", color: "yellow" }, total: "45.00" },
-  ];
 
-  const wishlistItems: WishlistItem[] = [
-    { title: "Straight-leg jeans", image: "/assets/images/product-1.jpg", price: "65.00" },
-    { title: "Cotton T-shirt", image: "/assets/images/product-2.jpg", price: "65.00" },
-    { title: "Straight-leg jeans", image: "/assets/images/product-3.jpg", price: "65.00" },
-    { title: "Striped T-shirt", image: "/assets/images/product-4.jpg", price: "65.00" },
-  ];
+
+ 
   const { token,user } = useAuth();
   const locale = useLocale();
   const t = useTranslations();
@@ -156,71 +146,9 @@ export default function Dashboard() {
           <StatCard color="blue" icon={<BagIcon />} value="12" label={t('Total Orders')} />
         </div>
 
-        {/* Loyalty Level Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('Loyalty Status')} </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('You are currently a')} <span className="font-bold text-primary-600">Silver</span> {t('member')}. {t('You are only')} {" "}
-                <span className="font-bold">{750} {t('points')} </span> {t('away from reaching')} {" "}
-                <span className="font-bold text-yellow-500">{t('Gold')}</span>!
-              </p>
-            </div>
-            <a href="/dashboard-points" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-              {t('See Benefits')}
-            </a>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div className="bg-primary-600 h-2.5 rounded-full" style={{ width: "50%" }}></div>
-          </div>
-        </div>
 
         {/* Recent Orders */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('Recent Orders')}</h2>
-            <Link href="/dashboard/orders" className="text-sm font-medium text-primary-600 hover:text-primary-700">
-            {t('View All')}
-            </Link>
-          </div>
-          <div className="p-6 overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th className="px-6 py-3">{t('Order ID')}</th>
-                  <th className="px-6 py-3">{t('Date')}</th>
-                  <th className="px-6 py-3">{t('Status')}</th>
-                  <th className="px-6 py-3">{t('Total')}</th>
-                  <th className="px-6 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{order.id}</td>
-                    <td className="px-6 py-4">{order.date}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 bg-${order.status.color}-100 dark:bg-${order.status.color}-900 text-${order.status.color}-800 dark:text-${order.status.color}-200 text-xs font-medium rounded-full`}
-                      >
-                        {t(order.status.text)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">﷼ {order.total}</td>
-                    <td className="px-6 py-4">
-                      <a href="#" className="font-medium text-primary-600 hover:underline">
-                        {t('View')}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <DashboardOrders />
 
       
       </div>

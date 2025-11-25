@@ -11,6 +11,7 @@ import HeaderDesktopMenu from '../headerDesktopMenu'
 import { useAuth } from '@/app/hooks/useAuth'
 import LanguageToggleButton from '../LanguageToggleButton'
 import HeaderNotification from '../headerNotification'
+import {usePathname} from 'next/navigation'
 
 interface MenuData {
   items?: Array<{
@@ -24,7 +25,7 @@ interface MenuData {
 function HeaderRtl( { menuData }: { menuData: MenuData | null } ) {
   const { isAuthenticated } = useAuth();
   const [mounted, setMounted] = useState(false);
-
+  const pathname = usePathname();
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -66,7 +67,7 @@ function HeaderRtl( { menuData }: { menuData: MenuData | null } ) {
               )}
 
               {/* <!-- Login Icon (when not authenticated, Desktop only) --> */}
-              {mounted && !isAuthenticated && (
+              {mounted && !isAuthenticated && pathname !== '/auth/login' && (
                 <a 
                   href="/auth/login" 
                   className="te-navbar-icon-button hidden lg:flex"

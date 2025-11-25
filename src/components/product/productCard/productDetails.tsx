@@ -15,6 +15,7 @@ import ProductTitle from "./productTitle";
 import ProductPrice from "./productPrice";
 import ProductFooter from "./productFooter";
 import ProductCategory from "./productCategory";
+import { logout } from "@/app/store/slices/authSlice";
 
 interface Badge {
   type: string;
@@ -425,13 +426,13 @@ function ProductDetails({ product }: ProductDetailsProps) {
   const handleAddToCart = async () => {
     // Check authentication first
     if (!isAuthenticated) {
-      toast.error('Please login first to add items to cart');
+      toast.error(t('Please login first to add items to cart'));
       router.push('/auth/login');
       return;
     }
 
     if (!token) {
-      toast.error('Authentication required. Please login again.');
+      toast.error(`${t('Authentication required')}. ${t('Please login again')}`);
       router.push('/auth/login');
       return;
     }
@@ -486,8 +487,17 @@ function ProductDetails({ product }: ProductDetailsProps) {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
-      toast.error('An error occurred while adding to cart');
+      if(error.response.data.message=='Unauthenticated'){
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('cartData');
+        localStorage.removeItem('wishlistData');
+        localStorage.removeItem('orderData');
+        dispatch(logout());
+        router.push('/auth/login');
+        return;
+      }
     } finally {
       setState(prev => ({ ...prev, isAddingToCart: false }));
     }

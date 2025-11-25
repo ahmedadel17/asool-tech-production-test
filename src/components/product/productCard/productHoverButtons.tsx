@@ -4,7 +4,7 @@ import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../../app/store/hooks'
 import { toggleCompareProduct, CompareProduct } from '../../../app/store/slices/compareSlice'
 import { toast } from 'react-hot-toast'
-
+import { useTranslations } from 'next-intl'
 interface ProductHoverButtonsProps {
   onQuickViewClick?: () => void
   onOpenModal?: () => void
@@ -27,7 +27,7 @@ function ProductHoverButtons({
 }: ProductHoverButtonsProps) {
   const dispatch = useAppDispatch()
   const compareProducts = useAppSelector(state => state.compare.products)
-
+  const t = useTranslations()
   const handleOpenModal = () => {
     onOpenModal?.()
   }
@@ -45,13 +45,13 @@ function ProductHoverButtons({
       const isCurrentlyInCompare = compareProducts.some(p => String(p.id) === String(product.id))
       
       if (isCurrentlyInCompare) {
-        toast.success('Removed from compare')
+        toast.success(t('Removed from compare'))
       } else {
         if (compareProducts.length >= 4) {
-          toast.error('You can only compare up to 4 products at a time.')
+          toast.error(t('You can only compare up to 4 products at a time'))
           return
         }
-        toast.success('Added to compare')
+        toast.success(t('Added to compare'))
       }
 
       dispatch(toggleCompareProduct(product))

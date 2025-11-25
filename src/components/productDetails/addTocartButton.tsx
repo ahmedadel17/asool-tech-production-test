@@ -5,6 +5,7 @@ import { useAuth } from '@/app/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { setCartData, setCartLoading, setCartError } from '@/app/store/slices/cartSlice'
+import { logout } from '@/app/store/slices/authSlice'
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
@@ -99,8 +100,15 @@ function AddToCartButton({
       }
       
     } catch (err) {
-      console.error('Error adding to cart:', err);
       if (axios.isAxiosError(err) && err.response?.status === 401) {
+        // Clear token from localStorage
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('token')
+        localStorage.removeItem('userData')
+        
+        // Clear token from Redux state slice
+        dispatch(logout());
+        
         router.push('/auth/login');
         return;
       }

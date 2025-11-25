@@ -22,13 +22,15 @@ const {token}= useAuth()
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const t = useTranslations();
   const router = useRouter();
+
+  // Auto-select COD on page load if no payment method is selected
   useEffect(() => {
-    if (order.status === 'shippingAddress' ) {
-      setTimeout(() => {
-        router.push('/checkout');
-      }, 2000);
+    if (!order.payment_method_id) {
+      updatePaymentMethod('cod');
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only on mount to auto-select COD
+
   // Check if browser is Safari
   const isSafari = () => {
     if (typeof window === 'undefined') return false;

@@ -34,15 +34,10 @@ const ShippingMethod = () => {
       amount_to_pay: cartData.amount_to_pay
     } : undefined;
   }, [cartData]); 
-  useEffect(() => {
-    if (order.status === 'shippingAddress' ) {
-      setTimeout(() => {
-        router.push('/checkout');
-      }, 2000);
-    }
-  }, []);
+
   const getshippingRates = useCallback(async () => {
-    const response =await postRequest(`/marketplace/cart/shipping-rates`, { order_id: cartData?.id,user_address_id: order.shipping_address_id},{},token,locale  );
+    const shippingAddressId = localStorage.getItem('shippingAddressId');
+    const response =await postRequest(`/marketplace/cart/shipping-rates`, { order_id: cartData?.id,user_address_id: shippingAddressId},{},token,locale  );
 
     const methods = response.data.data.shipping_methods || [];
 
@@ -50,10 +45,8 @@ const ShippingMethod = () => {
   }, [cartData?.id, order.shipping_address_id, token, locale])
   useEffect(() => {
     // console.log('order.status',order.status)
-    if(order.status=='ShippingMethod'){
       getshippingRates();
-    }
-  }, [getshippingRates]);
+  }, []);
 
 
   // Auto-select first shipping method when methods are loaded

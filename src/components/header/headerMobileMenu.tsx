@@ -63,7 +63,7 @@ function HeaderMobileMenu({ menuData }: { menuData: any }) {
             </div>
           ) : (
             // Actual menu items
-            menuData.items.map((item: any, index: number) => (
+            menuData?.items.map((item: any, index: number) => (
               item?.is_mega_menu ? (
                 <DropDownSubMenu key={index} label={item.label} items={item?.mega_menu_children_columns} onNavigate={() => setIsMenuOpen(false)} />
               ) : (

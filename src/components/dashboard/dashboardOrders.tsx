@@ -28,35 +28,10 @@ const OrdersPage: React.FC = () => {
     total: "",
   });
 
-  const orders: Order[] = [
-    { id: "ORD-2024-001234", date: "September 1, 2025", status: { text: "Delivered", color: "green" }, total: "65.00" },
-    { id: "ORD-2024-001233", date: "August 28, 2025", status: { text: "Shipped", color: "blue" }, total: "55.50" },
-    { id: "ORD-2024-001232", date: "August 25, 2025", status: { text: "Processing", color: "yellow" }, total: "72.00" },
-    { id: "ORD-2024-001231", date: "August 20, 2025", status: { text: "Delivered", color: "green" }, total: "48.75" },
-    { id: "ORD-2024-001230", date: "August 18, 2025", status: { text: "Shipped", color: "blue" }, total: "120.00" },
-    { id: "ORD-2024-001229", date: "August 15, 2025", status: { text: "Cancelled", color: "red" }, total: "0.00" },
-    { id: "ORD-2024-001228", date: "August 12, 2025", status: { text: "Processing", color: "yellow" }, total: "99.99" },
-    { id: "ORD-2024-001227", date: "August 10, 2025", status: { text: "Delivered", color: "green" }, total: "75.00" },
-    { id: "ORD-2024-001226", date: "August 5, 2025", status: { text: "Shipped", color: "blue" }, total: "89.50" },
-    { id: "ORD-2024-001225", date: "August 1, 2025", status: { text: "Processing", color: "yellow" }, total: "150.00" },
-  ];
+  
 
   // Filtering logic
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const idMatch = order.id.toLowerCase().includes(filters.orderId.toLowerCase());
-      const dateMatch = filters.date ? order.date.includes(filters.date) : true;
-      const statusMatch = filters.status ? order.status.text === filters.status : true;
 
-      const total = parseFloat(order.total);
-      let totalMatch = true;
-      if (filters.total === "0-50") totalMatch = total >= 0 && total <= 50;
-      if (filters.total === "50-100") totalMatch = total > 50 && total <= 100;
-      if (filters.total === "100+") totalMatch = total > 100;
-
-      return idMatch && dateMatch && statusMatch && totalMatch;
-    });
-  }, [filters, orders]);
   const getOrders=async()=>{
     try {
       setIsLoading(true);
@@ -168,7 +143,7 @@ const OrdersPage: React.FC = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">{t('No orders found')}</p>
-                        <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">{t('You haven\'t placed any orders yet')}</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">{t('You have not placed any orders yet')}</p>
                       </div>
                     </td>
                   </tr>

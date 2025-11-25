@@ -3,15 +3,15 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import getRequest from '../../../../helpers/get'
 import { useAuth } from '@/app/hooks/useAuth'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import OrderDetails from '@/components/checkoutConfirmation/orderDetails'
 import SuccessHeader from '@/components/checkoutConfirmation/successHeader'
-
+import OrderStatus from '@/components/dashboard/orderStatus'
 function OrderDetailsPage() {
   const { token } = useAuth()
   const locale = useLocale()
   const { id } = useParams()
-  
+  const t = useTranslations();
   // Consolidated state with loading
   const [state, setState] = useState({
     orderData: null as {
@@ -60,7 +60,7 @@ function OrderDetailsPage() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading order details...</p>
+            <p className="text-gray-600 dark:text-gray-400">{t("Loading order details")}...</p>
           </div>
         </div>
       </div>
@@ -96,6 +96,7 @@ function OrderDetailsPage() {
     <div className='container mx-auto mt-6 mb-4'>
       <SuccessHeader />
       <OrderDetails orderData={state.orderData} />
+      <OrderStatus orderData={state.orderData} />
     </div>
   )
 }

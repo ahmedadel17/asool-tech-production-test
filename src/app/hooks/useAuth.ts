@@ -91,6 +91,7 @@ export const useAuth = () => {
     id: string;
     email: string;
     name: string;
+    first_name?: string;
     phone: string;
   }>) => {
     dispatch(updateUser(userData));
@@ -98,7 +99,7 @@ export const useAuth = () => {
     // Update localStorage if user data exists
     if (auth.user) {
       const updatedUser = { ...auth.user, ...userData };
-      localStorage.setItem('userData', JSON.stringify(updatedUser));
+      saveUserData(updatedUser);
     }
   };
 
