@@ -34,6 +34,19 @@ export default async function RootLayout({
   return (
     <html dir={isRTL ? 'rtl' : 'ltr'} lang={locale} suppressHydrationWarning>
       <head>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          html:not([data-colors-loaded]) body {
+            visibility: hidden;
+            opacity: 0;
+          }
+          html[data-colors-loaded] body {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.2s ease-in;
+          }
+        `
+      }} />
       <script
     dangerouslySetInnerHTML={{
       __html: `
@@ -99,40 +112,47 @@ export default async function RootLayout({
               return generatePalette(hsl[0], hsl[1], hsl[2]);
             }
             
+            function applyColors(colors) {
+              const root = document.documentElement;
+              Object.entries(colors).forEach(function([key, value]) {
+                const baseName = key.replace('_color', '');
+                const cssVar = '--apicolor-' + baseName;
+                root.style.setProperty(cssVar, value);
+                
+                if (key.endsWith('_color') && typeof value === 'string' && value.startsWith('#')) {
+                  const shades = generatePaletteFromHex(value);
+                  Object.entries(shades).forEach(function([step, shade]) {
+                    root.style.setProperty('--apicolor-' + baseName + '_' + step, shade);
+                  });
+                }
+              });
+              // Mark colors as loaded
+              document.documentElement.setAttribute('data-colors-loaded', 'true');
+            }
+            
             // Check for existing cache first
             const cached = localStorage.getItem(CACHE_KEY);
             let colorsToApply = null;
             
             if (cached) {
-              const cachedData = JSON.parse(cached);
-              const now = Date.now();
-              const isExpired = now - cachedData.timestamp > CACHE_DURATION;
-              
-              if (!isExpired && cachedData.colors) {
-                colorsToApply = cachedData.colors;
+              try {
+                const cachedData = JSON.parse(cached);
+                const now = Date.now();
+                const isExpired = now - cachedData.timestamp > CACHE_DURATION;
+                
+                if (!isExpired && cachedData.colors) {
+                  colorsToApply = cachedData.colors;
+                }
+              } catch (e) {
+                // Invalid cache data
               }
             }
             
             // Apply cached colors immediately if available
             if (colorsToApply) {
-                const root = document.documentElement;
-                
-                Object.entries(colorsToApply).forEach(function([key, value]) {
-                  const baseName = key.replace('_color', '');
-                  const cssVar = '--apicolor-' + baseName;
-                  root.style.setProperty(cssVar, value);
-                  
-                  if (key.endsWith('_color') && typeof value === 'string' && value.startsWith('#')) {
-                    const shades = generatePaletteFromHex(value);
-                    Object.entries(shades).forEach(function([step, shade]) {
-                      root.style.setProperty('--apicolor-' + baseName + '_' + step, shade);
-                    });
-                  }
-                });
-            }
-            
-            // Fetch from API only if cache is expired or doesn't exist
-            if (!colorsToApply && API_BASE_URL) {
+              applyColors(colorsToApply);
+            } else if (API_BASE_URL) {
+              // Fetch from API and wait for response before showing content
               fetch(API_BASE_URL + '/settings')
                 .then(function(response) {
                   return response.json();
@@ -152,27 +172,24 @@ export default async function RootLayout({
                     }
                     
                     // Apply the colors
-                    const root = document.documentElement;
-                    Object.entries(colors).forEach(function([key, value]) {
-                      const baseName = key.replace('_color', '');
-                      const cssVar = '--apicolor-' + baseName;
-                      root.style.setProperty(cssVar, value);
-                      
-                      if (key.endsWith('_color') && typeof value === 'string' && value.startsWith('#')) {
-                        const shades = generatePaletteFromHex(value);
-                        Object.entries(shades).forEach(function([step, shade]) {
-                          root.style.setProperty('--apicolor-' + baseName + '_' + step, shade);
-                        });
-                      }
-                    });
+                    applyColors(colors);
+                  } else {
+                    // No colors from API, show content anyway
+                    document.documentElement.setAttribute('data-colors-loaded', 'true');
                   }
                 })
                 .catch(function(err) {
                   console.error('Failed to fetch colors:', err);
+                  // On error, show content anyway
+                  document.documentElement.setAttribute('data-colors-loaded', 'true');
                 });
+            } else {
+              // No API URL, show content immediately
+              document.documentElement.setAttribute('data-colors-loaded', 'true');
             }
           } catch (e) {
-            // Silently fail
+            // On any error, show content anyway
+            document.documentElement.setAttribute('data-colors-loaded', 'true');
           }
         })();
       `

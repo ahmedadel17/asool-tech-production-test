@@ -6,13 +6,8 @@ import { useLocale } from 'next-intl';
 import { useWishlist } from '@/app/hooks/useWishlist';
 import postRequest from '../../../helpers/post';
 import toast from 'react-hot-toast';
-  import { useTranslations } from 'next-intl';
-interface WishlistItem {
-  id: number;
-  title: string;
-  image: string;
-  price: string;
-}
+import { useTranslations } from 'next-intl';
+import ProductCard2 from '@/components/product/productCard2';
 
 const MyWishlistPage: React.FC = () => {
   const { token } = useAuth();
@@ -39,12 +34,26 @@ const MyWishlistPage: React.FC = () => {
     }
   }, [token, locale, loadWishlist, fetchWishlistData]);
 
-  // Transform Redux wishlist products to match WishlistItem interface
-  const wishlistItems: WishlistItem[] = reduxWishlistProducts.map(product => ({
+  // Transform Redux wishlist products to match ProductCard2 interface
+  const wishlistProducts = reduxWishlistProducts.map(product => ({
     id: product.id,
     title: product.name,
-    image: product.thumbnail || '',
-    price: product.price_after_discount.toString()
+    name: product.name,
+    thumbnail: product.thumbnail || '',
+    slug: product.slug || '',
+    price: product.price_after_discount?.toString() || product.min_price?.toString() || '0',
+    image: product.thumbnail,
+    hover: product.thumbnail,
+    category: product.category || '',
+    old_price: product.discount ? product.min_price?.toString() : null,
+    colors: [],
+    sizes: [],
+    badges: [],
+    variations: product.variations || [],
+    min_price: product.min_price?.toString(),
+    price_after_discount: product.price_after_discount?.toString(),
+    default_variation_id: product.default_variation_id ?? undefined,
+    is_favourite: true
   }));
 
   const handleRemove = async (productId: number) => {
@@ -150,76 +159,36 @@ const MyWishlistPage: React.FC = () => {
               </div>
 
               <div className="p-6">
-                {wishlistItems.length > 0 ? (
+                {wishlistProducts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {wishlistItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="group relative bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
-                      >
+                    {wishlistProducts.map((product) => (
+                      <div key={product.id} className="relative group">
                         {/* Remove Button */}
                         <button
-                          onClick={() => handleRemove(item.id)}
-                          disabled={removingIds.has(item.id)}
-                          className={`absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors ${
-                            removingIds.has(item.id) ? 'opacity-50 cursor-not-allowed' : ''
+                          onClick={() => handleRemove(product.id)}
+                          disabled={removingIds.has(product.id)}
+                          className={`absolute top-2 right-2 z-10 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors ${
+                            removingIds.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                           aria-label="Remove from wishlist"
                         >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          ></path>
-                        </svg>
-                      </button>
-
-                      {/* Product Image */}
-                      <div className="aspect-square bg-gray-100 dark:bg-gray-600 rounded-lg mb-4 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full objectCover"
-                        />
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            ></path>
+                          </svg>
+                        </button>
+                        <ProductCard2 product={product} />
                       </div>
-
-                      {/* Product Info */}
-                      <p className="text-md font-medium text-gray-900 dark:text-white">
-                        {item.title}
-                      </p>
-
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        <span className="text-xs">﷼</span> {item.price}
-                      </p>
-
-                      {/* Add to Cart */}
-                      <button
-                        className="te-btn te-btn-primary flex items-center justify-center gap-2 w-full mt-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition"
-                      >
-                        <svg
-                          className="icon-cart w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z" />
-                          <path d="M8 11V6a4 4 0 0 1 8 0v5" />
-                        </svg>
-                        <span className="hidden lg:block">{t("Add to Cart")}</span>
-                      </button>
-                    </div>
-                  ))}
+                    ))}
                   </div>
                 ) : (
                   <div className="text-center py-16">
