@@ -487,7 +487,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
         toast.error(response.data.message);
       }
     } catch (error) {
-      if(error.response.data.message=='Unauthenticated'){
+      if(axios.isAxiosError(error) && error.response?.data.message=='Unauthenticated'){
         localStorage.removeItem('authToken');
         localStorage.removeItem('token');
         localStorage.removeItem('userData');

@@ -231,7 +231,6 @@ function ProductVariations({
         toast.error(t('Failed to add product to cart'));
       }
     } catch (error) {
-      console.log('error', error.response.data);
       // toast.error(t('An error occurred while adding to cart'));
     } finally {
       setState(prev => ({ ...prev, isAddingToCart: false }));

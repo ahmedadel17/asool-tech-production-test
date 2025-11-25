@@ -10,7 +10,7 @@ function OrderStep({label, date,isCurrent,isActive}: {label: string, date: strin
    
 </div>
 <div className="relative flex items-start">
-    <div className={`flex-shrink-0 w-8 h-8 ${isActive && isCurrent ? 'bg-primary-600'  : 'bg-gray-300 dark:bg-gray-600'} rounded-full flex items-center justify-center`}>
+    <div className={`flex-shrink-0 w-8 h-8 ${isActive && isCurrent ? 'bg-primary-600': isActive  ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'} rounded-full flex items-center justify-center`}>
         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
     </div>
     <div className="ms-4 flex-1">
