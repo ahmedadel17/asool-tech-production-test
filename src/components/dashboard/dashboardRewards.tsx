@@ -31,7 +31,7 @@ export default function RewardsWalletCenter() {
   const locale = useLocale();
   const t = useTranslations();
   // Mirror dashboard wallet source
-  const [walletState, setWalletState] = useState<{ balance: number } | null>(null);
+  const [walletState, setWalletState] = useState<{ balance: number, total_earned_points: number, redeemed_points: number, total_value_earned: number } | null>(null);
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
   const[recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [isLoadingRecentTransactions, setIsLoadingRecentTransactions] = useState(false);
@@ -42,7 +42,6 @@ export default function RewardsWalletCenter() {
     try {
       
       const response = await getRequest('/customer/points-history', { 'Content-Type': 'application/json' }, token, locale);
-      console.log('response', response);
       setWalletState(response?.data ?? null);
       setRecentTransactions(response?.data.transactions.items ?? []);
     } catch (e) {
@@ -59,11 +58,9 @@ export default function RewardsWalletCenter() {
   // Real user-based points (fallback to 0) without using any
   const authUser = (user ?? {}) as { reward_points?: number };
   const current_points = Number(authUser.reward_points ?? 0);
-  const total_earned_lifetime = 0;
-  const total_converted_lifetime = 0;
+  
   const points_to_next_tier = 0;
-  const current_tier = "";
-  const next_tier = "";
+  
 
   const conversion_tiers: ConversionTier[] = [
     { points: 100, bonus: 0, value: 10.0, label: "Basic" },
@@ -91,9 +88,7 @@ export default function RewardsWalletCenter() {
     setSelectedTier(null);
   };
 
-  const percentage = Math.round(
-    (current_points / (current_points + points_to_next_tier)) * 100
-  );
+ 
 
   return (
    <>
