@@ -1,15 +1,16 @@
 import BreadCrumb from '@/components/breadCrumb'
 import LeftSide from '@/components/productDetails/leftSide'
-import ProductTabs from '@/components/productDetails/productTabs'
+// import ProductTabs from '@/components/productDetails/productTabs'
 import RightSide from '@/components/productDetails/rightSide'
 import React from 'react'
 import getRequest from '../../../../helpers/get'
 import { getLocale } from 'next-intl/server'
 import { getTranslations } from 'next-intl/server'
 
-async function ProductDetails({params}: {params: {slug: string}}) {
+async function ProductDetails({params}: {params: Promise<{slug: string}>}) {
   const locale = await getLocale()
-  const product = await getRequest(`/catalog/products/details-by-slug/${params.slug}`, {}, null, locale)
+  const {slug} = await params
+  const product = await getRequest(`/catalog/products/details-by-slug/${slug}`, {}, null, locale)
   const t = await getTranslations('productDetails')
   return (
     <div id="content" className="flex-1 mt-8 mb-8 site-content dark:bg-gray-900" role="main">

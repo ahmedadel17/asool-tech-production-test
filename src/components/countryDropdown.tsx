@@ -88,7 +88,7 @@ export default function CountryDropdown({ selectedCountry, onCountryChange }: Co
         </button>
         
         {isOpen && (
-          <div className={`absolute top-full left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 ${locale === 'ar' ? 'right-0' : 'left-0 -translate-x-1/2'}`} >
+          <div className={`absolute top-full  md:left-0 md:translate-x-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 ${locale === 'ar' ? 'right-0' : 'left-0'}`} >
             <div className="p-2 border-b border-gray-200 dark:border-gray-700">
               <input
                 ref={searchInputRef}

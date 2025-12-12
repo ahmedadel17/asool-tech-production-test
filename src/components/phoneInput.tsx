@@ -109,7 +109,7 @@ export default function PhoneInput({
         {t(label)}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      <div className='mt-1 relative'>
+      <div className="mt-1 relative">
         <CountryDropdown 
           selectedCountry={selectedCountry} 
           onCountryChange={onCountryChange}
@@ -118,7 +118,7 @@ export default function PhoneInput({
           <input 
             type="tel" 
             id={id}  
-            className={`block w-full ps-28 pr-5 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white ${
+            className={`block w-full border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white ${
               hasError 
                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                 : 'border-gray-300 dark:border-gray-600'

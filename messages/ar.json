@@ -380,7 +380,10 @@
     "Order Summary": "ملخص الطلب",
     "Secure checkout guaranteed": "الدفع الآمن مضمون",
     "Total": "المجموع",
-    "Use Wallet Balance": "استخدم رصيد المحفظة"
+    "Use Wallet Balance": "استخدم رصيد المحفظة",
+    "Your cart is empty": "عرض العربة فارغ",
+    "Add some items to get started": "أضف بعض العناصر للبدء",
+    "Start Shopping": "ابدء التسوق"
    },
    "Checkout":{
     "Checkout": "الدفع",

@@ -21,6 +21,7 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'react-hot-toast'
 import { useLocale } from 'next-intl'
 import { WishlistProduct } from '@/store/wishlistStore'
+import { useRouter } from 'next/navigation'
 interface Variation {
   attribute_id: string
   attribute_name: string
@@ -58,6 +59,7 @@ function ProductCard({ product }: { product: Product }) {
   const { token } = useUserStore()
   const t = useTranslations('productsCard')
   const locale=useLocale()
+  const router = useRouter()
   // Get variation specific to this product
   const variation = product?.id ? getVariation(product.id) : null
   
@@ -148,6 +150,7 @@ function ProductCard({ product }: { product: Product }) {
   const handleAddToCart = async () => {
     if (!token) {
       toast.error(t('Please login to add to cart'))
+      router.push('/auth/login')
       return
     }
 

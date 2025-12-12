@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import postRequest from '../../../../helpers/post'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from '@/store/userStore'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 function OTP() {
   const searchParams = useSearchParams()
@@ -18,7 +18,7 @@ function OTP() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-
+  const locale = useLocale()  
   // Countdown timer
   useEffect(() => {
     if (countdown > 0) {
@@ -87,7 +87,6 @@ function OTP() {
     
     const otpCode = otp.join('')
     
-    toast.error(t('Please enter the complete 5 digit code'))
    
 
     setIsSubmitting(true)
@@ -131,7 +130,7 @@ function OTP() {
         payload,
         {},
         null,
-        'en'
+        locale
       )
 
       // Handle success - redirect or show success message
@@ -145,11 +144,16 @@ function OTP() {
         useUserStore.getState().setToken(response.data?.data?.token)
         router.push('/')
       }
+      else{
+        console.log('response', response)
+        toast.error(response.data?.message)
+      }
     } catch (error) {
+      
       const errorMessage = error && typeof error === 'object' && 'response' in error
         ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
         : t('Invalid OTP Please try again')
-      alert(errorMessage)
+      toast.error(errorMessage || t('Invalid OTP Please try again'))
       setOtp(['', '', '', '', ''])
       inputRefs.current[0]?.focus()
     } finally {

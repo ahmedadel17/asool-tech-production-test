@@ -7,6 +7,7 @@ import { useUserStore } from '../../store/userStore'
 import { useCartStore } from '../../store/cartStore'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 interface ProductData {
   id?: string | number
   default_variation_id?: string | number
@@ -30,6 +31,7 @@ function ProductActions({
   const [isLoading, setIsLoading] = useState(false)
   const t = useTranslations('productDetails')
   const locale=useLocale()
+  const router = useRouter()  
   const addToCart = async () => {
     setIsLoading(true)
     // Use variation_id from store if available (for this specific product), otherwise use product.default_variation_id
@@ -65,6 +67,7 @@ function ProductActions({
         const err = error as { status?: boolean; response?: { message?: string } }
         if(err?.status === false && err?.response?.message === 'Unauthenticated') {
             toast.error(t('Please login to add to cart'))
+            router.push('/auth/login')
         }
       toast.error(t('Failed to add to cart'))
     } finally {

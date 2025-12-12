@@ -59,6 +59,7 @@
     "We sent a code to your phone number": "We sent a code to your phone number",
     "Enter the 5 digit code sent to your phone": "Enter the 5 digit code sent to your phone",
     "Invalid OTP Please try again": "Invalid OTP Please try again"
+
    },
    "register":{
     "Registration failed Please try again": "Registration failed Please try again",
@@ -182,7 +183,8 @@
     "Do you have another comment": "Do you have another comment",
     "Enter your comment here": "Enter your comment here",
     "Adding": "Adding",
-    "Add to Cart": "Add to Cart"
+    "Add to Cart": "Add to Cart",
+    "Products": "Products"
 },
 "Dashboard":{
  "Welcome back": "Welcome back",
@@ -367,7 +369,11 @@
     "Proceed to checkout": "Proceed to checkout",
     "Order Summary": "Order Summary",
     "Secure checkout guaranteed": "Secure checkout guaranteed",
-    "Use Wallet Balance": "Use Wallet Balance"
+    "Use Wallet Balance": "Use Wallet Balance",
+    "Your cart is empty": "Your cart is empty",
+    "Add some items to get started": "Add some items to get started",
+    "Start Shopping": "Start Shopping",
+    "Total": "Total"
 },
 "Checkout":{
     "Checkout": "Checkout",
@@ -393,7 +399,8 @@
     "Shipping method selected successfully": "Shipping method selected successfully",
     "Failed to fetch shipping rates": "Failed to fetch shipping rates",
     "Failed to update cart details": "Failed to update cart details",
-    "Select your shipping method": "Select your shipping method"    
+    "Select your shipping method": "Select your shipping method",
+    "Checkout": "Checkout"
 },
 "paymentMethod":{
     "Payment Method": "Payment Method",
@@ -415,7 +422,8 @@
     "Failed to fetch checkout ID": "Failed to fetch checkout ID",
     "Change Payment Method": "Change Payment Method",
     "Preparing payment with": "Preparing payment with",
-    "Cart": "Cart"
+    "Cart": "Cart",
+    "Payment Method": "Payment Method"
 },
 "wishlist":{
     "Home": "Home",
@@ -430,6 +438,16 @@
     "We will keep them safe here for you": "We will keep them safe here for you",
     "Loading wishlist": "Loading wishlist",
     "products added to favorites successfully": "products added to favorites successfully"
+},
+"promoCode":{
+    "Promo code must be at least 3 characters": "Promo code must be at least 3 characters",
+    "Promo code must be less than 20 characters": "Promo code must be less than 20 characters",
+    "Promo code applied successfully": "Promo code applied successfully",
+    "Failed to apply promo code": "Failed to apply promo code",
+    "Please enter a valid promo code": "Please enter a valid promo code",
+    "Promo Code": "Promo Code",
+    "Apply": "Apply",
+    "Enter code": "Enter code"
 },
 "recentlyAdded":{
     "Recently Added": "Recently Added",

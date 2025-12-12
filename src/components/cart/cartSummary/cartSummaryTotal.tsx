@@ -1,4 +1,4 @@
-import React from 'react'
+'use client'
 import { useTranslations } from 'next-intl'
 
 function CartSummaryTotal({total}: {total: number}) {
