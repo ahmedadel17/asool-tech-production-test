@@ -2,13 +2,13 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import getRequest from '../../../../helpers/get'
-import { useAuth } from '@/app/hooks/useAuth'
+import { useUserStore } from '@/store/userStore'
 import { useLocale, useTranslations } from 'next-intl'
 import OrderDetails from '@/components/checkoutConfirmation/orderDetails'
 import SuccessHeader from '@/components/checkoutConfirmation/successHeader'
 import OrderStatus from '@/components/dashboard/orderStatus'
 function OrderDetailsPage() {
-  const { token } = useAuth()
+  const { token } = useUserStore()
   const locale = useLocale()
   const { id } = useParams()
   const t = useTranslations();

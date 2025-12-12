@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useAppDispatch, useAppSelector } from '../../app/store/hooks'
-import { clearCompare } from '../../app/store/slices/compareSlice'
+import { useAppDispatch, useAppSelector } from '../../../../../commerce-test/my-app/src/app/store/hooks'
+import { clearCompare } from '../../../../../commerce-test/my-app/src/app/store/slices/compareSlice'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 

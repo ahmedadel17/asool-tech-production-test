@@ -1,13 +1,11 @@
 
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { generatePaletteFromHex } = require('./tailwindPlugins/colors');
 const components = require('./tailwindPlugins/index');
 const rtl = require('tailwindcss-rtl');
 const typography = require('@tailwindcss/typography');
 
 module.exports = {
     darkMode: 'class',
-   
     content: [
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -24,6 +22,10 @@ module.exports = {
         'md:grid-cols-2',
         'md:grid-cols-3',
         'md:grid-cols-4',
+        'embla-thumbs__slide__img',
+        'embla-thumbs__slide',
+        'embla-thumbs__container',
+        'embla-thumbs',
     ],
   
     theme: {

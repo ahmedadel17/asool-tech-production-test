@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import getRequest from "../../../helpers/get";
-import { useAuth } from "../hooks/useAuth";
+import { useUserStore } from "@/store/userStore";
 import { useLocale, useTranslations } from "next-intl";
 import DashboardOrders from "@/components/dashboard/dashboardOrders";
 
@@ -24,10 +24,9 @@ interface WishlistItem {
 export default function Dashboard() {
 
 
- 
-  const { token,user } = useAuth();
+  const t = useTranslations('Dashboard')
+  const { token,user } = useUserStore();
   const locale = useLocale();
-  const t = useTranslations();
   // Consolidated state for better performance and organization
   const [state, setState] = useState({
     wallet: null as {balance:number} | null,
@@ -46,11 +45,11 @@ export default function Dashboard() {
       // console.log('wallet', response);
       setState(prev => ({ 
         ...prev, 
-        wallet: response.data,
+        wallet: response?.data,
         isLoading: { ...prev.isLoading, wallet: false }
       }));
-      if (response.status) {
-        return response.data;
+      if (response?.status) {
+        return response?.data;
       }
       return null;
     } catch (error) {
@@ -66,7 +65,7 @@ export default function Dashboard() {
       // console.log('points', response);
       setState(prev => ({ 
         ...prev, 
-        points: response.data,
+        points: response?.data,
         isLoading: { ...prev.isLoading, points: false }
       }));
     } catch (error) {
@@ -82,7 +81,7 @@ export default function Dashboard() {
       // console.log('profile', response);
       setState(prev => ({ 
         ...prev, 
-        profile: response.data,
+        profile: response?.data,
         isLoading: { ...prev.isLoading, profile: false }
       }));
     } catch (error) {
@@ -102,7 +101,7 @@ export default function Dashboard() {
    <div className="lg:col-span-3 space-y-8">
         {/* Welcome Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('Welcome back')}, {user?.name}!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('Welcome back')}, {user?.first_name} {user?.last_name}!</h1>
           <p className="text-gray-600 dark:text-gray-400">{t('Heres whats happening with your account')}</p>
         </div>
 
@@ -117,7 +116,7 @@ export default function Dashboard() {
                 <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
               </svg>
             }
-            value={state.isLoading.wallet ? "Loading" : `$ ${state.wallet?.balance || '0'}`}
+            value={state.isLoading.wallet ? t("Loading") : `$ ${state.wallet?.balance || '0'}`}
             label={t('Wallet Balance')}
             isLoading={state.isLoading.wallet}
           />

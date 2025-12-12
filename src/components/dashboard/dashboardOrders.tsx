@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
 import getRequest from "../../../helpers/get";
-import { useAuth } from "@/app/hooks/useAuth";
-import { useLocale } from "next-intl";
+import { useUserStore } from "@/store/userStore";
+import { useLocale, useTranslations } from "next-intl";
 import OrderItem from "./dashboardOrdersComponents/orderItem";
-import { useTranslations } from "next-intl";
 interface Order {
   id: string;
   date: string;
@@ -16,8 +15,7 @@ interface Order {
 }
 
 const OrdersPage: React.FC = () => {
-  const t = useTranslations();
-  const { token } = useAuth();
+  const { token } = useUserStore();
   const locale = useLocale();
   const [ordersNew,setOrdersNew]=useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +29,7 @@ const OrdersPage: React.FC = () => {
   
 
   // Filtering logic
-  
+  const t = useTranslations('Dashboard');
   const getOrders=async()=>{
     try {
       setIsLoading(true);

@@ -1,15 +1,15 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { useAuth } from '@/app/hooks/useAuth';
+import { useUserStore } from '@/store/userStore';
 import getRequest from '../../../helpers/get';
 import postRequest from '../../../helpers/post';
 import { toast } from 'react-hot-toast';
 
 function DashboardSettings() {
-  const t = useTranslations();
+  const t = useTranslations('Account Settings');
   const locale = useLocale();
-  const { token, updateUser } = useAuth();
+  const { token, user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -25,8 +25,8 @@ function DashboardSettings() {
     if (!token) return;
     
     const response = await getRequest('/customer/get-profile', {}, token, locale);
-    if (response.data) {
-      const userData = response.data.user;
+    if (response?.data) {
+      const userData = response?.data?.user;
       setFormData({
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
@@ -37,13 +37,9 @@ function DashboardSettings() {
       
       // Update user data in Redux state slice and localStorage
       const fullName = userData.name || `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-      updateUser({
-        email: userData.email || '',
-        first_name: userData.first_name || undefined,
-        name: fullName || undefined,
-      });
+     
     }
-  }, [token, locale, updateUser]);
+  }, [token, locale, ]);
 
   useEffect(() => {
     fetchProfile();
@@ -87,11 +83,7 @@ function DashboardSettings() {
         
         // Update user data in Redux state slice and localStorage
         const fullName = `${formData.first_name} ${formData.last_name}`.trim();
-        updateUser({
-          email: formData.email,
-          first_name: formData.first_name || undefined,
-          name: fullName || undefined,
-        });
+      
         
         // Optionally refetch profile to get updated data
         await fetchProfile();

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/app/hooks/useAuth";
+import { useUserStore } from "@/store/userStore";
 import { useTranslations } from "next-intl";
 interface MenuItem {
   title: string;
@@ -137,9 +137,9 @@ const menuItems: MenuItem[] = [
 
 const DashboardSidebar: React.FC = () => {
   const pathname = usePathname();
-  const { user, logout: logoutUser } = useAuth();
+  const { user, logout } = useUserStore();
   const [mounted, setMounted] = useState(false);
-  const t = useTranslations();
+  const t = useTranslations('dashboardSidebar');
   
   useEffect(() => {
     setMounted(true);
@@ -154,7 +154,7 @@ const DashboardSidebar: React.FC = () => {
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     
     // Call logout function from useAuth hook (this also handles Redux store cleanup)
-    logoutUser();
+    logout();
     // Redirect to login page
     window.location.href = '/auth/login';
   };
@@ -168,7 +168,7 @@ const DashboardSidebar: React.FC = () => {
               {!mounted ? (
                 <div className="animate-pulse bg-white/20 rounded-full w-8 h-8"></div>
               ) : (
-                user?.name?.split(' ').map((name) => name.charAt(0)).join('') || user?.first_name?.charAt(0) || 'U'
+                (user?.first_name?.charAt(0) || '') + (user?.last_name?.charAt(0) || '') || 'U'
               )}
             </div>
             <div className="ms-4">
@@ -176,14 +176,14 @@ const DashboardSidebar: React.FC = () => {
                 {!mounted ? (
                   <div className="animate-pulse bg-gray-300 dark:bg-gray-600 rounded h-4 w-32"></div>
                 ) : (
-                  user?.name || 'User'
+                  user?.first_name + ' ' + user?.last_name || 'User'
                 )}
               </h3>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 {!mounted ? (
                   <div className="animate-pulse bg-gray-300 dark:bg-gray-600 rounded h-3 w-40 mt-1"></div>
                 ) : (
-                  user?.email || 'user@example.com'
+                  user?.email || 'No email found'
                 )}
               </div>
             </div>

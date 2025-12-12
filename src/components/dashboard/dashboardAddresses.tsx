@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useAuth } from "@/app/hooks/useAuth";
+import { useUserStore } from "@/store/userStore";
 import getRequest from "../../../helpers/get";
 import toast from "react-hot-toast";
-import CreateNewAddressForm from "../checkout/shippingAddress/CreateNewAddressForm";
-import { useTranslations } from "next-intl";
+import CreateNewAddressForm from "@/components/shippingAddress/CreateNewAddressForm";
+import { useLocale, useTranslations } from "next-intl";
 
 // 🏠 Address interface based on API response
 interface Address {
@@ -29,7 +29,7 @@ interface Address {
 
 
 const MyAddressesPage: React.FC = () => {
-  const { getToken, isAuthenticated } = useAuth();
+  const { token, user } = useUserStore();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +38,8 @@ const MyAddressesPage: React.FC = () => {
   const [settingDefault, setSettingDefault] = useState<string | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const isFetchingRef = useRef(false);
-  const t = useTranslations();
+  const t = useTranslations('Addresses');
+  const locale = useLocale();
   // Fetch addresses from API
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -47,7 +48,7 @@ const MyAddressesPage: React.FC = () => {
         return;
       }
 
-      if (!isAuthenticated) {
+      if (!token) {
         setError("Please login to view your addresses");
         setIsLoading(false);
         return;
@@ -58,11 +59,10 @@ const MyAddressesPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         
-        const token = getToken();
-        const response = await getRequest('/customer/addresses', {}, token);
+        const response = await getRequest('/customer/addresses', {}, token, locale);
         // console.log(response)
-        if ( response.data) {
-          setAddresses(response.data);
+        if ( response?.data) {
+          setAddresses(response?.data);
           // console.log('📦 Addresses fetched:', response.data);
           
           // Auto-select the default address if one exists
@@ -83,7 +83,7 @@ const MyAddressesPage: React.FC = () => {
     };
 
     fetchAddresses();
-  }, [isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this address?")) {
@@ -91,7 +91,6 @@ const MyAddressesPage: React.FC = () => {
     }
 
     try {
-      const token = getToken();
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/delete-address/${id}`, {
         method: 'POST',
         headers: {
@@ -126,7 +125,6 @@ const MyAddressesPage: React.FC = () => {
   const handleAddressSelect = async (addressId: string) => {
     try {
       setSettingDefault(addressId);
-      const token = getToken();
       
       // Call the set-as-default API
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/set-as-default/${addressId}`, {
@@ -164,8 +162,7 @@ const MyAddressesPage: React.FC = () => {
     
     // Refresh the addresses list
     try {
-      const token = getToken();
-      const response = await getRequest('/customer/addresses', {}, token);
+      const response = await getRequest('/customer/addresses', {}, token, locale);
       
       if (response.data) {
         setAddresses(response.data);

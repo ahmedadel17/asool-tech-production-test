@@ -3,14 +3,14 @@ import React, { useState } from 'react'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useLocale, useTranslations } from 'next-intl';
-import AppliedPromoCode from './appliedPromoCode';
-import { useAuth } from '@/app/hooks/useAuth';
-import { useCart } from '@/app/hooks/useCart';
+import AppliedPromoCode from '../appliedPromoCode';
+import { useUserStore } from '@/store/userStore';
+import { useCartStore } from '@/store/cartStore';
 import postRequest from '../../../../helpers/post';
     function PromoCode() {
-    const t = useTranslations();
-    const { token } = useAuth();
-    const { cartData,setCartData } = useCart();
+    const t = useTranslations('promoCode');
+    const { token } = useUserStore();
+    const { cartData,setCartData } = useCartStore();
     const locale = useLocale();
     const promoCodeSchema = Yup.object({
         promo_code_id: Yup.string()
@@ -30,7 +30,7 @@ import postRequest from '../../../../helpers/post';
         try {
           // Here you would typically make an API call to validate and apply the promo code
           // Get cart ID from the cart data structure
-          const cartId = cartData?.id;
+          const cartId = cartData?.data?.id;
           const response = await postRequest('/marketplace/cart/apply-voucher/'+cartId, { promo_code_id: values.promo_code_id }, {},token,locale);
           // toastHelper(response.data.status,response.data.message);
           if(response.data.status){
@@ -48,7 +48,7 @@ import postRequest from '../../../../helpers/post';
       };
   return (
     <div>
-          {!cartData?.voucher?.code && <Formik
+          {!cartData?.data?.voucher?.code && <Formik
               initialValues={{ promo_code_id: '' }}
               validationSchema={promoCodeSchema}
               onSubmit={handlePromoCodeSubmit}
@@ -83,7 +83,7 @@ import postRequest from '../../../../helpers/post';
                 </Form>
               )}
             </Formik>}
-            {cartData?.voucher?.code && (
+            {cartData?.data?.voucher?.code && (
          <AppliedPromoCode />
             )}
     </div>

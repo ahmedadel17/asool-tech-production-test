@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl';
 function OrderItem({order}: {order: any}) {
-  const t = useTranslations();
+  const t = useTranslations('Dashboard');
   console.log('order', order);
   return (
     <>
@@ -10,11 +10,35 @@ function OrderItem({order}: {order: any}) {
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">ORD-2024-{order?.order_num}</td>
                     <td className="px-6 py-4">{order?.created_at}</td>
                     <td className="px-6 py-4"  >
-                      <span
-                        className={`px-3 py-1 bg-${order?.status==='order_finished'?'green':order?.status==='order_processing'?'yellow':order?.status==='order_cancelled'?'red':order?.status==='order_shipped'?'blue':''}-100 dark:bg-${order?.status?.color}-900 text-${order?.status?.color}-800 dark:text-${order?.status?.color}-200 text-xs font-medium rounded-full`}
-                      >
-                        {order?.status_value}
-                      </span>
+                    {order?.status=='order_finished' && <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='processing' && <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='pending' && <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-green-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='shipped' && <span className="px-3 py-1 bg-blue-100 dark:bg-green-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='ready_for_pickup' && <span className="px-3 py-1 bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='canceled' && <span className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                    {order?.status=='in_transit' && <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs font-medium rounded-full order-status">
+                    {order?.status_value}
+                                 
+                    </span>}
+                     
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs">﷼</span> {order?.total_amount}

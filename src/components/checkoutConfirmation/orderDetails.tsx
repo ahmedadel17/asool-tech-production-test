@@ -19,22 +19,21 @@ interface OrderDetailsProps {
 }
 
 function OrderDetails({orderData}: OrderDetailsProps) {
-  const t = useTranslations();
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
     <div className="p-6 border-b border-gray-200 dark:border-gray-600">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('Order Number')}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Order Number</h3>
                 <p className="text-gray-600 dark:text-gray-400">#ORD-                    {orderData?.data?.order_num}
                 </p>
             </div>
             <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('Order Date')}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Order Date</h3>
                 <p className="text-gray-600 dark:text-gray-400"> {orderData?.data?.created_at}</p>
             </div>
             <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('Estimated Delivery')}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Estimated Delivery</h3>
                 <p className="text-gray-600 dark:text-gray-400">{orderData?.data?.estimated_delivery}</p>
             </div>
         </div>
@@ -42,7 +41,7 @@ function OrderDetails({orderData}: OrderDetailsProps) {
 
     {/* <!-- Order Items --> */}
     <div className="p-6" >
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('Items Ordered')}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Items Ordered</h3>
         {orderData?.data?.products?.map((item:any)=>(    
      <ProductItem key={item.id} item={item} />
         ))}
@@ -56,7 +55,7 @@ function OrderDetails({orderData}: OrderDetailsProps) {
         ))
       }
                    
-                       <TotalAttribute value={orderData?.data?.total_amount} label={t('Total')} />
+                       <TotalAttribute value={orderData?.data?.total_amount} label="Total" />
                   
                 </div>
             </div>

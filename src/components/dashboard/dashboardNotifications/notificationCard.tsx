@@ -3,7 +3,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import postRequest from '../../../../helpers/post';
-import { useAuth } from '@/app/hooks/useAuth';
+import { useUserStore } from '@/store/userStore';
 
 interface Notification {
   id: number;
@@ -20,8 +20,8 @@ interface Notification {
   };
 }
 function NotificationCard({notification, deleteNotification, refetchNotifications}: {notification: Notification, deleteNotification: (id: number) => void, refetchNotifications: () => Promise<void>}) {
-  const t = useTranslations();
-  const { token } = useAuth();
+  const t = useTranslations('Notifications');
+  const { token } = useUserStore();
   const locale = useLocale();
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
 
@@ -31,7 +31,7 @@ function NotificationCard({notification, deleteNotification, refetchNotification
       const response = await postRequest('/customer/mark-notification-as-read/'+id, {}, {}, token, locale);
       // Refetch notifications after successful mark as read
       await refetchNotifications();
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error('Error marking notification as read:', error);
     } finally {

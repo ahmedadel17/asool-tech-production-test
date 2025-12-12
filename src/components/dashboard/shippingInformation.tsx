@@ -1,12 +1,13 @@
+'use client'
 import React from 'react'
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import postRequest from '../../../helpers/post';
-import { useAuth } from '@/app/hooks/useAuth';
 import toast from 'react-hot-toast';
+import { useUserStore } from '@/store/userStore';
 function ShippingInformation({orderData}: {orderData: any}) {
   const t = useTranslations();
-  const { token } = useAuth();
+  const { token } = useUserStore();
   const locale = useLocale();
   const cancelOrder = async () => {
     const response = await postRequest(`/order/orders/change-status/${orderData?.data?.id}`, {

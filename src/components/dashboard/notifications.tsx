@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import getRequest from "../../../helpers/get";
-import { useAuth } from "../../app/hooks/useAuth";
+import { useUserStore } from "@/store/userStore";
 import NotificationCard from "./dashboardNotifications/notificationCard";
 import SettingToggle from "./dashboardNotifications/settingToggle";
 interface Notification {
@@ -21,8 +21,8 @@ interface Notification {
 }
 
 export default function Notifications() {
-  const t = useTranslations();
-  const { token } = useAuth();
+  const t = useTranslations("Notifications");
+  const { token } = useUserStore();
   const locale = useLocale();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,8 +31,8 @@ export default function Notifications() {
     setIsLoading(true);
     try {
       const response = await getRequest('/customer/notifications', {'Content-Type': 'application/json'}, token, locale);
-      setNotifications(response.data.items);
-      return response.data;
+      setNotifications(response?.data?.items);
+      return response?.data;
     } catch (error) {
       console.error('Error fetching notifications:', error);
     } finally {
@@ -76,7 +76,7 @@ export default function Notifications() {
            {t('Notifications')}
           </h1>
 
-          {notifications.some((n) => n.unread) && (
+          {notifications?.some((n) => n.unread) && (
             <button
               onClick={markAllAsRead}
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
@@ -96,8 +96,8 @@ export default function Notifications() {
               <p className="text-gray-500 dark:text-gray-400">{t('Loading notifications')}...</p>
             </div>
           </div>
-        ) : notifications.length > 0 ? (
-          notifications.map((notification) => (
+        ) : notifications?.length > 0 ? (
+          notifications?.map((notification) => (
             <NotificationCard key={notification.id} notification={notification}  deleteNotification={deleteNotification} refetchNotifications={getNotifications} />
           ))
         ) : (

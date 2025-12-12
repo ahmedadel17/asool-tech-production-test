@@ -1,8 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl';
 function ProductItem({item}: {item: any}) {
-  const t = useTranslations();
   return (
     <div className="space-y-4" key={item.id}>
             <div className="flex items-center space-x-4 rtl:space-x-reverse p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -10,7 +8,7 @@ function ProductItem({item}: {item: any}) {
                 <div className="flex-1">
                     <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{item.variation}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('Quantity')}: {item.qty}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Quantity: {item.qty}</p>
                 </div>
                 <div className="text-right">
                     <p className="font-medium text-gray-900 dark:text-white">

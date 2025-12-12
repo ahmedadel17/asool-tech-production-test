@@ -26,15 +26,14 @@ interface CountrySearchSelectProps {
 const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
   value = '',
   onChange,
-  placeholder = 'Select Country',
+  placeholder = "Select Country",
   className = '',
   disabled = false,
   required = false,
-  label,
+  label = "Country",
   error,
   touched = false
 }) => {
-  const t = useTranslations();
   const [countries, setCountries] = useState<Country[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -207,7 +206,7 @@ const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
     absolute z-50 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 
     rounded-md shadow-lg max-h-60 overflow-hidden
   `;
-
+const t = useTranslations('Addresses');
   return (
     <div className={containerClasses} ref={dropdownRef}>
       {/* Label */}
@@ -239,7 +238,7 @@ const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
             </>
           ) : (
             <span className="text-gray-500 dark:text-gray-400">
-              {isLoading ? ('Loading...') : placeholder}
+              {isLoading ? (t('Loading')) : (placeholder as string)}
             </span>
           )}
         </div>
@@ -262,7 +261,7 @@ const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              placeholder={t("Search countries")}
+              placeholder={t('Search countries')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -278,13 +277,13 @@ const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
           <div className="max-h-48 overflow-auto">
             {isLoading ? (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                {("Loading countries...")}
+                {t('Loading countries')}
               </div>
             ) : isSearching ? (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
                 <div className="flex items-center justify-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-500"></div>
-                  <span>{("Searching...")}</span>
+                  <span>{t('Searching')}</span>
                 </div>
               </div>
             ) : filteredCountries.length > 0 ? (
@@ -308,7 +307,7 @@ const CountrySearchSelect: React.FC<CountrySearchSelectProps> = ({
               ))
             ) : (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                {t("No countries found")}
+                {t('No countries found')}
               </div>
             )}
           </div>

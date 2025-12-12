@@ -3,16 +3,16 @@ import { useCallback, useEffect } from "react";
 import { Clock } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import getRequest from "../../../../helpers/get";
-import { useCart } from "@/app/hooks/useCart";
-import { useAuth } from "@/app/hooks/useAuth";
+import { useCartStore } from "@/store/cartStore";
+import { useUserStore } from "@/store/userStore";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 export default function PendingPayment() {
   const searchParams = useSearchParams();   
   const paymentId=searchParams.get('id');
-  const { token } = useAuth();
+  const { token } = useUserStore();
   const locale = useLocale();
-  const { cartData } = useCart();
+  const { cartData } = useCartStore();
   const router = useRouter();
   // Check if status has already been checked for this payment ID
   const getStatusCheckKey = useCallback(() => `payment_status_checked_${paymentId}`, [paymentId]);
@@ -28,14 +28,14 @@ export default function PendingPayment() {
 const checkPaymentStatus = useCallback(async () => {
     if(paymentId && !hasStatusBeenChecked()){
         markStatusAsChecked();
-        const paymentData = await getRequest(`/payment/hyper-pay/check-status?id=${paymentId}`, { 'Content-Type': 'application/json' }, token, locale);
+        const paymentData = await getRequest(`/payment/hyper-pay/check-status?id=${paymentId}`, { 'Content-Type': 'application/json' }, token, 'en');
         // console.log('Payment Status Response:', paymentData);
         
         // Log the status specifically if it exists
         if (paymentData?.status) {
             // console.log('Payment Status:', paymentData.status);
 
-            router.push('/checkoutConfirmation/?orderId='+cartData?.id);
+            router.push('/checkoutConfirmation/?orderId='+cartData?.data?.id);
         }else{
             router.push('/checkoutConfirmation/failed');
 
@@ -54,17 +54,7 @@ const checkPaymentStatus = useCallback(async () => {
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   };
 
-  const order = {
-    id: "ORD-98217",
-    amount: 249.99,
-    method: "Credit Card",
-    date: "October 21, 2025",
-  };
-
-  const handleRetry = () => {
-    alert("Redirecting to payment gateway...");
-    // Replace with actual payment retry logic
-  };
+ 
 
   return (
     <div className="container mx-auto px-4 py-12">

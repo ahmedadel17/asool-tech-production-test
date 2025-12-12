@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import axios from 'axios';
-
 interface City {
   id: number;
   title: string;  
@@ -36,7 +35,7 @@ interface CitySearchSelectProps {
   touched = false,
   countryId
 }) => {
-  const t = useTranslations();
+  const t = useTranslations('Addresses');
   const [cities, setCities] = useState<City[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +49,6 @@ interface CitySearchSelectProps {
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
   // Fetch cities from API for a specific country
   const fetchCities = async (countryId?: string | number) => {
     if (!countryId) return;
@@ -264,7 +262,7 @@ interface CitySearchSelectProps {
             </>
           ) : (
             <span className="text-gray-500 dark:text-gray-400">
-              {!countryId ? (t('Select country first')) : isLoading ? (t('Loading')) : placeholder}
+              {!countryId ? t('Select country first') : isLoading ? t('Loading') : placeholder}
             </span>
           )}
         </div>
@@ -287,7 +285,7 @@ interface CitySearchSelectProps {
             <input
               ref={searchInputRef}
               type="text"
-              placeholder={t("Search cities")}
+              placeholder={t('Search cities')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -303,13 +301,13 @@ interface CitySearchSelectProps {
           <div className="max-h-48 overflow-auto">
             {isLoading ? (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                {t("Loading cities")}
+                {t('Loading cities')}
               </div>
             ) : isSearching ? (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
                 <div className="flex items-center justify-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-500"></div>
-                  <span>{t("Searching")}</span>
+                  <span>{t('Searching')}</span>
                 </div>
               </div>
             ) : filteredCities.length > 0 ? (
@@ -333,7 +331,7 @@ interface CitySearchSelectProps {
               ))
             ) : (
               <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                {t("No cities found")}
+                {t('No cities found')}
               </div>
             )}
           </div>
