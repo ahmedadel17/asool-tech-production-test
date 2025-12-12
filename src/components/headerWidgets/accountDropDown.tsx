@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useUserStore } from '@/store/userStore'
 import { useCartStore } from '@/store/cartStore'
 import { useCheckoutStore } from '@/store/checkoutStore'
+import { useWishlistStore } from '@/store/wishlistStore'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl' 
 
@@ -13,6 +14,7 @@ function AccountDropDown({isOpen}: {isOpen: boolean}) {
   const logout = useUserStore((state) => state.logout)
   const clearCart = useCartStore((state) => state.clearCart)
   const clearCheckout = useCheckoutStore((state) => state.clearCheckout)
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   const router = useRouter()
   const t = useTranslations('header')
   const handleLogout = () => {
@@ -20,6 +22,9 @@ function AccountDropDown({isOpen}: {isOpen: boolean}) {
     clearCart()
     // Clear checkout data from localStorage
     clearCheckout()
+    // Clear wishlist data from localStorage
+    clearWishlist()
+    localStorage.removeItem('wishlist-storage')
     // Logout user
     logout()
     // Redirect to login page

@@ -337,7 +337,28 @@
     "No cities found": "No cities found",
     "Loading cities": "Loading cities",
     "Search cities": "Search cities",
-    "Select country first": "Select country first"
+    "Select country first": "Select country first",
+    "Error loading addresses": "Error loading addresses",
+    "Loading addresses": "Loading addresses",
+    "Address deleted successfully": "Address deleted successfully",
+    "No addresses":"No addresses",
+    "Get started by adding your first address":"Get started by adding your first address",
+    "Name must be at least 2 characters":"Name must be at least 2 characters",
+    "Country is required":"Country is required",
+    "Address is required":"Address is required",
+    "Latitude is required":"Latitude is required",
+    "Longitude is required":"Longitude is required",
+    "City ID is required":"City ID is required",
+    "Country ID is required":"Country ID is required",
+    "Notes must not exceed 500 characters":"Notes must not exceed 500 characters",
+    "Phone number must contain only digits":"Phone number must contain only digits",
+    "Phone number must be at least 7 digits":"Phone number must be at least 7 digits",
+    "Phone number must not exceed 15 digits":"Phone number must not exceed 15 digits",
+    "Please select country and city":"Please select country and city",
+    "Please select a location on the map":"Please select a location on the map",
+    "Location selected successfully":"Location selected successfully",
+    "Please select country and city":"Please select country and city",
+    "Saving":"Saving"
 },
 "Account Settings":{
     "Account Settings": "Account Settings",
@@ -392,6 +413,7 @@
     "Cart": "Cart"
 },
 "shippingMethod":{
+    "Shipping Address": "Shipping Address",
     "Shipping Method": "Shipping Method",
     "Please select a shipping method": "Please select a shipping method",
     "Estimated delivery": "Estimated delivery",
@@ -423,7 +445,9 @@
     "Change Payment Method": "Change Payment Method",
     "Preparing payment with": "Preparing payment with",
     "Cart": "Cart",
-    "Payment Method": "Payment Method"
+    "Payment Method": "Payment Method",
+    "Checkout": "Checkout",
+    "Shipping Method": "Shipping Method"
 },
 "wishlist":{
     "Home": "Home",
@@ -447,7 +471,8 @@
     "Please enter a valid promo code": "Please enter a valid promo code",
     "Promo Code": "Promo Code",
     "Apply": "Apply",
-    "Enter code": "Enter code"
+    "Enter code": "Enter code",
+    "Applying": "Applying"
 },
 "recentlyAdded":{
     "Recently Added": "Recently Added",

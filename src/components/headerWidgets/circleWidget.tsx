@@ -1,11 +1,11 @@
 'use client'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React from 'react'
 import AccountGrid from './accountGrid'
 import AccountDropDown from './accountDropDown'
 import CartDropDown from './cartDropDown'
 
-function CircleWidget({icon, badge,type,link,accountGrid=false,accountGridTitle,accountGridSubtitle}: {icon: string, badge: number | null | undefined, type: string, link: string | null, accountGrid?:boolean, accountGridTitle?:string, accountGridSubtitle?:string}) {
+function CircleWidget({icon, badge,type,link,accountGrid=false,accountGridTitle,accountGridSubtitle, isOpen, onToggle}: {icon: string, badge: number | null | undefined, type: string, link: string | null, accountGrid?:boolean, accountGridTitle?:string, accountGridSubtitle?:string, isOpen?: boolean, onToggle?: () => void}) {
     const icons={
         notification:   <svg className="w-5 h-5 dark:text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
@@ -25,22 +25,34 @@ account:
           <path d="M8 11V6a4 4 0 0 1 8 0v5"></path>
       </svg>
     }
-    const [isOpen, setIsOpen] = useState({
-        account:false,
-        cart:false
+    // Use external state if provided, otherwise use local state (for backward compatibility)
+    const hasExternalState = isOpen !== undefined && onToggle !== undefined
+    const [localIsOpen, setLocalIsOpen] = React.useState({
+        account: false,
+        cart: false
     })
+    
+    const currentIsOpen = hasExternalState 
+        ? (icon === 'account' ? isOpen : icon === 'cart' ? isOpen : false)
+        : (icon === 'account' ? localIsOpen.account : icon === 'cart' ? localIsOpen.cart : false)
+    
     const open = (type: string) => {
-        if(type=='account'){
-        setIsOpen({
-                account:!isOpen.account,
-                cart:false
-            })
-        }
-        if(type=='cart'){
-            setIsOpen({
-                account:false,
-                cart:!isOpen.cart
-            })
+        if (hasExternalState && onToggle) {
+            onToggle()
+        } else {
+            // Fallback to local state for backward compatibility
+            if(type=='account'){
+                setLocalIsOpen({
+                    account: !localIsOpen.account,
+                    cart: false
+                })
+            }
+            if(type=='cart'){
+                setLocalIsOpen({
+                    account: false,
+                    cart: !localIsOpen.cart
+                })
+            }
         }
     }
    
@@ -80,8 +92,8 @@ account:
 
 
     {accountGrid && <AccountGrid title={accountGridTitle || ''} subtitle={accountGridSubtitle || ''} />}
-    {type=='dropdown' && icon=='account' && <AccountDropDown isOpen={isOpen.account}  />}
-    {type=='dropdown' && icon=='cart' && <CartDropDown isOpen={isOpen.cart}  />}
+    {type=='dropdown' && icon=='account' && <AccountDropDown isOpen={currentIsOpen}  />}
+    {type=='dropdown' && icon=='cart' && <CartDropDown isOpen={currentIsOpen}  />}
     </div>
    
     </div>

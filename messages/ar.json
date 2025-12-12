@@ -340,7 +340,28 @@
    "No cities found": "لا يوجد مدن مطابقة",
    "Loading cities": "جاري تحميل المدن",
    "Search cities": "ابحث عن المدن",
-   "Select country first": "اختر الدولة اولا"
+   "Select country first": "اختر الدولة اولا",
+   "Error loading addresses": "فشل تحميل العناوين يرجى المحاولة مرة أخرى",
+   "Loading addresses": "جاري تحميل العناوين",
+   "Address deleted successfully": "تم حذف العنوان بنجاح",
+   "No addresses":"لا يوجد عناوين محفوظة",
+   "Get started by adding your first address":"ابدء الإضافة بإضافة عنوانك الأول",
+   "Name must be at least 2 characters":"يجب أن يكون الاسم على الأقل 2 أحرف",
+   "Country is required":"يجب أن يكون الدولة محددة",
+   "Address is required":"يجب أن يكون العنوان محدد",
+   "Latitude is required":"يجب أن يكون العرض محدد",
+   "Longitude is required":"يجب أن يكون الطول محدد",
+   "City ID is required":"يجب أن يكون  المدينة محدده",
+   "Country ID is required":"يجب أن يكون الدولة محدده",
+   "Notes must not exceed 500 characters":"يجب أن يكون الملاحظات على الأقل 500 حرف",
+   "Phone number must contain only digits":"يجب أن يكون رقم الهاتف يحتوي على أرقام فقط",
+   "Phone number must be at least 7 digits":"يجب أن يكون رقم الهاتف على الأقل 7 أرقام",
+   "Phone number must not exceed 15 digits":"يجب أن يكون رقم الهاتف على الأكثر 15 أرقام",
+   "Please select country and city":"يرجى اختيار الدولة والمدينة",
+   "Please select a location on the map":"يرجى اختيار موقع على الخريطة",
+   "Location selected successfully":"تم تحديد الموقع بنجاح",
+   "Please select country and city":"يرجى اختيار الدولة والمدينة",
+   "Saving":"جاري الحفظ"
    },
    "Account Settings":{
     "Account Settings": "إعدادات الحساب",
@@ -402,6 +423,7 @@
     "Cart": "العربة"
    },
    "shippingMethod":{
+    "Shipping Address": "عنوان الشحن",
     "Shipping Method": "طريقة الشحن",
     "Please select a shipping method": "يرجى اختيار طريقة الشحن",
     "Estimated delivery": "تقدير التسليم",
@@ -427,7 +449,8 @@
     "Failed to fetch checkout ID": "فشل تحميل ID الدفع",
     "Change Payment Method": "تعديل طريقة الدفع",
     "Preparing payment with": "جاري التحضير باستخدام",
-    "Cart": "العربة"
+    "Cart": "العربة",
+    "Shipping Method": "طريقة الشحن"
 
    },
    "wishlist":{
@@ -456,7 +479,8 @@
     "Please enter a valid promo code": "يرجى إدخال رمز خصم صالح",
     "Promo Code": "رمز الخصم",
     "Apply":"تطبيق",
-    "Enter code":"أدخل الرمز"
+    "Enter code":"أدخل الرمز",
+    "Applying":"جاري التطبيق"
    },
    "recentlyAdded":{
     "Recently Added": "المضافة حديثا",

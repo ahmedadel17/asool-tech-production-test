@@ -3,12 +3,14 @@ import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import React from 'react'
 import { useUserStore } from '@/store/userStore';
+import { useWishlistStore } from '@/store/wishlistStore';
 import Link from 'next/link';
 
 function DashboardSidebar() {
     const pathname = usePathname();
     const t = useTranslations();
     const { user, logout } = useUserStore();
+    const clearWishlist = useWishlistStore((state) => state.clearWishlist);
     const menuItems = [
         {
           title: "Dashboard",
@@ -159,7 +161,11 @@ function DashboardSidebar() {
                 return (
                   <button
                     key={item.url}
-                    onClick={() => logout()}
+                    onClick={() => {
+                      clearWishlist();
+                      localStorage.removeItem('wishlist-storage');
+                      logout();
+                    }}
                     className={`flex gap-3 items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left ${activeClass}`}
                   >
                     <svg

@@ -74,7 +74,6 @@ const MyAddressesPage: React.FC = () => {
           setError(t("Failed to fetch addresses"));
         }
       } catch (error) {
-        console.error('❌ Error fetching addresses:', error);
         setError("Failed to load addresses Please try again");
       } finally {
         setIsLoading(false);
@@ -86,9 +85,7 @@ const MyAddressesPage: React.FC = () => {
   }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this address?")) {
-      return;
-    }
+   
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/delete-address/${id}`, {

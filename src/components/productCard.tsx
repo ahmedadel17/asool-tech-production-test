@@ -17,6 +17,7 @@ import postRequest from '../../helpers/post'
 import { useProductStore } from '@/store/productStore'
 import { useCartStore } from '@/store/cartStore'
 import { useUserStore } from '@/store/userStore'
+import { useWishlistStore } from '@/store/wishlistStore'
 import { useTranslations } from 'next-intl'
 import { toast } from 'react-hot-toast'
 import { useLocale } from 'next-intl'
@@ -54,6 +55,7 @@ function ProductCard({ product }: { product: Product }) {
   // Ref to track if we've already fetched for the current selection
   const lastFetchedSelection = useRef<string>('')
   const logout = useUserStore((state) => state.logout)
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   // Zustand stores
   const { setVariation, getVariation, clearVariation } = useProductStore()
   const { setCartData } = useCartStore()
@@ -187,6 +189,8 @@ function ProductCard({ product }: { product: Product }) {
       toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || t('Failed to add to cart'))
       if((error as { response?: { status?: number } }).response?.status==401){
         if(token){
+          clearWishlist()
+          localStorage.removeItem('wishlist-storage')
           logout()
         }
         router.push('/auth/login')

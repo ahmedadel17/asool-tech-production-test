@@ -5,6 +5,7 @@ import postRequest from '../../../helpers/post'
 import { useProductStore } from '../../store/productStore'
 import { useUserStore } from '../../store/userStore'
 import { useCartStore } from '../../store/cartStore'
+import { useWishlistStore } from '../../store/wishlistStore'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -30,6 +31,7 @@ function ProductActions({
   const { setCartData } = useCartStore()
   const [isLoading, setIsLoading] = useState(false)
   const logout = useUserStore((state) => state.logout)
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   const t = useTranslations('productDetails')
   const locale=useLocale()
   const router = useRouter()  
@@ -73,6 +75,8 @@ function ProductActions({
         toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || t('Failed to add to cart'))
         if((error as { response?: { status?: number } }).response?.status==401){
           if(token){
+            clearWishlist()
+            localStorage.removeItem('wishlist-storage')
             logout()
           }
           router.push('/auth/login')

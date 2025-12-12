@@ -47,7 +47,7 @@ function PaymentMethod() {
     <div className='container'>
         <main id='main' role='main'>
 
-            <BreadCrumb title={t('Checkout')} link='/checkout/shippingMethod' secondPage={t('Payment Method')} />
+            <BreadCrumb title={t('Shipping Method')} link='/checkout/shippingMethod' secondPage={t('Payment Method')} />
             <PageHeader title={t('Payment Method')} subtitle={t('Select your payment method')} />
             <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
 

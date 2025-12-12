@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCartStore } from '@/store/cartStore';
 import postRequest from '../../../helpers/post';
 import { useUserStore } from '@/store/userStore';
@@ -12,6 +12,13 @@ function WalletBallanceToggler() {
     const { token } = useUserStore();
     const t = useTranslations('cart')
     const locale = useLocale();
+
+    // Sync state with cartData when it updates
+    useEffect(() => {
+      if (cartData?.data?.use_wallet !== undefined) {
+        setUseWalletBalance(cartData.data.use_wallet);
+      }
+    }, [cartData?.data?.use_wallet]);
     const handleWalletBalanceToggle = async (checked: boolean) => {
         try {
           setIsWalletToggleLoading(true);

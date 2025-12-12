@@ -1,6 +1,5 @@
-import React from 'react'
 
-function TopBar() {
+function TopBar({menuData}: {menuData: any}) {
   return (
     <div className="site-topbar bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 py-3 flex items-center text-sm hidden lg:flex">
     <div className="container">
@@ -27,15 +26,12 @@ function TopBar() {
         </div>
         <div>
             <ul className="flex gap-4">
-                <li>
-                    <a href="#" className="hover:text-gray-800 dark:hover:text-gray-400 transition-colors duration-200">About</a>
-                </li>
-                <li>
-                    <a href="returns-page" className="hover:text-gray-800 dark:hover:text-gray-400 transition-colors duration-200">Return &amp; Exchange Policy</a>
-                </li>
-                <li>
-                    <a href="shipping-page" className="hover:text-gray-800 dark:hover:text-gray-400 transition-colors duration-200">Shipping &amp; Delivery</a>
-                </li>
+                {menuData?.data?.top_menu?.items?.map((item: any) => (
+                    <li key={item?.id}>
+                        <a href={item?.url} className="hover:text-gray-800 dark:hover:text-gray-400 transition-colors duration-200">{item?.label}</a>
+                    </li>
+                ))}
+                
             </ul>
     
         </div>

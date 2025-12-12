@@ -55,8 +55,8 @@ import postRequest from '../../../../helpers/post';
             >
               {({ errors, touched, isSubmitting, values }) => (
                 <Form>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Promo Code')}</label>
-                  <div className="flex">
+                  <label className="block  text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Promo Code')}</label>
+                  <div className="flex mb-2">
                     <Field
                       name="promo_code_id"
                       type="text"

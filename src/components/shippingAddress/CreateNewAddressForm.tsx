@@ -58,17 +58,17 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
   };
 
   const validationSchema = Yup.object({
-      name: Yup.string().notRequired().nullable().min(2, ('Name must be at least 2 characters')),
+      name: Yup.string().notRequired().nullable().min(2, t('Name must be at least 2 characters')),
     contact_phone: Yup.string().notRequired().nullable().matches(/^[0-9]*$/, ('Phone number must contain only digits')).min(7, ('Phone number must be at least 7 digits')).max(15, ('Phone number must not exceed 15 digits')),
-    country: Yup.string().required('Country is required'),
-    address: Yup.string().required('Address is required'),
-    lat: Yup.string().required('Latitude is required'),
-    lng: Yup.string().required('Longitude is required'),
-    city_id: Yup.string().required('City ID is required'),
-    country_id: Yup.string().required('Country ID is required'),
+    country: Yup.string().required(t('Country is required')),
+    address: Yup.string().required(t('Address is required')),
+    lat: Yup.string().required(t('Latitude is required')),
+    lng: Yup.string().required(t('Longitude is required')),
+    city_id: Yup.string().required(t('City ID is required')),
+    country_id: Yup.string().required(t('Country ID is required')),
     street: Yup.string().notRequired().nullable(),
     house: Yup.string().notRequired().nullable(),
-    notes: Yup.string().notRequired().nullable().max(500, ('Notes must not exceed 500 characters')),
+    notes: Yup.string().notRequired().nullable().max(500, t('Notes must not exceed 500 characters')),
   });
 
   const onSubmit = async(values: CreateAddressData, { resetForm, setFieldTouched, }: FormikHelpers<CreateAddressData>) => {

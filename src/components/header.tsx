@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import CircleWidget from './headerWidgets/circleWidget'
 import DarkModeToggle from './headerWidgets/darkModeToggle'
 import MobileMenuToggle from './headerWidgets/mobileMenuToggle'
@@ -20,11 +20,51 @@ function Header({menuData}: {menuData: any}) {
     const { cartData } = useCartStore()
     const t = useTranslations('header')
     const { count } = useWishlistStore()
+    const headerRef = useRef<HTMLElement>(null)
+    
+    // Shared state for dropdowns
+    const [dropdownState, setDropdownState] = useState({
+        account: false,
+        cart: false
+    })
+
+    // Close all dropdowns
+    const closeAllDropdowns = () => {
+        setDropdownState({
+            account: false,
+            cart: false
+        })
+    }
+
+    // Toggle dropdown with mutual exclusivity
+    const toggleDropdown = (type: 'account' | 'cart') => {
+        setDropdownState(prev => ({
+            account: type === 'account' ? !prev.account : false,
+            cart: type === 'cart' ? !prev.cart : false
+        }))
+    }
+
+    // Click outside detection
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+                closeAllDropdowns()
+            }
+        }
+
+        if (dropdownState.account || dropdownState.cart) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [dropdownState.account, dropdownState.cart])
   return (
-    <header id="header" className="te-header flex-shrink-0 sticky top-0 z-50 transition-transform duration-300 sticky-scroll" role="banner" style={{transform: 'translateY(0px)'}}>
+    <header ref={headerRef} id="header" className="te-header flex-shrink-0 sticky top-0 z-50 transition-transform duration-300 sticky-scroll" role="banner" style={{transform: 'translateY(0px)'}}>
   <Marquee />
   {/* <!-- Topbar --> */}
-  <TopBar />
+  <TopBar menuData={menuData} />
   {/* <!-- Header Style (2) --> */}
   <nav className="te-navbar whitespace-nowrap mx-auto shadow-sm w-full relative bg-white dark:bg-gray-800" role="navigation" aria-label="Main Navigation">
   
@@ -45,8 +85,8 @@ function Header({menuData}: {menuData: any}) {
          {user && <CircleWidget icon="wishlist" badge={count} type="wishlist" link="/wishlist" />}
          {!user && (pathname !=='/auth/login')&&(pathname !=='/auth/register') && <CircleWidget icon="account" badge={null} type="account" link="/auth/login"  />}
 
-          {user && <CircleWidget icon="account" badge={null} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Account")} accountGridSubtitle={`${t('Hi')}, ${user?.first_name}`} />}
-         { user && <CircleWidget icon="cart" badge={cartData?.data?.cart_count} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Cart")} accountGridSubtitle={ cartData?.data?.amount_to_pay ? `${cartData?.data?.amount_to_pay}` : '0' } />}
+          {user && <CircleWidget icon="account" badge={null} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Account")} accountGridSubtitle={`${t('Hi')}, ${user?.first_name}`} isOpen={dropdownState.account} onToggle={() => toggleDropdown('account')} />}
+         { user && <CircleWidget icon="cart" badge={cartData?.data?.cart_count} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Cart")} accountGridSubtitle={ cartData?.data?.amount_to_pay ? `${parseFloat(cartData?.data?.amount_to_pay as string) >0 ? cartData?.data?.amount_to_pay:'0.00'} ` : '0' } isOpen={dropdownState.cart} onToggle={() => toggleDropdown('cart')} />}
 
 
             

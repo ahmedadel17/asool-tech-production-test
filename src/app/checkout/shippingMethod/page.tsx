@@ -16,7 +16,7 @@ function ShippingMethod() {
     <div className='container'>
         <main id='main' role='main'>
 
-            <BreadCrumb title={t('Checkout')} link='/checkout' secondPage={t('Shipping Method')} />
+            <BreadCrumb title={t('Shipping Address')} link='/checkout' secondPage={t('Shipping Method')} />
             <PageHeader title={t('Shipping Method')} subtitle={t('Select your shipping method')} />
             <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { useTranslations } from "next-intl";
 interface MenuItem {
   title: string;
@@ -146,12 +147,16 @@ const DashboardSidebar: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    // Remove authToken, cartData, and wishlistProducts from localStorage
+    // Remove authToken, cartData, and wishlist from localStorage
     localStorage.removeItem('authToken');
     localStorage.removeItem('cartData');
-    localStorage.removeItem('wishlistProducts');
+    localStorage.removeItem('wishlist-storage');
     // Also clear cookie
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    
+    // Clear wishlist from store
+    const { clearWishlist } = useWishlistStore.getState();
+    clearWishlist();
     
     // Call logout function from useAuth hook (this also handles Redux store cleanup)
     logout();
