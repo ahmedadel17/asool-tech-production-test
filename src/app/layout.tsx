@@ -4,7 +4,8 @@ import { getMessages, getLocale } from 'next-intl/server';
 import { unstable_cache } from 'next/cache';
 import Header from "@/components/header";
 import FooterStyle1 from "@/components/footer/styles/footerStyle1";
-import ThemeProvider from "@/components/themeProvider";
+// import ThemeProvider from "@/components/themeProvider";
+import ThemeProvider2 from "@/components/ThemeProvider2";
 import getRequest from "../../helpers/get";
 import { generatePaletteFromHex } from "@/utils/colorUtils";
 import { NextIntlClientProvider } from "next-intl";
@@ -213,7 +214,7 @@ export default async function RootLayout({
       >
       <NextIntlClientProvider messages={messages}>
           
-        <ThemeProvider>
+        <ThemeProvider2>
           <Header menuData={menuData} />
           <main className="flex-1 pb-16 lg:pb-0 dark:bg-gray-900 dark:text-white">
             {children}
@@ -221,7 +222,7 @@ export default async function RootLayout({
           <FooterStyle1 menuData={menuData} />
           <MobileMenuFooter />
           <Toaster />
-        </ThemeProvider>
+        </ThemeProvider2>
 
         </NextIntlClientProvider>
       </body>
