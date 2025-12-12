@@ -4,7 +4,7 @@ import { getMessages, getLocale } from 'next-intl/server';
 import { unstable_cache } from 'next/cache';
 import Header from "@/components/header";
 import FooterStyle1 from "@/components/footer/styles/footerStyle1";
-import ThemeProvider from "../components/themeProvider";
+import ThemeProvider from "@/components/themeProvider";
 import getRequest from "../../helpers/get";
 import { generatePaletteFromHex } from "@/utils/colorUtils";
 import { NextIntlClientProvider } from "next-intl";
