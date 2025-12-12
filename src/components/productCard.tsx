@@ -22,6 +22,7 @@ import { toast } from 'react-hot-toast'
 import { useLocale } from 'next-intl'
 import { WishlistProduct } from '@/store/wishlistStore'
 import { useRouter } from 'next/navigation'
+
 interface Variation {
   attribute_id: string
   attribute_name: string
@@ -52,7 +53,7 @@ function ProductCard({ product }: { product: Product }) {
   
   // Ref to track if we've already fetched for the current selection
   const lastFetchedSelection = useRef<string>('')
-  
+  const logout = useUserStore((state) => state.logout)
   // Zustand stores
   const { setVariation, getVariation, clearVariation } = useProductStore()
   const { setCartData } = useCartStore()
@@ -60,6 +61,7 @@ function ProductCard({ product }: { product: Product }) {
   const t = useTranslations('productsCard')
   const locale=useLocale()
   const router = useRouter()
+
   // Get variation specific to this product
   const variation = product?.id ? getVariation(product.id) : null
   
@@ -181,7 +183,15 @@ function ProductCard({ product }: { product: Product }) {
       toast.success(response.data.message)
       setCartData(response.data)
     } catch (error) {
-      toast.error(t('Failed to add to cart'))
+
+      toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || t('Failed to add to cart'))
+      if((error as { response?: { status?: number } }).response?.status==401){
+        if(token){
+          logout()
+        }
+        router.push('/auth/login')
+      }
+
     }
   }
 

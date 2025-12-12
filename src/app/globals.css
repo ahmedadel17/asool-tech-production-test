@@ -404,7 +404,7 @@ html.no-transition *:after {
  [multiple],
  textarea,
  select {
-   @apply w-full px-input-x py-2 border border-gray-300 rounded-input text-gray-900 placeholder-gray-400 text-sm leading-5 transition-colors duration-200 bg-white shadow-sm;
+   @apply w-full     border border-gray-300 rounded-input text-gray-900 placeholder-gray-400 text-sm leading-5 transition-colors duration-200 bg-white shadow-sm;
  }
 
  .input-mobile-sm {

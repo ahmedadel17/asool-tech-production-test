@@ -77,7 +77,7 @@ function ProductsPagination({ currentPage, totalPages, totalItems, itemsPerPage 
             <span className="te-pagination-info-number font-semibold text-gray-900 dark:text-gray-100 mx-1">{startItem}</span>
             {t('to')} <span className="te-pagination-info-number font-semibold text-gray-900 dark:text-gray-100 mx-1">{endItem}</span>
             {t('of')} <span className="te-pagination-info-number font-semibold text-gray-900 dark:text-gray-100 mx-1">{totalItems}</span>
-            {t('results')}{totalItems !== 1 ? t('s') : t('')}
+            {t('results')}
           </span>
         </div>
 

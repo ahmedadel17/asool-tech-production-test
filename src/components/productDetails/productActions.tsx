@@ -29,6 +29,7 @@ function ProductActions({
   const { token } = useUserStore()
   const { setCartData } = useCartStore()
   const [isLoading, setIsLoading] = useState(false)
+  const logout = useUserStore((state) => state.logout)
   const t = useTranslations('productDetails')
   const locale=useLocale()
   const router = useRouter()  
@@ -69,7 +70,13 @@ function ProductActions({
             toast.error(t('Please login to add to cart'))
             router.push('/auth/login')
         }
-      toast.error(t('Failed to add to cart'))
+        toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || t('Failed to add to cart'))
+        if((error as { response?: { status?: number } }).response?.status==401){
+          if(token){
+            logout()
+          }
+          router.push('/auth/login')
+        }
     } finally {
       setIsLoading(false)
     }
