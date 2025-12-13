@@ -83,7 +83,7 @@ function Header({menuData}: {menuData: any}) {
               {/* <!-- Notification --> */}
         {user&&  <CircleWidget icon="notification" badge={5} type="notification" link="/dashboard/notifications" />}
          {user && <CircleWidget icon="wishlist" badge={count} type="wishlist" link="/wishlist" />}
-         {!user && (pathname !=='/auth/login')&&(pathname !=='/auth/register') && <CircleWidget icon="account" badge={null} type="account" link="/auth/login"  />}
+         {!user && (pathname !=='/auth/login')&&(pathname !=='/auth/Register') && <CircleWidget icon="account" badge={null} type="account" link="/auth/login"  />}
 
           {user && <CircleWidget icon="account" badge={null} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Account")} accountGridSubtitle={`${t('Hi')}, ${user?.first_name}`} isOpen={dropdownState.account} onToggle={() => toggleDropdown('account')} />}
          { user && <CircleWidget icon="cart" badge={cartData?.data?.cart_count} type="dropdown" link={null} accountGrid={true} accountGridTitle={t("My Cart")} accountGridSubtitle={ cartData?.data?.amount_to_pay ? `${parseFloat(cartData?.data?.amount_to_pay as string) >0 ? cartData?.data?.amount_to_pay:'0.00'} ` : '0' } isOpen={dropdownState.cart} onToggle={() => toggleDropdown('cart')} />}

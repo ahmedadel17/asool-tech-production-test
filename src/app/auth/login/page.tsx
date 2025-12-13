@@ -54,7 +54,7 @@ function Login() {
       if (response?.data?.data?.registered) {
         router.push(`/auth/otp?phone=${formData.fullPhoneNumber}&country=${formData.countryCode}`)
       } else {
-        router.push(`/auth/register?phone=${formData.fullPhoneNumber}&country=${formData.countryCode}`)
+        router.push(`/auth/Register?phone=${formData.fullPhoneNumber}&country=${formData.countryCode}`)
       }
     } catch (error: unknown) {
       console.error('Error sending OTP:', error)
