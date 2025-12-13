@@ -17,7 +17,7 @@ function AccountDropDown({isOpen}: {isOpen: boolean}) {
   const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   const router = useRouter()
   const pathname = usePathname()
-  console.log('pathname',pathname)
+  // console.log('pathname',pathname)
   const t = useTranslations('header')
   const handleLogout = () => {
     // Clear cart data from localStorage
