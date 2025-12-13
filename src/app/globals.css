@@ -700,7 +700,5 @@ html.no-transition *:after {
             --tw-bg-opacity: 1;
             background-color: rgb(246 241 229 / var(--tw-bg-opacity, 1));
         }
-        .bg-primary-50\/20 {
-            background-color: hsl(222 81.7% 66.4% / 0.2);
-        }
+    
         
