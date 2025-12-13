@@ -18,11 +18,17 @@ interface RegisterFormValues {
 function Register() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0])
   const [isPhoneValid, setIsPhoneValid] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const phoneFromQuery = searchParams.get('phone') || ''
   const countryFromQuery = searchParams.get('country') || ''
   const t = useTranslations("register")
+
+  // Set mounted state after component mounts to avoid hydration issues
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Define validation schema inside component to access t function
   const validationSchema = Yup.object({
@@ -159,7 +165,7 @@ function Register() {
                   disabled={isSubmitting}
                   placeholder={t('Enter your First name')}
                   className={`block w-full border rounded-md shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-3 py-2 ${
-                    errors.firstName && touched.firstName
+                    isMounted && errors.firstName && touched.firstName
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                       : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500'
                   } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -177,7 +183,7 @@ function Register() {
                   disabled={isSubmitting}
                   placeholder={t('Enter your Last name')}
                   className={`block w-full border rounded-md shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-3 py-2 ${
-                    errors.lastName && touched.lastName
+                    isMounted && errors.lastName && touched.lastName
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                       : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500'
                   } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -196,7 +202,7 @@ function Register() {
                 disabled={isSubmitting}
                 placeholder={t('Enter your email address')}
                 className={`block w-full border rounded-md shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-3 py-2 ${
-                  errors.email && touched.email
+                  isMounted && errors.email && touched.email
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                     : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500'
                 } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -221,7 +227,7 @@ function Register() {
                   type="checkbox"
                   disabled={isSubmitting}
                   className={`focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 ${
-                    errors.terms && touched.terms ? 'border-red-500' : ''
+                    isMounted && errors.terms && touched.terms ? 'border-red-500' : ''
                   } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                 />
               </div>
