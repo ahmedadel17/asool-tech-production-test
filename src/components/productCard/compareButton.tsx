@@ -1,18 +1,33 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCompareStore, type CompareProduct } from '@/store/compareStore'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { usePathname } from 'next/navigation'
 
 interface CompareButtonProps {
   product: CompareProduct
 }
 
 function CompareButton({ product }: CompareButtonProps) {
+  const pathname = usePathname()
   const { addProduct, removeProduct, isProductInCompare, getProductCount } = useCompareStore()
   const t = useTranslations('productsCard')
-  const isInCompare = isProductInCompare(product.id as string | number)
+  const [isMounted, setIsMounted] = useState(false)
   const compareCount = getProductCount()
+
+  // Only check compare state after component mounts (client-side only)
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Check if product is in compare (only after mount to avoid hydration mismatch)
+  const isInCompare = isMounted && isProductInCompare(product.id as string | number)
+
+  // Don't show compare button on auth pages
+  if (pathname?.startsWith('/auth')) {
+    return null
+  }
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()

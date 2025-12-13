@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import PhoneInput from '@/components/phoneInput'
@@ -59,13 +59,30 @@ function Register() {
     }
   }, [countryFromQuery])
 
-  const initialValues: RegisterFormValues = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: phoneFromQuery && selectedCountry.dialCode ? phoneFromQuery.replace(selectedCountry.dialCode, '') : '',
-    terms: false
-  }
+  // Compute initial phone value - handle both server and client render
+  const initialValues: RegisterFormValues = useMemo(() => {
+    let phone = ''
+    if (phoneFromQuery) {
+      // Find country from query or use default
+      const country = countryFromQuery 
+        ? countries.find(c => c.code === countryFromQuery) || countries[0]
+        : countries[0]
+      
+      if (country.dialCode && phoneFromQuery.startsWith(country.dialCode)) {
+        phone = phoneFromQuery.replace(country.dialCode, '')
+      } else {
+        phone = phoneFromQuery
+      }
+    }
+    
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: phone,
+      terms: false
+    }
+  }, [phoneFromQuery, countryFromQuery])
 
   const handleSubmit = async (
     values: RegisterFormValues, 
@@ -122,6 +139,7 @@ function Register() {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('Create Your Account')}</h3>
       <p className="text-sm text-gray-600 dark:text-gray-400">{t('We need a few more details to get started')}</p></div>
       <Formik
+        key={selectedCountry.code}
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
