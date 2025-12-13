@@ -491,7 +491,8 @@
     "Save items you love by clicking the heart icon on any product": "Save items you love by clicking the heart icon on any product",
     "We will keep them safe here for you": "We will keep them safe here for you",
     "Loading wishlist": "Loading wishlist",
-    "products added to favorites successfully": "products added to favorites successfully"
+    "products added to favorites successfully": "products added to favorites successfully",
+    "item":"item"
 },
 "promoCode":{
     "Promo code must be at least 3 characters": "Promo code must be at least 3 characters",

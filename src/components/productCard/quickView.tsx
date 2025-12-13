@@ -2,34 +2,17 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useQuickViewStore } from '@/store/quickViewStore'
 
-interface Product {
-  id?: string | number
-  slug?: string
-  name?: string
-  min_price?: number
-  price_after_discount?: number
-  short_description?: string
-  thumbnail?: string
-  [key: string]: unknown
-}
-
-function QuickViewModal({ 
-  isOpen, 
-  onClose, 
-  product 
-}: { 
-  isOpen: boolean
-  onClose: () => void
-  product: Product | null
-}) {
+function QuickViewModal() {
   const t = useTranslations('productsCard')
+  const { isOpen, product, closeQuickView } = useQuickViewStore()
 
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        closeQuickView()
       }
     }
 
@@ -42,12 +25,12 @@ function QuickViewModal({
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen, onClose])
+  }, [isOpen, closeQuickView])
 
   // Close on backdrop click
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      onClose()
+      closeQuickView()
     }
   }
 
@@ -60,7 +43,7 @@ function QuickViewModal({
 
   return (
     <div 
-      className="quickViewModal animate-fade-in fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      className="quickViewModal animate-fade-in fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -69,7 +52,7 @@ function QuickViewModal({
             {product.name || ''}
           </h2>
           <button 
-            onClick={onClose}
+            onClick={closeQuickView}
             className="closeQuickView text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-3xl leading-none w-8 h-8 flex items-center justify-center transition-colors" 
             type="button"
             aria-label="Close"
@@ -111,7 +94,7 @@ function QuickViewModal({
                 <Link 
                   href={`/products/${product.slug || ''}`}
                   className="w-full  te-btn te-btn-default block text-center"
-                  onClick={onClose}
+                  onClick={closeQuickView}
                 >
                   {t('View Details') }
                 </Link>

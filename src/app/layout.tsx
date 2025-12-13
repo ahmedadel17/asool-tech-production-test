@@ -223,6 +223,7 @@ export default async function RootLayout({
           </main>
           <FooterStyle1 menuData={menuData} />
           <CompareBar />  
+          <QuickViewModal />
           <MobileMenuFooter />
           <Toaster />
         </ThemeProvider2>

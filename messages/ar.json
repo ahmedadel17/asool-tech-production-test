@@ -494,7 +494,8 @@
     "Remove from Wishlist": "إزالة من قائمة الأمتيازات",
     "Wishlist is empty": "قائمة الأمتيازات فارغة",
     "Add to Wishlist": "إضافة إلى قائمة الأمتيازات",
-    "Remove from Wishlist": "إزالة من قائمة الأمتيازات"
+    "Remove from Wishlist": "إزالة من قائمة الأمتيازات",
+    "item":"عنصر"
    },
    "promoCode":{
     "Promo code must be at least 3 characters": "يجب أن يكون رمز الخصم على الأقل 3 أحرف",
