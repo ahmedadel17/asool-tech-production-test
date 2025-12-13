@@ -102,7 +102,7 @@ function RightSide({
     }
     // Log selected variations when all are selected (for debugging)
     if (allVariationsSelected) {
-      console.log('All variations selected:', selectedVariations)
+      // console.log('All variations selected:', selectedVariations)
     }
   }, [selectedVariations, allVariationsSelected, onVariationsChange])
 

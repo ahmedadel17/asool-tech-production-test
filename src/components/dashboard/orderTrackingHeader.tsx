@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslations } from 'next-intl';
 function OrderTrackingHeader({orderData}: {orderData: any}) {
-  const t = useTranslations();
+  const t = useTranslations('order');
   return (
     <div className="p-6 border-b border-gray-200 dark:border-gray-600">
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

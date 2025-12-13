@@ -23,6 +23,7 @@ import { toast } from 'react-hot-toast'
 import { useLocale } from 'next-intl'
 import { WishlistProduct } from '@/store/wishlistStore'
 import { useRouter } from 'next/navigation'
+import QuickViewModal from './productCard/quickView'
 
 interface Variation {
   attribute_id: string
@@ -51,6 +52,9 @@ function ProductCard({ product }: { product: Product }) {
   
   // State to track loading when fetching variations
   const [isFetchingVariations, setIsFetchingVariations] = useState(false)
+  
+  // State for QuickView modal
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false)
   
   // Ref to track if we've already fetched for the current selection
   const lastFetchedSelection = useRef<string>('')
@@ -117,7 +121,7 @@ function ProductCard({ product }: { product: Product }) {
         })
       }
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       toast.error(t('Failed to fetch product variations'))
       if (product.id) {
         setVariation(product.id, null)
@@ -200,6 +204,7 @@ function ProductCard({ product }: { product: Product }) {
   }
 
   return (
+    <>
     <div className="product-item w-full h-full lg:bg-white dark:lg:bg-gray-800 rounded-md lg:rounded-lg lg:shadow flex flex-col" data-product-id="1" data-product-title="رداء قطني مطرز بالأكمام الطويلة" data-product-price="720.00" data-product-image="assets/images/cotton/cotton-pro-1.jpg">
 
     <Link href={`/products/${product?.slug}`} className="product-thumbnail relative block overflow-hidden rounded-lg lg:rounded-t-lg lg:rounded-b-none group">
@@ -212,11 +217,11 @@ function ProductCard({ product }: { product: Product }) {
     <div className="product-hover-btns absolute inset-0 pointer-events-auto flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-30 z-20 flex gap-1">
 
         {/* <!-- Compare Button --> */}
-       <CompareButton />
+       <CompareButton product={product} />
         {/* <!-- .compare-btn --> */}
 
         {/* <!-- Quick View Button --> */}
-        <QuickViewButton />
+        <QuickViewButton onClick={() => setIsQuickViewOpen(true)} />
         {/* <!-- .quick-view-btn --> */}
 
     </div>
@@ -304,6 +309,16 @@ function ProductCard({ product }: { product: Product }) {
 
 </div>
 </div>
+
+{/* Quick View Modal */}
+{isQuickViewOpen && (
+  <QuickViewModal 
+    isOpen={isQuickViewOpen}
+    onClose={() => setIsQuickViewOpen(false)}
+    product={product}
+  />
+)}
+    </>
   )
 }
 

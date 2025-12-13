@@ -70,7 +70,7 @@ function OTP() {
     
     setIsResending(true)
     try {
-      await postRequest('/auth/send-otp', { phone }, {}, null, 'en')
+      await postRequest('/auth/send-otp', { phone }, {}, null, locale)
       setCountdown(60)
       setIsResendDisabled(true)
       setOtp(['', '', '', '', ''])
@@ -145,7 +145,7 @@ function OTP() {
         router.push('/')
       }
       else{
-        console.log('response', response)
+        // console.log('response', response)
         toast.error(response.data?.message)
       }
     } catch (error) {

@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslations } from 'next-intl';
 import ProductItem from '../checkoutConfirmation/productItem';
 function ProductItems({orderData}: {orderData: any}) {
-  const t = useTranslations();
+  const t = useTranslations('order');
   return (
    
     <div className="p-6 border-b border-gray-200 dark:border-gray-600">

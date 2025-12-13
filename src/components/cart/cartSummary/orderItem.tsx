@@ -2,6 +2,8 @@ import React from 'react'
 
 function OrderItem({item}: {item: any}) {
   return (
+    <div className="space-y-4 mb-6">
+
       <div className="flex items-center space-x-4 rtl:space-x-reverse">
                         <img src={item?.image} alt={item?.name} className="w-16 h-16 object-cover rounded-md" />
                         <div className="flex-1">
@@ -16,6 +18,8 @@ function OrderItem({item}: {item: any}) {
                             </p>
                         </div>
                     </div>
+    </div>
+
   )
 }
 

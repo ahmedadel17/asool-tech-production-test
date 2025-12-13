@@ -82,6 +82,7 @@ function Login() {
                 isLoading={isLoading}
                 error={error}
                 onValidationChange={setIsPhoneValid}
+                label={`${t('Phone Number')}`}
               />
               {error && !error.includes('Phone number') && (
                 <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">

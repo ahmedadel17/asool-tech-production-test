@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import FormikInput from '@/components/phone/formikInput';
 import * as Yup from 'yup';
@@ -12,6 +12,8 @@ import { useUserStore } from '@/store/userStore';
 import FormikCitySearchSelect from '@/components/phone/formikCitySearchSelect';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import PhoneInput from '@/components/phoneInput';
+import { countries, type Country } from '@/components/countryDropdown';
 interface CreateAddressData {
   name: string;
   address: string;
@@ -56,6 +58,28 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
     ...initialValues,
     ...(initialValuesOverride as CreateAddressData | undefined),
   };
+  
+  // Initialize phone and country from merged initial values
+  const getInitialCountry = (): Country => {
+    const countryCode = mergedInitialValues.countryCode || 'SA';
+    return countries.find(c => c.code === countryCode) || countries[0];
+  };
+  
+  const [selectedCountry, setSelectedCountry] = useState<Country>(getInitialCountry())
+  const [phone, setPhone] = useState(mergedInitialValues.contact_phone || '')
+  
+  // Sync phone and country when initialValuesOverride changes (edit mode)
+  useEffect(() => {
+    if (initialValuesOverride?.contact_phone) {
+      setPhone(initialValuesOverride.contact_phone);
+    }
+    if (initialValuesOverride?.countryCode) {
+      const country = countries.find(c => c.code === initialValuesOverride.countryCode);
+      if (country) {
+        setSelectedCountry(country);
+      }
+    }
+  }, [initialValuesOverride]);
 
   const validationSchema = Yup.object({
       name: Yup.string().notRequired().nullable().min(2, t('Name must be at least 2 characters')),
@@ -114,9 +138,7 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
           validationSchema={validationSchema}
         >
           {({ values, setFieldValue, handleChange, handleBlur, errors, touched, isSubmitting }) => {
-            // Debug: Log validation errors
-            // console.log('Form errors:', errors);
-            // console.log('Form touched:', touched);
+          
             
             return (
             <Form>
@@ -184,6 +206,22 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
                   placeholder={t('Select your city')}
                   required
                 />    
+                
+                <PhoneInput
+                  selectedCountry={selectedCountry}
+                  onCountryChange={(country) => {
+                    setSelectedCountry(country);
+                    setFieldValue('countryCode', country.code);
+                  }}
+                  phone={phone}
+                  onPhoneChange={(phoneValue) => {
+                    setPhone(phoneValue);
+                    setFieldValue('contact_phone', phoneValue);
+                  }}
+                  required={false}
+                  label={`${t('Phone Number')} (${t('optional')})`}
+                />
+                
                 {/* <CountryPhoneInput
                   value={values.contact_phone}
                   onChange={(phoneValue, countryCode) => {

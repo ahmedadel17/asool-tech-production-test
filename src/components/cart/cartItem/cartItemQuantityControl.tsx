@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useCartStore } from '@/store/cartStore'
 import { useUserStore } from '@/store/userStore'
 import postRequest from '../../../../helpers/post'
+import { useLocale } from 'next-intl'
 
 function CartItemQuantityControl({
   quantity: initialQuantity,
@@ -16,7 +17,7 @@ function CartItemQuantityControl({
   const { token } = useUserStore()
   const [quantity, setQuantity] = useState(initialQuantity as number)
   const [isLoading, setIsLoading] = useState(false)
-
+  const locale = useLocale();
   // Update local state when prop changes
   useEffect(() => {
     setQuantity(initialQuantity as number)
@@ -44,7 +45,7 @@ function CartItemQuantityControl({
         },
         {},
         token,
-        'en'
+        locale
       )
       
       if (response?.data) {

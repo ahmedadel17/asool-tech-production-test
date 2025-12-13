@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 function ClearFiltersButton() {
   const router = useRouter()
@@ -21,19 +22,23 @@ function ClearFiltersButton() {
     }
     params.set('page', '1')
     
+    // Clear all filter parameters: min_price, max_price, categories[], attributes[], keyword
+    // (These are not included in the new params, so they're effectively cleared)
+    
     router.push(`?${params.toString()}`)
   }
-
+ const t = useTranslations('productsGrid')
   return (
     <button 
       onClick={handleClearFilters}
       className="px-6 py-3 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors font-medium"
     >
-      Clear Filters
+      {t('Clear Filters')}
     </button>
   )
 }
 
 export default ClearFiltersButton
+
 
 

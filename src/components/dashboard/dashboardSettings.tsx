@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 function DashboardSettings() {
   const t = useTranslations('Account Settings');
   const locale = useLocale();
-  const { token, user } = useUserStore();
+  const { token, user, setUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -34,16 +34,12 @@ function DashboardSettings() {
         birth_date: userData.birth_date || '',
         gender: userData.gender || '',
       });
-      
-      // Update user data in Redux state slice and localStorage
-      const fullName = userData.name || `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-     
     }
-  }, [token, locale, ]);
+  }, [token, locale]);
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -79,20 +75,27 @@ function DashboardSettings() {
       );
 
       if (response.data?.status) {
-        toast.success(response.data.message || t('Profile updated successfully') || 'Profile updated successfully');
+        toast.success(response.data.message || t('Profile updated successfully'));
+        // console.log('response', response?.data?.data?.user);
         
-        // Update user data in Redux state slice and localStorage
-        const fullName = `${formData.first_name} ${formData.last_name}`.trim();
+        // Update user data in Zustand store and localStorage
+        const updatedUser = response?.data?.data?.user;
+        if (updatedUser) {
+          // Merge with existing user data to preserve any fields not returned in response
+          setUser({
+            ...user,
+            ...updatedUser,
+            // Ensure we have the name field if it exists or construct it
+            name: updatedUser.name || `${updatedUser.first_name || ''} ${updatedUser.last_name || ''}`.trim() || user?.name,
+          });
+        }
       
-        
-        // Optionally refetch profile to get updated data
-        await fetchProfile();
       } else {
-        toast.error(response.data?.message || t('Failed to update profile') || 'Failed to update profile');
+        toast.error(response.data?.message || t('Failed to update profile') );
       }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error(t('Failed to update profile') || 'Failed to update profile');
+    } catch (error: unknown) {
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(errorMessage || t('Failed to update profile'));
     } finally {
       setIsLoading(false);
     }

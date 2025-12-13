@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl';
 function OrderItem({order}: {order: any}) {
   const t = useTranslations('Dashboard');
-  console.log('order', order);
+  // console.log('order', order);
   return (
     <>
              <tr key={order.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">

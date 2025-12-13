@@ -169,7 +169,7 @@ const DashboardSidebar: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           {/* User Profile */}
           <div className="flex items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-600">
-            <div className="w-16 h-16 uppercase bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg shrink-0">
+            <div className="w-16 h-16 uppercase bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg">
               {!mounted ? (
                 <div className="animate-pulse bg-white/20 rounded-full w-8 h-8"></div>
               ) : (
@@ -197,18 +197,21 @@ const DashboardSidebar: React.FC = () => {
           {/* Navigation Menu */}
           <nav className="space-y-1">
             {menuItems.map((item) => {
-              const isActive = pathname === item.url;
+              // Only check active state after component has mounted to prevent hydration mismatch
+              const isActive = mounted && pathname === item.url;
               const activeClass = isActive
-                ? "bg-primary-50/20 dark:bg-primary-900/20 text-primary-600 dark:text-primary-100"
+                ? "bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
                 : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700";
 
               // Handle logout button specially
+              // Logout button should never be active since /logout is not a real route
               if (item.url === "/logout") {
                 return (
                   <button
                     key={item.url}
                     onClick={handleLogout}
-                    className={`flex gap-3 items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left ${activeClass}`}
+                    className="flex gap-3 items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    suppressHydrationWarning
                   >
                     <svg
                       className="w-5 h-5"

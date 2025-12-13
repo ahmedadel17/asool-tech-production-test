@@ -1,99 +1,237 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-function VariableWidget() {
+import { useRouter, useSearchParams } from 'next/navigation'
+import VariableWidgetSection from './VariableWidgetSection'
+import AttributeButton from './attributeButton'
+import ColorButton from './colorButton'
+import ResultsCount from './resultsCount'
+import SelectedAttributes from './selectedAttributes'
+import VariableWidgetHeader from './variableWidgetHeader'
+
+interface AttributeValue {
+  id: string | number
+  value: string
+  color?: string
+}
+
+interface Attribute {
+  id: string | number
+  name: string
+  type: string
+  values: AttributeValue[]
+}
+
+interface SelectedAttributesState {
+  [attributeId: string]: string[]
+}
+
+function VariableWidget({ attributes, totalProducts }: { attributes: Attribute[], totalProducts: number }) {
   const t = useTranslations('productsFilter')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  // State to track selected attribute values: { attributeId: [valueId1, valueId2, ...] }
+  const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesState>({})
+
+  // Initialize selected attributes from URL parameters on mount
+  useEffect(() => {
+    const attributesParam = searchParams.getAll('attributes[]')
+    if (attributesParam.length > 0 && attributes) {
+      const initialSelected: SelectedAttributesState = {}
+      
+      // Group attribute values by attribute ID
+      attributes.forEach((attribute) => {
+        const attributeValues: string[] = []
+        attribute.values.forEach((value) => {
+          if (attributesParam.includes(String(value.id))) {
+            attributeValues.push(String(value.id))
+          }
+        })
+        if (attributeValues.length > 0) {
+          initialSelected[String(attribute.id)] = attributeValues
+        }
+      })
+      
+      setSelectedAttributes(initialSelected)
+    }
+  }, [searchParams, attributes])
+
+  // Toggle attribute value selection
+  const toggleAttributeValue = useCallback((attributeId: string | number, valueId: string | number) => {
+    setSelectedAttributes((prev) => {
+      const attrId = String(attributeId)
+      const valId = String(valueId)
+      const currentValues = prev[attrId] || []
+      
+      if (currentValues.includes(valId)) {
+        // Remove if already selected
+        const newValues = currentValues.filter((id) => id !== valId)
+        if (newValues.length === 0) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [attrId]: _, ...rest } = prev
+          return rest
+        }
+        return { ...prev, [attrId]: newValues }
+      } else {
+        // Add if not selected
+        return { ...prev, [attrId]: [...currentValues, valId] }
+      }
+    })
+  }, [])
+
+  // Check if an attribute value is selected
+  const isValueSelected = useCallback((attributeId: string | number, valueId: string | number) => {
+    const attrId = String(attributeId)
+    const valId = String(valueId)
+    return selectedAttributes[attrId]?.includes(valId) || false
+  }, [selectedAttributes])
+
+  // Apply filters to URL
+  const handleApplyFilter = useCallback(() => {
+    // Dispatch custom event to trigger loading
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('productsFilterApplied'))
+    }
+
+    // Create new URLSearchParams with existing params
+    const params = new URLSearchParams(searchParams.toString())
+    
+    // Remove all existing attributes[]
+    params.delete('attributes[]')
+    
+    // Add selected attribute values
+    Object.values(selectedAttributes).forEach((valueIds) => {
+      valueIds.forEach((valueId) => {
+        params.append('attributes[]', valueId)
+      })
+    })
+    
+    // Reset to page 1 when applying filters
+    params.set('page', '1')
+    
+    router.push(`?${params.toString()}`)
+  }, [selectedAttributes, searchParams, router])
+
+  // Get all selected values for display
+  const getAllSelectedValues = useCallback(() => {
+    const selected: Array<{ attributeId: string, attributeName: string, valueId: string, valueName: string, valueColor?: string }> = []
+    
+    attributes?.forEach((attribute) => {
+      const attrId = String(attribute.id)
+      const selectedValueIds = selectedAttributes[attrId] || []
+      
+      selectedValueIds.forEach((valueId) => {
+        const value = attribute.values.find((v) => String(v.id) === valueId)
+        if (value) {
+          selected.push({
+            attributeId: attrId,
+            attributeName: attribute.name,
+            valueId: valueId,
+            valueName: value.value,
+            valueColor: value.color
+          })
+        }
+      })
+    })
+    
+    return selected
+  }, [selectedAttributes, attributes])
+
+  // Remove a specific attribute value
+  const removeAttributeValue = useCallback((attributeId: string, valueId: string) => {
+    setSelectedAttributes((prev) => {
+      const attrId = String(attributeId)
+      const currentValues = prev[attrId] || []
+      const newValues = currentValues.filter((id) => id !== valueId)
+      
+      if (newValues.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [attrId]: _, ...rest } = prev
+        return rest
+      }
+      return { ...prev, [attrId]: newValues }
+    })
+  }, [])
+
+  // Clear all selected attributes
+  const handleClearAll = useCallback(() => {
+    // Dispatch custom event to trigger loading
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('productsFilterApplied'))
+    }
+
+    // Clear local state
+    setSelectedAttributes({})
+
+    // Create new URLSearchParams with existing params
+    const params = new URLSearchParams(searchParams.toString())
+    
+    // Remove all attributes[] parameters
+    params.delete('attributes[]')
+    
+    // Reset to page 1
+    params.set('page', '1')
+    
+    router.push(`?${params.toString()}`)
+  }, [searchParams, router])
+
   return (
     <div className="variable-widget w-full max-w-sm mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6">
+      <VariableWidgetHeader onClear={handleClearAll} />
 
-    {/* <!-- Widget Header --> */}
-    <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('Size')} &amp; {t('Color')}</h3>
-        <button id="clearSizeColor" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors" aria-label="Clear all size and color filters" >
-            {t('Clear')}    
-        </button>
-    </div>
+      {/* Attribute Filters */}
+      {attributes?.map((attribute) => {
+        return (
+          attribute?.type === 'color' ? (
+            <VariableWidgetSection key={attribute?.id} attributeName={attribute?.name}>
+              {attribute?.values?.map((value) => {
+                return (
+                  <ColorButton 
+                    key={value?.id} 
+                    color={value}
+                    isSelected={isValueSelected(attribute.id, value.id)}
+                    onClick={() => toggleAttributeValue(attribute.id, value.id)}
+                  />
+                )
+              })}
+            </VariableWidgetSection>
+          ) : (
+            <VariableWidgetSection key={attribute?.id} attributeName={attribute?.name}>
+              {attribute?.values?.map((value) => {
+                return (
+                  <AttributeButton 
+                    key={value?.id} 
+                    attribute={value}
+                    isSelected={isValueSelected(attribute.id, value.id)}
+                    onClick={() => toggleAttributeValue(attribute.id, value.id)}
+                  />
+                )
+              })}
+            </VariableWidgetSection>
+          )
+        )
+      })}
 
-    {/* <!-- Size Filter --> */}
-    <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Size</h4>
-        <div className="grid grid-cols-4 gap-2">
-                            <button className="size-option" data-size="XS" aria-label="Select size XS" >
-                    XS                </button>
-                            <button className="size-option" data-size="S" aria-label="Select size S" >
-                    S                </button>
-                            <button className="size-option" data-size="M" aria-label="Select size M" >
-                    M                </button>
-                            <button className="size-option" data-size="L" aria-label="Select size L" >
-                    L                </button>
-                            <button className="size-option" data-size="XL" aria-label="Select size XL" >
-                    XL                </button>
-                            <button className="size-option" data-size="XXL" aria-label="Select size XXL" >
-                    XXL                </button>
-                    </div>
+      {/* Selected Attributes Display */}
+      <SelectedAttributes 
+        selectedValues={getAllSelectedValues()}
+        onRemove={removeAttributeValue}
+      />
 
-        {/* <!-- Shoe Sizes --> */}
-        <div className="mt-4">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Shoe Sizes</div>
-            <div className="grid grid-cols-4 gap-2">
-                                    <button className="size-option" data-size="38" aria-label="Select shoe size 38" >
-                        38                    </button>
-                                    <button className="size-option" data-size="39" aria-label="Select shoe size 39" >
-                        39                    </button>
-                                    <button className="size-option" data-size="40" aria-label="Select shoe size 40" >
-                        40                    </button>
-                                    <button className="size-option" data-size="41" aria-label="Select shoe size 41" >
-                        41                    </button>
-                                    <button className="size-option" data-size="42" aria-label="Select shoe size 42" >
-                        42                    </button>
-                                    <button className="size-option" data-size="43" aria-label="Select shoe size 43" >
-                        43                    </button>
-                                    <button className="size-option" data-size="44" aria-label="Select shoe size 44" >
-                        44                    </button>
-                                    <button className="size-option" data-size="45" aria-label="Select shoe size 45" >
-                        45                    </button>
-                            </div>
-        </div>
-    </div>
-
-    {/* <!-- Color Filter --> */}
-    <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Color</h4>
-        <div className="flex flex-wrap gap-3">
-                            <button className="color-option" style={{backgroundColor: 'black'}} data-color="black" title="black" aria-label="Select color black" ><span className="sr-only">black</span></button>
-                            <button className="color-option" style={{backgroundColor: 'white'}} data-color="white" title="white" aria-label="Select color white" ><span className="sr-only">white</span></button>
-                            <button className="color-option" style={{backgroundColor: 'gray'}} data-color="gray" title="gray" aria-label="Select color gray" ><span className="sr-only">gray</span></button>
-                            <button className="color-option" style={{backgroundColor: 'red'}} data-color="red" title="red" aria-label="Select color red" ><span className="sr-only">red</span></button>
-                            <button className="color-option" style={{backgroundColor: 'blue'}} data-color="blue" title="blue" aria-label="Select color blue" ><span className="sr-only">blue</span></button>
-                            <button className="color-option" style={{backgroundColor: 'yellow'}} data-color="yellow" title="yellow" aria-label="Select color yellow" ><span className="sr-only">yellow</span></button>
-                            <button className="color-option" style={{backgroundColor: 'green'}} data-color="green" title="green" aria-label="Select color green" ><span className="sr-only">green</span></button>
-                    </div>
-    </div>
-
-    {/* <!-- Selected Filters Display --> */}
-    <div id="selectedFilters" className="mb-6 hidden">
-        <div className="text-sm font-medium text-gray-900 dark:text-white mb-2">Selected:</div>
-        <div className="space-y-2">
-            <div id="selectedSizes" className="hidden">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Sizes:</span>
-                <div className="flex flex-wrap gap-1 mt-1" id="sizeTagsContainer"></div>
-            </div>
-            <div id="selectedColors" className="hidden">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Colors:</span>
-                <div className="flex flex-wrap gap-1 mt-1" id="colorTagsContainer"></div>
-            </div>
-        </div>
-    </div>
-
-    {/* <!-- Apply Button --> */}
-    <button id="applySizeColorFilter" className="w-full te-btn te-btn-default" aria-label="Apply size and color filters" >
+      {/* Apply Button */}
+      <button 
+        onClick={handleApplyFilter}
+        className="w-full te-btn te-btn-default" 
+        aria-label="Apply size and color filters"
+      >
         {t('Apply Filter')}
-    </button>
+      </button>
 
-    {/* <!-- Results Count --> */}
-    <div className="mt-4 text-center">
-        <span className="text-xs text-gray-500 dark:text-gray-400" id="sizeColorResults">Showing 124 products</span>
+      {/* Results Count */}
+      <ResultsCount totalProducts={totalProducts} />
     </div>
-</div>
   )
 }
 

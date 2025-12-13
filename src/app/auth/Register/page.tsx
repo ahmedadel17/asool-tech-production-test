@@ -193,6 +193,7 @@ function Register() {
               isLoading={isSubmitting}
               error={errors.phone && touched.phone ? errors.phone : undefined}
               onValidationChange={setIsPhoneValid}
+              label={`${t('Phone Number')}`}
             />
             <div className="flex items-start">
               <div className="flex items-center h-5">

@@ -2,10 +2,10 @@
 import { useRouter } from "next/navigation";
 import { XCircle, RotateCcw } from "lucide-react";
 import Link from "next/link";
-
+import { useTranslations } from "next-intl";
 export default function PaymentFailed() {
   const router = useRouter();
-
+  const t = useTranslations('paymentFailed');
   const handleRetry = () => {
     // Redirect to payment page or retry logic
     router.push("/pending-payment");
@@ -23,17 +23,17 @@ export default function PaymentFailed() {
         <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
       </div>
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        Payment Failed
+        {t('Payment Failed')}
       </h1>
       <p className="text-lg text-gray-600 dark:text-gray-400">
-        Unfortunately, your payment could not be processed.
+        {t('Unfortunately')}{' '}{t('your payment could not be processed')}.
       </p>
     </div>
 
     {/* Info Box */}
     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
       <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-        What can you do?
+        {t('What can you do')}
       </h3>
       <div className="space-y-6">
         <div className="flex items-start space-x-3 rtl:space-x-reverse">
@@ -44,10 +44,10 @@ export default function PaymentFailed() {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Check Your Payment Method
+              {t('Check Your Payment Method')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Ensure your card or payment account has sufficient balance and is active.
+              {t('Ensure your card or payment account has sufficient balance and is active')}.
             </p>
           </div>
         </div>
@@ -59,10 +59,10 @@ export default function PaymentFailed() {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Try Again
+              {t('Try Again')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              You can attempt the payment again using the same or a different method.
+              {t('You can attempt the payment again using the same or a different method')}.
             </p>
           </div>
         </div>
@@ -74,10 +74,10 @@ export default function PaymentFailed() {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Contact Support
+              {t('Contact Support')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              If the issue persists, please contact our support team for assistance.
+              {t('If the issue persists')}{' '}{t('please contact our support team for assistance')}.
             </p>
           </div>
         </div>
@@ -86,25 +86,25 @@ export default function PaymentFailed() {
 
     {/* Action Buttons */}
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-      <Link href="/retry-payment" className="te-btn te-btn-primary">
-        Try Again
-      </Link>
+      {/* <Link href="#" className="te-btn te-btn-primary">
+        {t('Try Again')}
+      </Link> */}
       <Link href="/" className="te-btn te-btn-default">
-        Continue Shopping
+        {t('Continue Shopping')}
       </Link>
     </div>
 
     {/* Email Confirmation Notice */}
     <div className="mt-8 text-center">
       <p className="text-gray-600 dark:text-gray-400">
-        If you’ve been charged, please reach out to{' '}
+        {t('If you have been charged')}{' '}{t('please reach out to')}{' '}
         <a
           href="mailto:support@example.com"
           className="text-primary-600 hover:text-primary-300 underline"
         >
           support@example.com
         </a>{' '}
-        for assistance.
+        {t('for assistance')}.
       </p>
     </div>
   </div>

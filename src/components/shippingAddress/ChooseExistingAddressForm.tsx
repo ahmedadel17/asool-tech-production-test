@@ -8,7 +8,7 @@ import axios from 'axios';
 import postRequest from '../../../helpers/post';
 // import { useDispatch } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface Address {
   id: number;
@@ -41,6 +41,7 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
   const { cartData, setCartData } = useCartStore();
   // const dispatch = useDispatch();
   const t = useTranslations('Checkout');
+  const locale = useLocale();
   const getExistingAddresses = useCallback(async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/addresses`, {
       headers: {
@@ -68,7 +69,7 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
               { user_address_id: addressIdStr },
               {},
               token,
-              'en'
+             locale
             );
           } catch (error) {
             console.error('Error updating cart details with default address:', error);
@@ -122,11 +123,11 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
           { user_address_id: addressId },
           {},
           token,
-          'en'
+          locale
         );
         
         if (response?.data) {
-          console.log('Cart details updated successfully:', response.data);
+          // console.log('Cart details updated successfully:', response.data);
           setCartData(response.data);
           toast.success('Address selected successfully');
         }

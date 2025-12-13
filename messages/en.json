@@ -23,7 +23,7 @@
     "parentheses": "parentheses",
     "Failed to send OTP Please try again": "Failed to send OTP Please try again",
     "Phone Number": "Phone Number",
-    "max 11 digits": "max 11 digits",
+    "Max 11 digits": "Max 11 digits",
     "digits": "digits",
     "Enter your": "Enter your",
     "Search countries": "Search countries",
@@ -88,10 +88,16 @@
     "You must agree to the terms and conditions": "You must agree to the terms and conditions",
     "Creating Account": "Creating Account",
     "Create Account": "Create Account",
-    "Back": "Back"
+    "Back": "Back",
+    "Phone number can only contain numbers":"Phone number can only contain numbers",
+    "spaces":"spaces",
+    "dashes":"dashes",
+    "parentheses":"parentheses",
+    "Phone Number":"Phone Number"
    },
    "header":{
     "Shopping Cart": "Shopping Cart",
+    "Notifications": "Notifications",
     "Total": "Total",
     "View Cart": "View Cart",
     "Checkout": "Checkout",
@@ -114,7 +120,13 @@
     "Failed to fetch product variations": "Failed to fetch product variations",
     "Please login to add to cart": "Please login to add to cart",
     "Failed to add to cart": "Failed to add to cart",
-    "No variation_id or default_variation_id available": "No variation_id or default_variation_id available"
+    "No variation_id or default_variation_id available": "No variation_id or default_variation_id available",
+    "View Details": "View Details",
+    "Add to Compare": "Add to Compare",
+    "Remove from Compare": "Remove from Compare",
+    "Added to compare": "Added to compare",
+    "Removed from compare": "Removed from compare",
+    "You can compare up to 4 products": "You can compare up to 4 products"
    },
    "productsFilter":{
     "Price Range": "Price Range",
@@ -158,7 +170,12 @@
     "3 Columns": "3 Columns",
     "4 Columns": "4 Columns",
     "Products per page": "Products per page",
-    "grid columns": "grid columns"
+    "grid columns": "grid columns",
+    "No Products Found": "No Products Found",
+    "We could not find any products matching your filters Try adjusting your search criteria or clear the filters to see all products": "We could not find any products matching your filters Try adjusting your search criteria or clear the filters to see all products",
+    "Clear Filters": "Clear Filters",
+    "Sort by": "Sort by",
+    "High to Low": "High to Low"
 },
 "footerNav":{
     "Home": "Home",
@@ -214,7 +231,8 @@
  "Processing": "Processing",
  "Cancelled": "Cancelled",
  "My Orders": "My Orders",
- "View": "View"
+ "View": "View",
+ "Wallet Balance": "Wallet Balance"
 },
 "dashboardSidebar":{
     "Dashboard": "Dashboard",
@@ -289,11 +307,15 @@
     "of": "of",
     "results": "results",
     "Previous": "Previous",
-    "Next": "Next"
+    "Next": "Next",
+    "No transaction history": "No transaction history",
+    "You have not made any wallet transactions yet": "You have not made any wallet transactions yet"
 },
 "Points History":{
     "Points Transaction History": "Points Transaction History",
-    "Complete log of all your points activities and conversions": "Complete log of all your points activities and conversions"
+    "Complete log of all your points activities and conversions": "Complete log of all your points activities and conversions",
+    "No transaction history": "No transaction history",
+    "You have not earned or used any points yet": "You have not earned or used any points yet"
 },
 "Addresses":{
     "My Addresses": "My Addresses",
@@ -358,7 +380,11 @@
     "Please select a location on the map":"Please select a location on the map",
     "Location selected successfully":"Location selected successfully",
     "Please select country and city":"Please select country and city",
-    "Saving":"Saving"
+    "name":"name",
+    "Saving":"Saving",
+    "Phone Number":"Phone Number",
+    "Failed to fetch addresses":"Failed to fetch addresses",
+    "Phone":"Phone"
 },
 "Account Settings":{
     "Account Settings": "Account Settings",
@@ -376,7 +402,11 @@
     "Birth Date": "Birth Date",
     "Gender": "Gender",
     "Save Changes": "Save Changes",
-    "Saving": "Saving"
+    "Saving": "Saving",
+    "Select gender": "Select gender",
+    "Male": "Male",
+    "Female": "Female",
+    "Other": "Other"
 },
 "cart":{
     "Home": "Home",
@@ -477,5 +507,113 @@
 "recentlyAdded":{
     "Recently Added": "Recently Added",
     "View More": "View More"
+},
+"variableWidget":{
+    "Size & Color": "Size & Color",
+    "Clear": "Clear",
+    "Selected": "Selected",
+    "Sizes": "Sizes",
+    "Colors": "Colors",
+    "Apply Filter": "Apply Filter",
+    "Showing": "Showing",
+    "products": "products",
+    "Attributes": "Attributes"
+},
+"checkoutConfirmation":{
+    "Order Confirmed": "Order Confirmed",
+    "Thank you for your purchase": "Thank you for your purchase",
+    "Order Number": "Order Number",
+    "Order Date": "Order Date",
+    "Estimated Delivery": "Estimated Delivery",
+    "Items Ordered": "Items Ordered",
+    "Order Summary": "Order Summary",
+    "Total": "Total",
+    "Shipping Address": "Shipping Address",
+    "Shipping Method": "Shipping Method",
+    "Standard Shipping": "Standard Shipping",
+    "Track Your Order": "Track Your Order",
+    "Continue Shopping": "Continue Shopping",
+    "A confirmation email has been sent to": "A confirmation email has been sent to",
+    "Quantity": "Quantity"
+},
+"pendingPayment":{
+    "Payment Pending": "Payment Pending",
+    "What happens next": "What happens next",
+    "Payment Verification": "Payment Verification",
+    "We are verifying your payment": "We are verifying your payment",
+    "This may take a few minutes": "This may take a few minutes",
+    "Once payment is confirmed": "Once payment is confirmed",
+    "you will receive a confirmation email": "you will receive a confirmation email",
+    "Confirmation": "Confirmation",
+    "After confirmation": "After confirmation",
+    "we will process and ship your order": "we will process and ship your order",
+    "Shipping": "Shipping",
+    "Your order has been received but the payment is not yet confirmed": "Your order has been received but the payment is not yet confirmed"
+},
+"paymentFailed":{
+    "Payment Failed": "Payment Failed",
+    "Unfortunately": "Unfortunately",
+    "your payment could not be processed": "your payment could not be processed",
+    "What can you do": "What can you do",
+    "Check Your Payment Method": "Check Your Payment Method",
+    "Ensure your card or payment account has sufficient balance and is active": "Ensure your card or payment account has sufficient balance and is active",
+    "Try Again": "Try Again",
+    "You can attempt the payment again using the same or a different method": "You can attempt the payment again using the same or a different method",
+    "Contact Support": "Contact Support",
+    "If the issue persists": "If the issue persists",
+    "please contact our support team for assistance": "please contact our support team for assistance",
+    "Continue Shopping": "Continue Shopping",
+    "please reach out to": "please reach out to",
+    "for assistance": "for assistance",
+    "If you have been charged": "If you have been charged"
+},
+"order":{
+    "Order": "Order",
+    "Order Items": "Order Items",
+    "Order Summary": "Order Summary",
+    "Total": "Total",
+    "Shipping Information": "Shipping Information",
+    "Shipping Method": "Shipping Method",
+    "Standard Shipping": "Standard Shipping",
+    "Track Your Order": "Track Your Order",
+    "Continue Shopping": "Continue Shopping",
+    "Tracking Progress": "Tracking Progress",
+    "Cancel Order": "Cancel Order",
+    "Shipping Address": "Shipping Address"
+},
+"customerOpinions":{
+    "Customer Opinions":"Customer Opinions"
+},
+"compare":{
+    "Compare": "Compare",
+    "Compare Products": "Compare Products",
+    "Home": "Home",
+    "Compare up to 4 products side by side": "Compare up to 4 products side by side",
+    "selected": "selected",
+    "Compare Now": "Compare Now",
+    "Clear All": "Clear All",
+    "Features": "Features",
+    "Product": "Product",
+    "Product Image": "Product Image",
+    "Product Name": "Product Name",
+    "Description": "Description",
+    "Short Description": "Short Description",
+    "Available Colors": "Available Colors",
+    "Available Sizes": "Available Sizes",
+    "Remove": "Remove",
+    "No products to compare": "No products to compare",
+    "Unnamed Product": "Unnamed Product",
+    "No Image": "No Image",
+    "colors": "colors",
+    "sizes": "sizes",
+    "SAR": "SAR",
+    "View Details": "View Details",
+    "Remove from comparison": "Remove from comparison",
+    "Continue Shopping": "Continue Shopping",
+    "Actions": "Actions",
+    "Price": "Price",
+    "Variation": "Variation",
+    "option": "option",
+    "options": "options"
 }
 }

@@ -7,6 +7,7 @@ import { useCheckoutStore } from '@/store/checkoutStore';
 import postRequest from '../../../helpers/post';
 import HyperPayPayment from './hyperpay';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 interface PaymentMethodsProps {
   allowedPaymentMethods?: string[];
 }
@@ -20,6 +21,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   const [showPaymentOptions, setShowPaymentOptions] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const t = useTranslations('paymentMethod')
+  const locale = useLocale();
   // Use payment_method_id from checkout store, fallback to cartData
   const selectedPaymentMethodId = payment_method_id || cartData?.data?.payment_method_id;
 
@@ -40,7 +42,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.data?.id}`,
         failure_url: window.location.origin + `/checkoutConfirmation/failed`,
         cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
-      }, {}, token, 'en');
+      }, {}, token, locale);
       
       // console.log('Tamara response:', response);
       
@@ -68,7 +70,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
         success_url: window.location.origin + `/checkoutConfirmation?orderId=${cartData?.data?.id}`,
         failure_url: window.location.origin + `/checkoutConfirmation/failed`,
         cancel_url: window.location.origin + `/checkoutConfirmation/failed`,
-      }, {}, token, 'en');
+      }, {}, token, locale);
       
       // console.log('Tabby response:', response);
       
@@ -102,11 +104,11 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
           { payment_method_id: method },
           {},
           token,
-          'en'
+          locale
         );
         
         if (response?.data) {
-          console.log('Cart details updated with payment method:', response.data);
+          // console.log('Cart details updated with payment method:', response.data);
           setCartData(response.data);
         }
       } catch (error) {

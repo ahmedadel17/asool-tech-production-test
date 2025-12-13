@@ -2,7 +2,7 @@ import React from 'react'
 import OrderStep from './orderStep';
 import { useTranslations } from 'next-intl';
 function OrderSteps({orderData}: {orderData: any}) {
-  const t = useTranslations();
+  const t = useTranslations('order');
   return (
     <div className="p-6 border-b border-gray-200 dark:border-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">{t("Tracking Progress")}</h3>

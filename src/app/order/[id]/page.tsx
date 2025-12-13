@@ -11,7 +11,7 @@ function OrderDetailsPage() {
   const { token } = useUserStore()
   const locale = useLocale()
   const { id } = useParams()
-  const t = useTranslations();
+  const t = useTranslations('order');
   // Consolidated state with loading
   const [state, setState] = useState({
     orderData: null as {
@@ -84,7 +84,7 @@ function OrderDetailsPage() {
               onClick={getOrderData}
               className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
             >
-              Try Again
+              {t('Try Again')}
             </button>
           </div>
         </div>

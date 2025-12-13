@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useUserStore } from '@/store/userStore'
 import { useCartStore } from '@/store/cartStore'
 import { useCheckoutStore } from '@/store/checkoutStore'
@@ -16,6 +16,8 @@ function AccountDropDown({isOpen}: {isOpen: boolean}) {
   const clearCheckout = useCheckoutStore((state) => state.clearCheckout)
   const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   const router = useRouter()
+  const pathname = usePathname()
+  console.log('pathname',pathname)
   const t = useTranslations('header')
   const handleLogout = () => {
     // Clear cart data from localStorage
@@ -35,6 +37,10 @@ function AccountDropDown({isOpen}: {isOpen: boolean}) {
     dashboard:                   
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>                        </svg>,
+    notifications:<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path>
+    </svg>,
     rewards:<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M11.051 7.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.867l-1.156-1.152a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z"></path>
@@ -68,28 +74,54 @@ orders:<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 2
 
     
     <div className="grid gap-1">
-    <Link href="/dashboard" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-
-       
-                {icons.dashboard}     {t('Dashboard')}               </Link>
-                            <Link href="/dashboard/myRewards" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+    <Link 
+      href="/dashboard" 
+      className={pathname == '/dashboard' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }
+    >
+      {icons.dashboard} {t('Dashboard')}
+    </Link>
+    <Link href="/dashboard/notifications"  className={pathname == '/dashboard/notifications' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
+                {icons.notifications}    
+                {t('Notifications')}                    </Link>
+                            <Link href="/dashboard/rewards"  className={pathname == '/dashboard/rewards' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
                 {icons.rewards}    
                 {t('My Rewards')}                    </Link>
-                            <Link href="/dashboard/myOrders" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <Link href="/dashboard/orders"  className={pathname == '/dashboard/orders' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
                {icons.orders}    
                 {t('My Orders')}                    </Link>
                      
                             
-                            <Link href="/dashboard/myWishlist" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <Link href="/dashboard/wishlist" className={pathname == '/dashboard/wishlist' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
                {icons.wishlist}    
-                {t('Wishlist')}                    </Link>
-                            <Link href="/dashboard/myAddresses" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    {t('Wishlist')}                    </Link>
+                                <Link href="/dashboard/addresses" className={pathname == '/dashboard/addresses' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
                {icons.addresses}    
                 {t('Addresses')}                    </Link>
-                            <Link href="/dashboard/settings" className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <Link href="/dashboard/settings" className={pathname == '/dashboard/settings' 
+        ? "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-100"
+        : "flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md"
+      }>
                {icons.settings}    
                 {t('Account Settings')}                    </Link>
-                             <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                             <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                {icons.logout}    
                 {t('Logout')}                    </a>
         

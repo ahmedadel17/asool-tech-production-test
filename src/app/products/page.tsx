@@ -23,6 +23,11 @@ async function Products({ searchParams }: ProductsPageProps) {
   const categories = categoriesParam 
     ? (Array.isArray(categoriesParam) ? categoriesParam : [categoriesParam])
     : []
+  // Handle attributes[] parameter (Next.js parses it as 'attributes[]' key)
+  const attributesParam = params?.['attributes[]'] || params?.attributes
+  const attributes = attributesParam 
+    ? (Array.isArray(attributesParam) ? attributesParam : [attributesParam])
+    : []
   
   // Build query string for API
   const queryParams = new URLSearchParams()
@@ -45,6 +50,11 @@ async function Products({ searchParams }: ProductsPageProps) {
   // Add category filters if they exist
   categories.forEach((categoryId: string) => {
     queryParams.append('categories[]', categoryId)
+  })
+  
+  // Add attribute filters if they exist
+  attributes.forEach((attributeId: string) => {
+    queryParams.append('attributes[]', attributeId)
   })
   
   const products = await getRequest(`/catalog/products?${queryParams.toString()}`, {}, null, locale)

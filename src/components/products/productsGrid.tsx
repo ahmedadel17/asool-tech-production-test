@@ -70,7 +70,7 @@ function ProductsGrid({ products, paginationData, currentPage = 1 }: ProductsGri
                 {/* <!-- Order Select --> */}
                 <form method="GET" className="flex items-center space-x-2 rtl:space-x-reverse">
                     <label htmlFor="order" className="sr-only">{t('Sort by')}:</label>
-                    <select id="order" name="order">
+                    <select id="order" name="order" style={{ paddingLeft: '0px' }}>
                         <option value="default">{t("Default")}</option>
                         <option value="price_asc">{t('Price')}: {t('Low to High')}</option>
                         <option value="price_desc">{t('Price')}: {t('High to Low')}</option>

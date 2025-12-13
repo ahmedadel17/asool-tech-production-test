@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import getRequest from "../../../helpers/get";
 import { useUserStore } from "@/store/userStore";
 import { useLocale, useTranslations } from "next-intl";
@@ -30,22 +30,23 @@ const OrdersPage: React.FC = () => {
 
   // Filtering logic
   const t = useTranslations('Dashboard');
-  const getOrders=async()=>{
+  const getOrders = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response=await getRequest('/order/orders',{'Content-Type': 'application/json'},token,locale);
+      const response = await getRequest('/order/orders', {'Content-Type': 'application/json'}, token, locale);
       // console.log('orders',response.data.my_orders.items);
-      setOrdersNew(response.data.my_orders.items);
+      setOrdersNew(response?.data?.my_orders?.items);
     } catch (error) {
       console.error('Error fetching orders:', error);
       setOrdersNew([]);
     } finally {
       setIsLoading(false);
     }
-  }
-  useEffect(()=>{
+  }, [token, locale]);
+  
+  useEffect(() => {
     getOrders();
-  },[token,locale]);  
+  }, [getOrders]);  
   return (
 <>
       {/* Main Content */}
@@ -66,7 +67,7 @@ const OrdersPage: React.FC = () => {
                         type="text"
                         placeholder={t('Filter')}
                         className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                        value={filters.orderId}
+                        value={filters.orderId || ""}
                         onChange={(e) => setFilters({ ...filters, orderId: e.target.value })}
                       />
                     </div>
@@ -77,7 +78,7 @@ const OrdersPage: React.FC = () => {
                       <span>{t('Date')}</span>
                       <select
                         className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                        value={filters.date}
+                        value={filters.date || ""}
                         onChange={(e) => setFilters({ ...filters, date: e.target.value })}
                       >
                         <option value="">{t('All Dates')}</option>
@@ -92,7 +93,7 @@ const OrdersPage: React.FC = () => {
                       <span>{t('Status')}</span>
                       <select
                         className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                        value={filters.status}
+                        value={filters.status || ""}
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                       >
                         <option value="">{t('All Status')}  </option>
@@ -109,7 +110,7 @@ const OrdersPage: React.FC = () => {
                       <span>{t('Total')}</span>
                       <select
                         className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                        value={filters.total}
+                        value={filters.total || ""}
                         onChange={(e) => setFilters({ ...filters, total: e.target.value })}
                       >
                         <option value="">{t('All Amounts')}</option>
@@ -133,7 +134,7 @@ const OrdersPage: React.FC = () => {
                       </div>
                     </td>
                   </tr>
-                ) : ordersNew.length === 0 ? (
+                ) : ordersNew?.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-12">
                       <div className="flex flex-col items-center justify-center">
@@ -146,7 +147,7 @@ const OrdersPage: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  ordersNew.map((order) => (
+                  ordersNew?.map((order) => (
                     <OrderItem key={order?.id} order={order} />
                   ))
                 )}

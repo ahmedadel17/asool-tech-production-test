@@ -7,12 +7,12 @@ import { getLocale } from 'next-intl/server'
 async function ProductsFilter() {
   const locale = await getLocale()
   const filterData =  await getRequest(`/catalog/filter-data?`, {}, '', locale)
-  console.log('filterData', filterData)
+  // console.log('filterData', filterData)
   return (
     <>
       <PriceWidget priceRange={filterData?.data?.price_range} />
       <CategoriesWidget categories={filterData?.data?.categories} />
-      <VariableWidget />
+      <VariableWidget attributes={filterData?.data?.attributes} totalProducts={filterData?.data?.total_products} />
     </>
   )
 }

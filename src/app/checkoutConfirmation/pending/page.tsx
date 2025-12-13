@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import getRequest from "../../../../helpers/get";
 import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 export default function PendingPayment() {
   const searchParams = useSearchParams();   
@@ -28,7 +28,7 @@ export default function PendingPayment() {
 const checkPaymentStatus = useCallback(async () => {
     if(paymentId && !hasStatusBeenChecked()){
         markStatusAsChecked();
-        const paymentData = await getRequest(`/payment/hyper-pay/check-status?id=${paymentId}`, { 'Content-Type': 'application/json' }, token, 'en');
+        const paymentData = await getRequest(`/payment/hyper-pay/check-status?id=${paymentId}`, { 'Content-Type': 'application/json' }, token, locale);
         // console.log('Payment Status Response:', paymentData);
         
         // Log the status specifically if it exists
@@ -54,7 +54,7 @@ const checkPaymentStatus = useCallback(async () => {
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   };
 
- 
+  const t = useTranslations('pendingPayment');
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -64,17 +64,17 @@ const checkPaymentStatus = useCallback(async () => {
         <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
       </div>
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        Payment Pending
+        {t('Payment Pending')}
       </h1>
       <p className="text-lg text-gray-600 dark:text-gray-400">
-        Your order has been received but the payment is not yet confirmed.
+        {t('Your order has been received but the payment is not yet confirmed')}
       </p>
     </div>
 
     {/* Info Box */}
     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
       <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-        What happens next?
+        {t('What happens next')}
       </h3>
       <div className="space-y-6">
         <div className="flex items-start space-x-3 rtl:space-x-reverse">
@@ -85,10 +85,10 @@ const checkPaymentStatus = useCallback(async () => {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Payment Verification
+              {t('Payment Verification')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              We are verifying your payment. This may take a few minutes.
+              {t('We are verifying your payment')}{' '}{t('This may take a few minutes')}
             </p>
           </div>
         </div>
@@ -100,10 +100,10 @@ const checkPaymentStatus = useCallback(async () => {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Confirmation
+              {t('Confirmation')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Once payment is confirmed, you’ll receive a confirmation email.
+              {t('Once payment is confirmed')}{' '}{t('you will receive a confirmation email')}.
             </p>
           </div>
         </div>
@@ -115,10 +115,10 @@ const checkPaymentStatus = useCallback(async () => {
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">
-              Shipping
+              {t('Shipping')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              After confirmation, we’ll process and ship your order.
+              {t('After confirmation')}{' '}{t('we will process and ship your order')}.
             </p>
           </div>
         </div>

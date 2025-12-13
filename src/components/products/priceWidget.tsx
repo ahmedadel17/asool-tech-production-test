@@ -19,22 +19,12 @@ function PriceWidget({ priceRange }: PriceWidgetProps) {
   const minLimit = priceRange?.min ?? 0
   const maxLimit = priceRange?.max ?? 1000
 
-  // Get initial values from URL params or use priceRange prop defaults
-  const getInitialMin = () => {
-    const urlMin = searchParams.get('min_price')
-    if (urlMin) return parseFloat(urlMin) || minLimit
-    return minLimit
-  }
-
-  const getInitialMax = () => {
-    const urlMax = searchParams.get('max_price')
-    if (urlMax) return parseFloat(urlMax) || maxLimit
-    return maxLimit
-  }
-
-  const [minPrice, setMinPrice] = useState(getInitialMin)
-  const [maxPrice, setMaxPrice] = useState(getInitialMax)
+  // Initialize with defaults to avoid hydration mismatch
+  // We'll sync with URL params in useEffect after mount
+  const [minPrice, setMinPrice] = useState(minLimit)
+  const [maxPrice, setMaxPrice] = useState(maxLimit)
   const [selectedQuickBtn, setSelectedQuickBtn] = useState<string | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
 
   // Calculate dynamic quick select ranges based on minLimit and maxLimit
   const calculateQuickRanges = () => {
@@ -90,21 +80,50 @@ function PriceWidget({ priceRange }: PriceWidgetProps) {
 
   const quickRanges = calculateQuickRanges()
 
-  // Update state when priceRange prop changes
+  // Initialize from URL params and priceRange after mount (client-side only)
+  // This prevents hydration mismatch by ensuring server and client render the same initial HTML
   useEffect(() => {
-    if (priceRange) {
+    setIsMounted(true)
+    
+    const urlMin = searchParams.get('min_price')
+    const urlMax = searchParams.get('max_price')
+    
+    // Set initial values from URL params if they exist, otherwise use priceRange
+    if (urlMin) {
+      const parsedMin = parseFloat(urlMin)
+      if (!isNaN(parsedMin)) {
+        setMinPrice(parsedMin)
+      }
+    } else if (priceRange?.min !== undefined) {
+      setMinPrice(priceRange.min)
+    }
+    
+    if (urlMax) {
+      const parsedMax = parseFloat(urlMax)
+      if (!isNaN(parsedMax)) {
+        setMaxPrice(parsedMax)
+      }
+    } else if (priceRange?.max !== undefined) {
+      setMaxPrice(priceRange.max)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run once on mount to prevent hydration issues
+
+  // Update state when priceRange prop changes (after initial mount)
+  useEffect(() => {
+    if (isMounted && priceRange) {
       const urlMin = searchParams.get('min_price')
       const urlMax = searchParams.get('max_price')
       
       // Only update if URL params don't exist
-      if (!urlMin) {
+      if (!urlMin && priceRange.min !== undefined) {
         setMinPrice(priceRange.min)
       }
-      if (!urlMax) {
+      if (!urlMax && priceRange.max !== undefined) {
         setMaxPrice(priceRange.max)
       }
     }
-  }, [priceRange, searchParams])
+  }, [priceRange, searchParams, isMounted])
 
   // Update range track position
   useEffect(() => {

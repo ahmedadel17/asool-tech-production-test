@@ -8,7 +8,7 @@ async function RecentlyAdded({products}: {products: any}) {
     <section className="te-section dark:bg-gray-900">
     <div className="container">
         {/* <!-- Product Header --> */}
-        <div className="flex items-end justify-between mb-6 space-x-4 rtl:space-x-reverse">
+      { products?.data?.length > 0 && <div className="flex items-end justify-between mb-6 space-x-4 rtl:space-x-reverse">
             {/* <!-- Title --> */}
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {t('Recently Added')}
@@ -19,7 +19,7 @@ async function RecentlyAdded({products}: {products: any}) {
                     {t('View More')}
                 </Link>
             </div>
-        </div>
+        </div>}
 
         <div className="te-products">
             <div id="products-grid" className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-4">

@@ -26,7 +26,7 @@ export default function PhoneInput({
   onPhoneChange,
   id = 'phone',
   name = 'phone',
-  placeholder = 'max 11 digits',
+  placeholder = 'Max 11 digits',
   required = true,
   label = 'Phone Number',
   showHelperText = true,
@@ -106,7 +106,7 @@ export default function PhoneInput({
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-        {t(label)}
+        {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <div className="mt-1 relative">

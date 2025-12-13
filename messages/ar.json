@@ -6,7 +6,7 @@
     "Mac App Store": "متجر التطبيقات الماك",
     "Google Play": "متجر التطبيقات الجوجل",
     "Copyright": "حقوق التأليف والنشر",
-    "All rights reserved": "جميع الحقوق محفوظة."
+    "All rights reserved": "جميع الحقوق محفوظة"
    },
    "login":{
     "Welcome Back": "مرحبا بعودتك",
@@ -23,7 +23,7 @@
     "parentheses": "أقواس",
     "Failed to send OTP Please try again": "فشل الارسال للكود التحققي يرجى المحاولة مرة أخرى",
     "Phone Number": "رقم الهاتف",
-    "max 11 digits": "الحد الأقصى لعدد الأرقام هو 11",
+    "Max 11 digits": "الحد الأقصى لعدد الأرقام هو 11",
     "digits": "أرقام",
     "Enter your": "أدخل ",
     "Search countries": "ابحث عن الدول",
@@ -87,7 +87,12 @@
     "Phone number is required": "رقم الهاتف مطلوب",
     "Creating Account": "جاري إنشاء الحساب",
     "Create Account": "إنشاء الحساب",
-    "Back": "السابق"
+    "Back": "السابق",
+    "Phone Number":"رقم الهاتف",
+    "Phone number can only contain numbers":"رقم الهاتف يجب أن يكون على الأكثر 11 أرقام",
+    "spaces":"فراغات",
+    "dashes":"شرطات",
+    "parentheses":"أقواس"
    },
    "header":{
     "Shopping Cart": "عربة التسوق",
@@ -96,6 +101,7 @@
     "Checkout": "الدفع",
     "Search products": "ابحث عن المنتجات",
     "My Account": "حسابي",
+    "Notifications": "الإشعارات",
     "My Cart": "عربة التسوق",
     "Hi": "مرحبا",
     "Dashboard": "لوحة التحكم",
@@ -113,7 +119,13 @@
     "Failed to fetch product variations": "فشل في تحميل المنتجات",
     "Please login to add to cart": "يرجى تسجيل الدخول لإضافة المنتج إلى العربة",
     "Failed to add to cart": "فشل إضافة المنتج إلى العربة",
-    "No variation_id or default_variation_id available": "لا يوجد منتج مطابقة"
+    "No variation_id or default_variation_id available": "لا يوجد منتج مطابقة",
+    "View Details": "عرض التفاصيل",
+    "Add to Compare": "إضافة للمقارنة",
+    "Remove from Compare": "إزالة من المقارنة",
+    "Added to compare": "تمت الإضافة للمقارنة",
+    "Removed from compare": "تمت الإزالة من المقارنة",
+    "You can compare up to 4 products": "يمكنك مقارنة حتى 4 منتجات"
    },
    "productsFilter":{
     "Price Range": "مجال السعر",
@@ -157,7 +169,11 @@
     "3 Columns": "3 أعمدة",
     "4 Columns": "4 أعمدة",
     "Products per page": "عدد المنتجات في الصفحة",
-    "grid columns": "عدد الأعمدة "
+    "grid columns": "عدد الأعمدة ",
+    "No Products Found": "لا يوجد منتجات مطابقة",
+    "We could not find any products matching your filters Try adjusting your search criteria or clear the filters to see all products": "لم نتمكن من إيجاد منتجات مطابقة لبحثك يرجى إعادة البحث أو مسح التصفيات لعرض جميع المنتجات",
+    "Clear Filters": "مسح التصفيات",
+    "Sort by": "ترتيب بواسطة"
    },
    "footerNav":{
     "Home": "الرئيسية",
@@ -290,11 +306,16 @@
       "of": "من",
       "results": "نتائج",
       "Previous": "السابق",
-      "Next": "التالي"
+      "Next": "التالي",
+      "No transaction history": "لا يوجد تاريخ معاملات",
+      "You have not made any wallet transactions yet": "لم تقم بأي معاملات في المحفظة بعد"
    },
    "Points History":{
+      "Points History": "تاريخ النقاط",
     "Points Transaction History": "تاريخ النقاط",
-    "Complete log of all your points activities and conversions": "سجل كامل لجميع أنشطتك في النقاط"
+    "Complete log of all your points activities and conversions": "سجل كامل لجميع أنشطتك في النقاط",
+    "No transaction history": "لا يوجد تاريخ معاملات",
+    "You have not earned or used any points yet": "لم تكن قد حصلت على أو استخدمت أي نقاط بعد"
    },
    "Addresses":{
     "My Addresses": "العناوين",
@@ -361,7 +382,11 @@
    "Please select a location on the map":"يرجى اختيار موقع على الخريطة",
    "Location selected successfully":"تم تحديد الموقع بنجاح",
    "Please select country and city":"يرجى اختيار الدولة والمدينة",
-   "Saving":"جاري الحفظ"
+   "name":"الاسم",
+   "Saving":"جاري الحفظ",
+   "Phone Number":"رقم الهاتف",
+   "Failed to fetch addresses":"فشل احضار العناوين",
+   "Phone":"الهاتف"
    },
    "Account Settings":{
     "Account Settings": "إعدادات الحساب",
@@ -485,5 +510,114 @@
    "recentlyAdded":{
     "Recently Added": "المضافة حديثا",
     "View More": "عرض المزيد"
-   }
+   },
+   "variableWidget":{
+    "Size & Color": "الحجم واللون",
+    "Clear": "مسح",
+    "Selected": "محدد",
+    "Sizes": "الحجم",
+    "Colors": "اللون",
+    "Apply Filter": "تطبيق التصفية",
+    "Showing": "عرض",
+    "products": "المنتجات",
+    "Attributes": "السمات"
+    
+   },
+   "checkoutConfirmation":{
+    "Order Confirmed": "تم تأكيد الطلب",
+    "Thank you for your purchase": "شكرا لك على عملية الشراء",
+    "Order Number": "رقم الطلب",
+    "Order Date": "تاريخ الطلب",
+    "Estimated Delivery": "تقدير التسليم",
+    "Items Ordered": "العناصر المطلوبة",
+    "Order Summary": "ملخص الطلب",
+    "Total": "المجموع",
+    "Shipping Address": "عنوان الشحن",
+    "Shipping Method": "طريقة الشحن",
+    "Standard Shipping": "شحن معتمد",
+    "Track Your Order": "تتبع الطلب",
+    "Continue Shopping": "استمرار التسوق",
+    "A confirmation email has been sent to": "تم إرسال بريد إلكتروني للتأكيد إلى",
+    "Quantity": "الكمية"
+   },
+   "pendingPayment":{
+    "Payment Pending": "الدفع معلق",
+    "What happens next": "ما الذي يحدث بعد",
+    "Payment Verification": "تحقق الدفع",
+    "We are verifying your payment": "نحن نتحقق من الدفع",
+    "This may take a few minutes": "قد يستغرق هذا بضع دقائق",
+    "Once payment is confirmed": "بعد التأكيد",
+    "you will receive a confirmation email": "ستحصل على بريد إلكتروني للتأكيد",
+    "Confirmation": "التأكيد",
+    "After confirmation": "بعد التأكيد",
+    "we will process and ship your order": "سنعمل على معالجة وشحن الطلب",
+    "Shipping": "الشحن",
+    "Your order has been received but the payment is not yet confirmed": "تم استلام طلبك ولكن الدفع لم يتم تأكيده بعد"
+   },
+   "paymentFailed":{
+    "Payment Failed": "فشل الدفع",
+    "Unfortunately": "عذرا",
+    "your payment could not be processed": "لم يتم معالجة الدفع",
+    "What can you do": "ما الذي يمكنك القيام به",
+    "Check Your Payment Method": "تحقق من طريقة الدفع",
+    "Ensure your card or payment account has sufficient balance and is active": "تأكد من أن رصيد طريقة الدفع لديك كافي وأنها مفعلة",
+    "Try Again": "حاول مرة أخرى",
+    "You can attempt the payment again using the same or a different method": "يمكنك إعادة المحاولة باستخدام نفس طريقة الدفع أو طريقة أخرى",
+    "Contact Support": "اتصل بالدعم",
+    "If the issue persists": "إذا كان المشكلة مستمرة",
+    "please contact our support team for assistance": "يرجى الاتصال بفريق الدعم للحصول على المساعدة",
+    "Continue Shopping": "استمرار التسوق",
+    "If you have been charged": "إذا تم إخصم المبلغ",
+    "please reach out to": "يرجى الاتصال بفريق الدعم للحصول على المساعدة",
+    "for assistance": "للحصول على المساعدة"
+   },
+   "order":{
+    "Order": "الطلب",
+    "Order Items": "العناصر المطلوبة",
+    "Order Summary": "ملخص الطلب",
+    "Total": "المجموع",
+    "Shipping Information": "معلومات الشحن",
+    "Shipping Method": "طريقة الشحن",
+    "Standard Shipping": "شحن معتمد",
+    "Track Your Order": "تتبع الطلب",
+    "Continue Shopping": "استمرار التسوق",
+    "Tracking Progress": "تتبع التقدم",
+    "Cancel Order": "إلغاء الطلب",
+    "Shipping Address": "عنوان الشحن"
+   },
+   "customerOpinions":{
+      "Customer Opinions":"اراء العملاء"
+   },
+   "compare":{
+    "Compare": "مقارنة",
+    "Compare Products": "مقارنة المنتجات",
+    "Home": "الرئيسية",
+    "Compare up to 4 products side by side": "مقارنة 4 منتجات معا",
+    "selected": "محدد",
+    "Compare Now": "مقارنة الآن",
+    "Clear All": "مسح الكل",
+    "Features": "المميزات",
+    "Product": "منتج",
+    "Product Image": "صورة المنتج",
+    "Product Name": "اسم المنتج",
+    "Description": "الوصف",
+    "Short Description": "وصف مختصر",
+    "Available Colors": "الألوان المتاحة",
+    "Available Sizes": "المقاسات المتاحة",
+    "Remove": "إزالة",
+    "No products to compare": "لا توجد منتجات للمقارنة",
+    "Unnamed Product": "منتج بدون اسم",
+    "No Image": "لا توجد صورة",
+    "colors": "ألوان",
+    "sizes": "مقاسات",
+    "SAR": "ريال",
+    "View Details": "عرض التفاصيل",
+    "Remove from comparison": "إزالة من المقارنة",
+    "Continue Shopping": "متابعة التسوق",
+    "Actions": "الإجراءات",
+    "Price": "السعر",
+    "Variation": "التباين",
+    "option": "خيار",
+    "options": "خيارات"
+    }
 }

@@ -12,7 +12,7 @@ interface SliderData {
 }
 
 function MainSlider({sliders}: {sliders: { data?: SliderData[] }}) {
-  console.log('sliders',sliders)
+  // console.log('sliders',sliders)
   const locale = useLocale()
   const isRTL = locale === 'ar'
   const slides: SliderData[] = sliders?.data || []

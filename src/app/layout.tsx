@@ -11,6 +11,8 @@ import { generatePaletteFromHex } from "@/utils/colorUtils";
 import { NextIntlClientProvider } from "next-intl";
 import MobileMenuFooter from "@/components/mobileMenuFooter/mobileMenuFooter";
 import { Toaster } from "react-hot-toast";
+import QuickViewModal from "@/components/productCard/quickView";
+import CompareBar from "@/components/compare/compareBar";
 
 
 
@@ -220,6 +222,7 @@ export default async function RootLayout({
             {children}
           </main>
           <FooterStyle1 menuData={menuData} />
+          <CompareBar />  
           <MobileMenuFooter />
           <Toaster />
         </ThemeProvider2>

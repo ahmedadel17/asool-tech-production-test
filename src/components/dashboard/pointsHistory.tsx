@@ -49,7 +49,7 @@ function PointsHistory() {
                 token,
                 locale
             );
-            console.log('response', response);
+            // console.log('response', response);
             
             // Store the full response data structure
             setTransactionsData(response?.data?.transactions || null);
@@ -132,6 +132,20 @@ function PointsHistory() {
               <div className="flex flex-col items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"></div>
                 <p className="text-gray-500 dark:text-gray-400">{t("Loading transactions")}...</p>
+              </div>
+            </div>
+          </div>
+        ) : transactions.length === 0 ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="p-6">
+              <div className="text-center py-12">
+                <div className="flex flex-col items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">{t("No transaction history")}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">{t("You have not earned or used any points yet")}</p>
+                </div>
               </div>
             </div>
           </div>

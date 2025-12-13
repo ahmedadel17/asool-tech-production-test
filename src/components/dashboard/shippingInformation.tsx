@@ -6,7 +6,7 @@ import postRequest from '../../../helpers/post';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/store/userStore';
 function ShippingInformation({orderData}: {orderData: any}) {
-  const t = useTranslations();
+  const t = useTranslations('order');
   const { token } = useUserStore();
   const locale = useLocale();
   const cancelOrder = async () => {

@@ -638,7 +638,7 @@ html.no-transition *:after {
 
  /* RTL select arrow */
  [dir="rtl"] select {
-   padding-left: 2.5rem;
+   /* padding-left: 2.5rem; */
    padding-right: 0.75rem;
  }
  .bg-green-500\/20 {
@@ -695,5 +695,12 @@ html.no-transition *:after {
 
         .marquee-track:hover {
             animation-play-state: paused;
+        }
+        & .box-icon {
+            --tw-bg-opacity: 1;
+            background-color: rgb(246 241 229 / var(--tw-bg-opacity, 1));
+        }
+        .bg-primary-50\/20 {
+            background-color: hsl(222 81.7% 66.4% / 0.2);
         }
         
