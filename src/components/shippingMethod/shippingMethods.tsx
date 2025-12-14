@@ -14,8 +14,8 @@ interface ShippingMethod {
   name: string;
   slug: string;
   price: string;
-  estimated_days: string;
   image?: string;
+  description?: string;
 }
 
 const ShippingMethod = () => {
@@ -54,7 +54,6 @@ const ShippingMethod = () => {
           token,
           locale
         );
-
         const methods = response.data.data.shipping_methods || [];
         setShippingMethods(methods);
         
@@ -128,9 +127,9 @@ const ShippingMethod = () => {
           token,
           locale
         );
-        
+        console.log('response', response);
         if (response?.data) {
-          setCartData(response.data);
+          setCartData(response?.data);
           toast.success(t('Shipping method selected successfully'));
         }
       } catch (error) {
@@ -164,7 +163,7 @@ const ShippingMethod = () => {
                   slug: shippingMethod.slug,
                   name: shippingMethod.name,
                   price: shippingMethod?.price?.toString(),
-                  description: `${t('Estimated delivery')}: ${shippingMethod.estimated_days}`,
+                  description: `${t('Estimated delivery')}: ${shippingMethod.description}`,
                   image: shippingMethod?.image || '', // Default image
                   value: shippingMethod.id.toString(),
                   label: shippingMethod.name

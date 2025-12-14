@@ -43,8 +43,11 @@ function OrderDetails({orderData}: OrderDetailsProps) {
     {/* <!-- Order Items --> */}
     <div className="p-6" >
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('Items Ordered')}</h3>
-        {orderData?.data?.products?.map((item:any)=>(    
-     <ProductItem key={item.id} item={item} />
+        {orderData?.data?.products?.map((item:any)=>(   
+          <div className="my-4" key={item.id}>
+
+            <ProductItem key={item.id} item={item} />
+          </div> 
         ))}
         {/* <!-- Order Summary --> */}
         <div className="mt-6 border-t border-gray-200 dark:border-gray-600 pt-4">

@@ -42,6 +42,7 @@ interface Product {
   short_description?: string
   thumbnail?: string
   variations?: Variation[]
+  categories?: { name: string } []
   default_variation_id?: string | number
   [key: string]: unknown
 }
@@ -49,7 +50,6 @@ interface Product {
 function ProductCard({ product }: { product: Product }) {
   // State to track selected values for each attribute_id
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string | number>>({})
-  
   // State to track loading when fetching variations
   const [isFetchingVariations, setIsFetchingVariations] = useState(false)
   
@@ -160,6 +160,21 @@ function ProductCard({ product }: { product: Product }) {
       return
     }
 
+    // Check if product has variations and if all are selected
+    if (product?.variations && product.variations.length > 0 && !allVariationsSelected) {
+      // Get missing variation names
+      const missingVariations = product.variations
+        .filter((variation: Variation) => !selectedAttributes[variation.attribute_id])
+        .map((variation: Variation) => {
+          // Get variation name from attribute_name, attribute_type, or type
+          return variation.attribute_name || variation.attribute_type || variation.type || t('Variation')
+        })
+      
+      const missingVariationsText = missingVariations.join(', ')
+      toast.error(`${t('Please select variations first')}: ${missingVariationsText}`)
+      return
+    }
+
     // Use variation_id from store if available (for this specific product), otherwise use product.default_variation_id
     const currentVariation = product?.id ? getVariation(product.id) : null
     const itemId = currentVariation?.variation_id || product?.default_variation_id
@@ -200,7 +215,6 @@ function ProductCard({ product }: { product: Product }) {
 
     }
   }
-
   return (
     <>
     <div className="product-item w-full h-full lg:bg-white dark:lg:bg-gray-800 rounded-md lg:rounded-lg lg:shadow flex flex-col" data-product-id="1" data-product-title="رداء قطني مطرز بالأكمام الطويلة" data-product-price="720.00" data-product-image="assets/images/cotton/cotton-pro-1.jpg">
@@ -233,7 +247,7 @@ function ProductCard({ product }: { product: Product }) {
 
 <div className="product-body space-y-2 mb-5">
 
-   <ShortDescription short_description={product?.short_description} />
+   <ShortDescription short_description={product?.categories?.map((category: { name: string }) => category.name).join(', ')} />
             {/* <!-- .product-category --> */}
     
    <ProductName name={displayName || ''} link={`/products/${product?.slug || ''}`} />
@@ -290,14 +304,14 @@ function ProductCard({ product }: { product: Product }) {
 
     {/* <!-- Add to Cart --> */}
    <AddToCartButton 
-     disabled={product?.variations && product.variations.length > 0 ? !allVariationsSelected : false}
+     disabled={false}
      onClick={handleAddToCart}
      isLoading={isFetchingVariations}
    />
     {/* <!-- .product-add-to-cart --> */}
 
     {/* <!-- Add to Wishlist --> */}
-    {/* @ts-ignore */}
+    {/* @ts-expect-error - Type assertion needed for WishlistProduct */}
     <FavoriteButton product={product as unknown as Product as WishlistProduct} />
     {/* <WishListButton /> */}
     {/* <!-- .product-add-to-wishlist --> */}

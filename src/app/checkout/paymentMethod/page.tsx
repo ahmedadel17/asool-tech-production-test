@@ -55,7 +55,7 @@ function PaymentMethod() {
                     <PaymentMethods />
                 </div>
                 <div className='lg:col-span-1'>
-                    <CartSummary link="/checkout/paymentMethod" text={t('Proceed to Pay')} type="button" role={cartData?.data?.amount_to_pay==0&& cartData?.data?.use_wallet==true ? true : payment_method_id ? true : false} disabled={false} onClick={placeOrder} />
+                    <CartSummary link="/checkout/paymentMethod" text={t('Proceed to Pay')} type="button" role={cartData?.data?.amount_to_pay==0&& cartData?.data?.use_wallet==true ? true : payment_method_id=='cod' ? true : false} disabled={false} onClick={placeOrder} />
                 </div>
             </div>
         </main>

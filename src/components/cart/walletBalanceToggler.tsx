@@ -7,7 +7,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
 function WalletBallanceToggler() {
   const { cartData,setCartData } = useCartStore();
-  const [useWalletBalance, setUseWalletBalance] = useState(cartData?.data?.use_wallet);
+  // Initialize with boolean value to avoid controlled/uncontrolled input warning
+  const [useWalletBalance, setUseWalletBalance] = useState<boolean>(!!cartData?.data?.use_wallet);
     const [isWalletToggleLoading, setIsWalletToggleLoading] = useState(false);
     const { token } = useUserStore();
     const t = useTranslations('cart')
@@ -16,7 +17,7 @@ function WalletBallanceToggler() {
     // Sync state with cartData when it updates
     useEffect(() => {
       if (cartData?.data?.use_wallet !== undefined) {
-        setUseWalletBalance(cartData.data.use_wallet);
+        setUseWalletBalance(!!cartData.data.use_wallet);
       }
     }, [cartData?.data?.use_wallet]);
     const handleWalletBalanceToggle = async (checked: boolean) => {

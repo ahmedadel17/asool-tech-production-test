@@ -9,11 +9,11 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 export default function PendingPayment() {
   const searchParams = useSearchParams();   
-  const paymentId=searchParams.get('id');
+  const paymentId = searchParams.get('id');
   const { token } = useUserStore();
   const locale = useLocale();
-  const { cartData } = useCartStore();
   const router = useRouter();
+  
   // Check if status has already been checked for this payment ID
   const getStatusCheckKey = useCallback(() => `payment_status_checked_${paymentId}`, [paymentId]);
   const hasStatusBeenChecked = useCallback(() => {
@@ -25,34 +25,47 @@ export default function PendingPayment() {
           localStorage.setItem(getStatusCheckKey(), 'true');
       }
   }, [paymentId, getStatusCheckKey]);
-const checkPaymentStatus = useCallback(async () => {
+  
+  const checkPaymentStatus = useCallback(async () => {
     if(paymentId && !hasStatusBeenChecked()){
         markStatusAsChecked();
         const paymentData = await getRequest(`/payment/hyper-pay/check-status?id=${paymentId}`, { 'Content-Type': 'application/json' }, token, locale);
         // console.log('Payment Status Response:', paymentData);
         
+        // Get the latest cartData directly from the store to ensure we have the current value
+        const currentCartData = useCartStore.getState().cartData;
+        
         // Log the status specifically if it exists
         if (paymentData?.status) {
             // console.log('Payment Status:', paymentData.status);
-
-            router.push('/checkoutConfirmation/?orderId='+cartData?.data?.id);
-        }else{
-            router.push('/checkoutConfirmation/failed');
-
+            console.log('Payment Data:', paymentData);
+            console.log('Cart Data:', currentCartData);
+            console.log('Cart Data: id', currentCartData?.data?.id);
+            
+            // Use orderId from cartData
+            const orderId = currentCartData?.data?.id;
+            if (orderId) {
+              router.push(`/checkoutConfirmation/?orderId=${orderId}`);
+            } else {
+              console.error('Order ID not found in cartData');
+              // Fallback: try to get orderId from payment response if available
+              const orderIdFromResponse = paymentData?.data?.orderId || paymentData?.orderId;
+              if (orderIdFromResponse) {
+                router.push(`/checkoutConfirmation/?orderId=${orderIdFromResponse}`);
+              } else {
+                router.push('/checkoutConfirmation/failed');
+              }
+            }
+        } else {
+          console.log('Payment Data:', paymentData);
+          router.push('/checkoutConfirmation/failed');
         }
-       
     }
+  }, [paymentId, token, locale, hasStatusBeenChecked, markStatusAsChecked, router]);
   
-}, [paymentId, token, locale]);
   useEffect(() => {
    checkPaymentStatus();
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? "0" : ""}${s}`;
-  };
+  }, [checkPaymentStatus]);
 
   const t = useTranslations('pendingPayment');
 

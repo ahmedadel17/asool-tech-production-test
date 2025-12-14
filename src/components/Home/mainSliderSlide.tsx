@@ -1,4 +1,3 @@
-import React from 'react'
 import MainSliderText from './mainSliderText'
 
 function MainSliderSlide({img ,slider}: {img: string, slider: any}) {
@@ -10,6 +9,7 @@ function MainSliderSlide({img ,slider}: {img: string, slider: any}) {
         width: "100%",
         backgroundSize: "cover",
         backgroundPosition: "center",
+
       }}>
                 <div className="absolute inset-0 z-10 hero-overlay" style={{ backgroundColor: 'rgb(255, 255, 255)', opacity: 0, pointerEvents: 'none' }}></div>
     

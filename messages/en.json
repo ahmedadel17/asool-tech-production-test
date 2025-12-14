@@ -121,6 +121,7 @@
     "Please login to add to cart": "Please login to add to cart",
     "Failed to add to cart": "Failed to add to cart",
     "No variation_id or default_variation_id available": "No variation_id or default_variation_id available",
+    "Please select variations first": "Please select variations first",
     "View Details": "View Details",
     "Add to Compare": "Add to Compare",
     "Remove from Compare": "Remove from Compare",
@@ -256,7 +257,10 @@
     "Loading notifications": "Loading notifications",
     "No notifications": "No notifications",
     "You are all caught up": "You are all caught up",
-    "Check back later": "Check back later"
+    "Check back later": "Check back later",
+    "Delete": "Delete",
+    "Mark as read": "Mark as read",
+    "Loading order details": "Loading order details"
 },
 "Rewards":{
     "Rewards": "Rewards",

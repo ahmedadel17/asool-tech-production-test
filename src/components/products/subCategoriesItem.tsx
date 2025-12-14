@@ -59,7 +59,7 @@ function SubCategoriesItem({ name, id, count }: { name: string, id: number, coun
           {name}
         </span>
       </div>
-      <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">{count}</span>
+     {count && <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">{count}</span>}
     </div>
   )
 }

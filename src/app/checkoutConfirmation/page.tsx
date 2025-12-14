@@ -9,28 +9,22 @@ import { CartData, useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
 import getRequest from "../../../helpers/get";
 import { useLocale } from "next-intl";
-    type address = {
-    name?: string;
-    street?: string;
-    house?: string;
-    address?: string;
-    country?: string;
-    contact_phone?: string;
-    }
-    type OrderData = {
-        data?: {
-            order_num?: string;
-            created_at?: string;
-            estimated_delivery?: string;
-            products?: any[];
-            order_attributes?: any[];
-            total_amount?: string | number;
+type OrderData = {
+    data?: {
+        address?: {
+            name?: string;
+            street?: string;
+            house?: string;
+            address?: string;
+            country?: string;
+            contact_phone?: string;
         }
     }
- function Confirmation() {
+}
+function Confirmation() {
   const { setCartData } = useCartStore();
     const { token } = useUserStore();
-    const [orderData, setOrderData] = useState<{data?: unknown} | null>(null);
+    const [orderData, setOrderData] = useState<OrderData | null>(null);
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
     const locale = useLocale();
@@ -50,7 +44,6 @@ import { useLocale } from "next-intl";
             
             const orderData = await getRequest(`/order/orders/${orderId}`, { 'Content-Type': 'application/json' }, token, locale);
             setOrderData(orderData);
-            
        
                setCartData({data:{
                     id: '',
@@ -73,7 +66,6 @@ import { useLocale } from "next-intl";
             getOrderData();
         }
     }, [token, orderId]);
-
   return (
     <div className='container mx-auto mt-6 mb-4' >
       
@@ -84,7 +76,7 @@ import { useLocale } from "next-intl";
 <OrderDetails orderData={orderData as {data?: {order_num?: string; created_at?: string; estimated_delivery?: string; products?: any[]; order_attributes?: any[]; total_amount?: string | number;}} | null}/>
 
 {/* <!-- Shipping & Contact Info --> */}
-<ShippingInfo address={(orderData?.data as address)} />
+<ShippingInfo address={orderData?.data?.address} />
 
 {/* <!-- Next Steps --> */}
 {/* <NextSteps /> */}

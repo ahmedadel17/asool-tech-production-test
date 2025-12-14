@@ -21,6 +21,9 @@ function Header({menuData}: {menuData: any}) {
     const t = useTranslations('header')
     const { count } = useWishlistStore()
     const headerRef = useRef<HTMLElement>(null)
+    const lastScrollY = useRef(0)
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+    const [isDesktop, setIsDesktop] = useState(false)
     
     // Shared state for dropdowns
     const [dropdownState, setDropdownState] = useState({
@@ -44,6 +47,63 @@ function Header({menuData}: {menuData: any}) {
         }))
     }
 
+    // Check if desktop on mount and resize
+    useEffect(() => {
+        const checkDesktop = () => {
+            setIsDesktop(window.innerWidth >= 1024) // lg breakpoint
+        }
+        
+        checkDesktop()
+        window.addEventListener('resize', checkDesktop)
+        
+        return () => {
+            window.removeEventListener('resize', checkDesktop)
+        }
+    }, [])
+
+    // Scroll handler for hide/show header on desktop
+    useEffect(() => {
+        if (!isDesktop) {
+            // Always show header on mobile
+            setIsHeaderVisible(true)
+            if (headerRef.current) {
+                headerRef.current.style.transform = 'translateY(0)'
+            }
+            return
+        }
+
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY || document.documentElement.scrollTop
+            const scrollThreshold = 100 // Hide header after scrolling down 100px
+
+            if (currentScrollY < scrollThreshold) {
+                // Near top of page - always show header
+                setIsHeaderVisible(true)
+            } else if (currentScrollY > lastScrollY.current) {
+                // Scrolling down - hide header
+                setIsHeaderVisible(false)
+            } else if (currentScrollY < lastScrollY.current) {
+                // Scrolling up - show header
+                setIsHeaderVisible(true)
+            }
+
+            lastScrollY.current = currentScrollY
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [isDesktop])
+
+    // Update header transform based on visibility
+    useEffect(() => {
+        if (headerRef.current) {
+            headerRef.current.style.transform = isHeaderVisible ? 'translateY(0)' : 'translateY(-100%)'
+        }
+    }, [isHeaderVisible])
+
     // Click outside detection
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +121,7 @@ function Header({menuData}: {menuData: any}) {
         }
     }, [dropdownState.account, dropdownState.cart])
   return (
-    <header ref={headerRef} id="header" className="te-header flex-shrink-0 sticky top-0 z-50 transition-transform duration-300 sticky-scroll" role="banner" style={{transform: 'translateY(0px)'}}>
+    <header ref={headerRef} id="header" className="te-header flex-shrink-0 sticky top-0 z-50 transition-transform duration-300 sticky-scroll" role="banner">
   <Marquee />
   {/* <!-- Topbar --> */}
   <TopBar menuData={menuData} />

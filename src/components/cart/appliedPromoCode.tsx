@@ -19,7 +19,7 @@ function AppliedPromoCode() {
       const response = await postRequest('/marketplace/cart/delete-voucher/'+cartId, {}, {}, token, locale);
       // toastHelper(response.data.status,response.data.message);
       if(response.data.status){
-        setCartData(response.data.data);
+        setCartData(response?.data);
       }else{
         toast.error(response.data.message);
       }

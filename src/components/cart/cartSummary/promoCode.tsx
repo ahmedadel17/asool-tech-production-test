@@ -34,7 +34,8 @@ import postRequest from '../../../../helpers/post';
           const response = await postRequest('/marketplace/cart/apply-voucher/'+cartId, { promo_code_id: values.promo_code_id }, {},token,locale);
           // toastHelper(response.data.status,response.data.message);
           if(response.data.status){
-            setCartData(response.data.data);
+            // console.log('response', response);
+            setCartData(response.data);
             resetForm();
           }else{
             setFieldError('promo_code_id', response.data.message);

@@ -184,7 +184,6 @@ function DashboardSettings() {
                     <option value="">{t('Select gender')}</option>
                     <option value="male">{t('Male')}</option>
                     <option value="female">{t('Female')}</option>
-                    <option value="other">{t('Other')}</option>
                   </select>
                 </div>
                 {/* <div className="md:col-span-2">

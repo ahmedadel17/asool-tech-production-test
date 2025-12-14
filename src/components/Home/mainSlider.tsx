@@ -59,7 +59,7 @@ function MainSlider({sliders}: {sliders: { data?: SliderData[] }}) {
     <div ref={emblaRef} className="overflow-hidden h-full">
       <div id="slides-container" className="flex relative z-10" >
         {slides?.map((slide, index) => (
-          <MainSliderSlide key={index} img={slide?.image || ''} slider={slide} />
+          <MainSliderSlide key={index} img={slide?.image || ''} slider={slide || {}} />
         ))}
       </div>
     </div>

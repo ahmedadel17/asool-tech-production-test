@@ -3,8 +3,7 @@ import { useTranslations } from 'next-intl'
 function ProductItem({item}: {item: any}) {
   const t = useTranslations('checkoutConfirmation')
   return (
-    <div className="space-y-4" key={item.id}>
-            <div className="flex items-center space-x-4 rtl:space-x-reverse p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-4 rtl:space-x-reverse p-4 bg-gray-50 dark:bg-gray-700 rounded-lg" key={item.id}>
                     <Image width={100} height={100} src={item.image} alt="Product" className="w-16 h-16 objectCover rounded-md"/>
                 <div className="flex-1">
                     <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
@@ -18,7 +17,6 @@ function ProductItem({item}: {item: any}) {
                     </p>
                 </div>
             </div>
-        </div>
   )
 }
 

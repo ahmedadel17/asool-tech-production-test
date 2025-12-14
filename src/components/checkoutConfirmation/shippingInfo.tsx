@@ -1,5 +1,13 @@
 import { useTranslations } from 'next-intl'
-function ShippingInfo({address}: {address: {name?: string; street?: string; house?: string; address?: string; country?: string; contact_phone?: string}}) {
+type Address = {
+    name?: string;
+    street?: string;
+    house?: string;
+    address?: string;
+    country?: string;
+    contact_phone?: string;
+}
+function ShippingInfo({address}: {address: Address | undefined}) {
   const t = useTranslations('checkoutConfirmation')
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

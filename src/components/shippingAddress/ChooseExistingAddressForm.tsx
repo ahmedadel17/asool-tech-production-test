@@ -1,5 +1,5 @@
 'use client'
-import React, {  useEffect, useState, useCallback } from 'react';
+import React, {  useEffect, useState, useCallback, useRef } from 'react';
 import AddressRadioButton from './AddressRadioButton';
 import { useUserStore } from '@/store/userStore';
 import { useCheckoutStore } from '@/store/checkoutStore';
@@ -42,53 +42,97 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
   // const dispatch = useDispatch();
   const t = useTranslations('Checkout');
   const locale = useLocale();
+  
+  // Use refs to store callbacks to avoid dependency issues
+  const onAddressSelectedRef = useRef(onAddressSelected);
+  const onAddressDeletedRef = useRef(onAddressDeleted);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onAddressSelectedRef.current = onAddressSelected;
+    onAddressDeletedRef.current = onAddressDeleted;
+  }, [onAddressSelected, onAddressDeleted]);
+  
+  // Track if we've already auto-selected the default address to prevent re-selection
+  const hasAutoSelectedRef = useRef(false);
+  // Track if request is in progress to prevent multiple simultaneous requests
+  const isFetchingRef = useRef(false);
+  
   const getExistingAddresses = useCallback(async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/addresses`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    if(response.data.status){
-      setLoading(false)
-      const addresses = response.data.data
-      setExistingAddresses(addresses)
+    // Prevent multiple simultaneous requests
+    if (isFetchingRef.current) {
+      return;
+    }
+    
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
+    isFetchingRef.current = true;
+    setLoading(true);
+    
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/addresses`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
-      // Auto-select the default address if one exists
-      const defaultAddress = addresses.find((addr: Address) => addr.is_default === true)
-      if (defaultAddress) {
-        const addressIdStr = defaultAddress.id.toString();
-        setSelectedAddressId(addressIdStr);
-        setUserAddressId(addressIdStr);
+      if(response.data.status){
+        const addresses = response.data.data;
+        setExistingAddresses(addresses);
+        setLoading(false);
         
-        // Make API request to update cart details with the default address
-        const cartId = cartData?.data?.id;
-        if (cartId && token) {
-          try {
-            await postRequest(
-              `/marketplace/cart/cart-details/${cartId}`,
-              { user_address_id: addressIdStr },
-              {},
-              token,
-             locale
-            );
-          } catch (error) {
-            console.error('Error updating cart details with default address:', error);
+        // Auto-select the default address if one exists and we haven't already done so
+        if (!hasAutoSelectedRef.current) {
+          const defaultAddress = addresses.find((addr: Address) => addr.is_default === true);
+          if (defaultAddress) {
+            const addressIdStr = defaultAddress.id.toString();
+            setSelectedAddressId(addressIdStr);
+            setUserAddressId(addressIdStr);
+            hasAutoSelectedRef.current = true;
+            
+            // Make API request to update cart details with the default address
+            // Access cart data directly from store to avoid dependency issues
+            const currentCartData = useCartStore.getState().cartData;
+            const cartId = currentCartData?.data?.id;
+            if (cartId && token) {
+              try {
+                await postRequest(
+                  `/marketplace/cart/cart-details/${cartId}`,
+                  { user_address_id: addressIdStr },
+                  {},
+                  token,
+                  locale
+                );
+              } catch (error) {
+                console.error('Error updating cart details with default address:', error);
+              }
+            }
+            
+            onAddressSelectedRef.current?.(addressIdStr);
           }
         }
-        
-        onAddressSelected?.(addressIdStr);
       }
-    }
-    else{
-      toast.error(response.data.message);
+      else{
+        toast.error(response.data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
       setLoading(false);
+      toast.error('Failed to load addresses');
+    } finally {
+      isFetchingRef.current = false;
     }
-   
-  }, [token, onAddressSelected, cartData?.data?.id, setUserAddressId])
+  }, [token, locale, setUserAddressId])
 
   useEffect(() => {
-    getExistingAddresses()
-  }, [getExistingAddresses])
+    // Reset auto-selection flag when component mounts or token changes
+    hasAutoSelectedRef.current = false;
+    getExistingAddresses();
+  }, [token, getExistingAddresses])
 
   const handleDeleteAddress = async (addressId: number) => {
     try {
@@ -99,12 +143,20 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
       });
       
       if (response.data.status) {
+        // If deleted address was selected, clear selection
+        if (selectedAddressId === addressId.toString()) {
+          setSelectedAddressId(undefined);
+          setUserAddressId('');
+        }
+        
         // Refresh the addresses list
+        hasAutoSelectedRef.current = false; // Reset to allow auto-selection of new default
         await getExistingAddresses();
-        onAddressDeleted?.();
+        onAddressDeletedRef.current?.();
       }
     } catch (error) {
       console.error('Failed to delete address:', error);
+      toast.error('Failed to delete address');
     }
   };
 
@@ -138,7 +190,7 @@ const ChooseExistingAddressForm: React.FC<ChooseExistingAddressFormProps> = ({
     }
     
     // Call the parent callback
-    onAddressSelected?.(addressId);
+    onAddressSelectedRef.current?.(addressId);
   };
 
  

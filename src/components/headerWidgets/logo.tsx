@@ -1,9 +1,10 @@
+import Link from 'next/link'
 import React from 'react'
 
 function Logo() {
   return (
     <div className="te-navbar-brand">
-    <a href="index.php" className="flex items-center gap-3 no-underline">
+    <Link href="/" className="flex items-center gap-3 no-underline">
      { process.env.NEXT_PUBLIC_LOGO ? (
         <img src={process.env.NEXT_PUBLIC_LOGO } alt="Logo" className="w-20 h-20" />
      ) : (
@@ -12,7 +13,7 @@ function Logo() {
        <span className="text-xl font-bold text-gray-600 dark:text-white">Naseem</span>
        </>
      )}
-    </a>
+    </Link>
 </div>
   )
 }

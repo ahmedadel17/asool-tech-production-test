@@ -120,6 +120,7 @@
     "Please login to add to cart": "يرجى تسجيل الدخول لإضافة المنتج إلى العربة",
     "Failed to add to cart": "فشل إضافة المنتج إلى العربة",
     "No variation_id or default_variation_id available": "لا يوجد منتج مطابقة",
+    "Please select variations first": "يرجى اختيار المتغيرات أولاً",
     "View Details": "عرض التفاصيل",
     "Add to Compare": "إضافة للمقارنة",
     "Remove from Compare": "إزالة من المقارنة",
@@ -584,7 +585,8 @@
     "Continue Shopping": "استمرار التسوق",
     "Tracking Progress": "تتبع التقدم",
     "Cancel Order": "إلغاء الطلب",
-    "Shipping Address": "عنوان الشحن"
+    "Shipping Address": "عنوان الشحن",
+    "Loading order details": "جاري تحميل تفاصيل الطلب"
    },
    "customerOpinions":{
       "Customer Opinions":"اراء العملاء"

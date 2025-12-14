@@ -48,7 +48,7 @@ const ShippingMethodRadioButton: React.FC<ShippingMethodRadioButtonProps> = ({
       <div className={contentClassName}>
         <div className="flex justify-between">
           <span className="flex">
-            <Image className='rounded-lg w-10 h-10 mr-2' src={option.image} alt={option.name} width={100} height={100} />
+            <Image className='rounded-lg w-10 h-10 mx-2' src={option.image} alt={option.name} width={100} height={100} />
             <span className="font-medium text-gray-900 dark:text-white">
               {option.name}
               <p className="text-sm text-gray-600 dark:text-gray-400">{option.description}</p>
