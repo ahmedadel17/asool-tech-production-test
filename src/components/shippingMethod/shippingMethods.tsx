@@ -127,7 +127,7 @@ const ShippingMethod = () => {
           token,
           locale
         );
-        console.log('response', response);
+        // console.log('response', response);
         if (response?.data) {
           setCartData(response?.data);
           toast.success(t('Shipping method selected successfully'));
