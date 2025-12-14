@@ -147,7 +147,7 @@ const MyAddressesPage: React.FC = () => {
         toast.error(t("Failed to set address as default"));
       }
     } catch (error) {
-      toast.error(t("Failed to set address as default",));
+      toast.error(t("Failed to set address as default"));
     } finally {
       setSettingDefault(null);
     }

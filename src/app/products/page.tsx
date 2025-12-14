@@ -23,10 +23,23 @@ async function Products({ searchParams }: ProductsPageProps) {
   const categories = categoriesParam 
     ? (Array.isArray(categoriesParam) ? categoriesParam : [categoriesParam])
     : []
-  // Handle attributes[] parameter (Next.js parses it as 'attributes[]' key)
-  const attributesParam = params?.['attributes[]'] || params?.attributes
-  const attributes = attributesParam 
-    ? (Array.isArray(attributesParam) ? attributesParam : [attributesParam])
+  // Handle attributes[attributeId]=valueId format
+  // Extract all attributes[attributeId] parameters from URL
+  const attributeFilters: Record<string, string> = {}
+  Object.keys(params).forEach((key) => {
+    if (key.startsWith('attributes[') && key.endsWith(']')) {
+      const attributeId = key.slice(11, -1) // Extract ID from 'attributes[ID]'
+      const value = params[key]
+      if (value && typeof value === 'string') {
+        attributeFilters[attributeId] = value
+      }
+    }
+  })
+  
+  // Also handle legacy attributes[] format for backward compatibility
+  const legacyAttributesParam = params?.['attributes[]'] || params?.attributes
+  const legacyAttributes = legacyAttributesParam 
+    ? (Array.isArray(legacyAttributesParam) ? legacyAttributesParam : [legacyAttributesParam])
     : []
   
   // Build query string for API
@@ -52,8 +65,13 @@ async function Products({ searchParams }: ProductsPageProps) {
     queryParams.append('categories[]', categoryId)
   })
   
-  // Add attribute filters if they exist
-  attributes.forEach((attributeId: string) => {
+  // Add attribute filters in format: attributes[attributeId]=valueId
+  Object.entries(attributeFilters).forEach(([attributeId, value]) => {
+    queryParams.set(`attributes[${attributeId}]`, value)
+  })
+  
+  // Also add legacy format for backward compatibility
+  legacyAttributes.forEach((attributeId: string) => {
     queryParams.append('attributes[]', attributeId)
   })
   

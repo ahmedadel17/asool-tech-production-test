@@ -9,22 +9,35 @@ import { useWishlistStore } from '../../store/wishlistStore'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+interface Variation {
+  attribute_id: string
+  attribute_name: string
+  attribute_type: string
+  type?: string
+  values: Array<{ id: string | number; value?: string; color?: string }>
+}
+
 interface ProductData {
   id?: string | number
   default_variation_id?: string | number
+  variations?: Variation[]
   [key: string]: unknown
 }
 
 function ProductActions({ 
-  disabled, 
   product, 
   quantity, 
-  customerNote 
+  customerNote,
+  selectedAttributes,
+  allVariationsSelected,
+  isFetchingVariations
 }: { 
-  disabled?: boolean
   product?: ProductData
   quantity?: number
   customerNote?: string
+  selectedAttributes?: Record<string, string | number>
+  allVariationsSelected?: boolean
+  isFetchingVariations?: boolean
 }) {
   const { getVariation } = useProductStore()
   const { token } = useUserStore()
@@ -34,8 +47,34 @@ function ProductActions({
   const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   const t = useTranslations('productDetails')
   const locale=useLocale()
-  const router = useRouter()  
+  const router = useRouter()
+  
+  // Get variation to check if variation_id is loaded
+  const variation = product?.id ? getVariation(product.id) : null
+  const variationId = variation?.variation_id || product?.default_variation_id
+  
+  // Show loading if variations are being fetched and variation_id is not yet available
+  // Only show loading if product has variations and all are selected
+  const isWaitingForVariation = product?.variations && product.variations.length > 0 && 
+    allVariationsSelected && 
+    isFetchingVariations && 
+    !variationId  
   const addToCart = async () => {
+    // Check if product has variations and if all are selected
+    if (product?.variations && product.variations.length > 0 && !allVariationsSelected) {
+      // Get missing variation names
+      const missingVariations = product.variations
+        .filter((variation: Variation) => !selectedAttributes?.[variation.attribute_id])
+        .map((variation: Variation) => {
+          // Get variation name from attribute_name, attribute_type, or type
+          return variation.attribute_name || variation.attribute_type || variation.type || t('Variation')
+        })
+      
+      const missingVariationsText = missingVariations.join(', ')
+      toast.error(`${t('Please select variations first')}: ${missingVariationsText}`)
+      return
+    }
+
     setIsLoading(true)
     // Use variation_id from store if available (for this specific product), otherwise use product.default_variation_id
     const variation = product?.id ? getVariation(product.id) : null
@@ -92,16 +131,16 @@ function ProductActions({
     <button 
       id="addToCart" 
       onClick={addToCart}
-      disabled={disabled || isLoading}
-      className={`w-full py-1 product-add-to-cart flex-1 te-btn te-btn-primary flex gap-2 items-center justify-center ${disabled || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={isLoading || isWaitingForVariation}
+      className={`w-full py-1 product-add-to-cart flex-1 te-btn te-btn-primary flex gap-2 items-center justify-center ${isLoading || isWaitingForVariation ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-        {isLoading ? (
+        {isLoading || isWaitingForVariation ? (
           <>
             <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>{t('Adding')}</span>
+            <span>{isWaitingForVariation ? t('Loading') : t('Adding')}</span>
           </>
         ) : (
           <>

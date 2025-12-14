@@ -37,24 +37,26 @@ function VariableWidget({ attributes, totalProducts }: { attributes: Attribute[]
 
   // Initialize selected attributes from URL parameters on mount
   useEffect(() => {
-    const attributesParam = searchParams.getAll('attributes[]')
-    if (attributesParam.length > 0 && attributes) {
+    if (attributes && attributes.length > 0) {
       const initialSelected: SelectedAttributesState = {}
       
-      // Group attribute values by attribute ID
+      // Read attributes[attributeId]=valueId format from URL
       attributes.forEach((attribute) => {
-        const attributeValues: string[] = []
-        attribute.values.forEach((value) => {
-          if (attributesParam.includes(String(value.id))) {
-            attributeValues.push(String(value.id))
+        const attrId = String(attribute.id)
+        const attributeParam = searchParams.get(`attributes[${attrId}]`)
+        
+        if (attributeParam) {
+          // Split by comma if multiple values, otherwise single value
+          const valueIds = attributeParam.split(',').filter(v => v.trim() !== '')
+          if (valueIds.length > 0) {
+            initialSelected[attrId] = valueIds
           }
-        })
-        if (attributeValues.length > 0) {
-          initialSelected[String(attribute.id)] = attributeValues
         }
       })
       
-      setSelectedAttributes(initialSelected)
+      if (Object.keys(initialSelected).length > 0) {
+        setSelectedAttributes(initialSelected)
+      }
     }
   }, [searchParams, attributes])
 
@@ -98,14 +100,26 @@ function VariableWidget({ attributes, totalProducts }: { attributes: Attribute[]
     // Create new URLSearchParams with existing params
     const params = new URLSearchParams(searchParams.toString())
     
-    // Remove all existing attributes[]
+    // Remove all existing attributes[attributeId] parameters
+    // Get all keys and remove those that start with 'attributes['
+    const keysToDelete: string[] = []
+    params.forEach((_, key) => {
+      if (key.startsWith('attributes[')) {
+        keysToDelete.push(key)
+      }
+    })
+    keysToDelete.forEach(key => params.delete(key))
+    
+    // Also remove old format attributes[]
     params.delete('attributes[]')
     
-    // Add selected attribute values
-    Object.values(selectedAttributes).forEach((valueIds) => {
-      valueIds.forEach((valueId) => {
-        params.append('attributes[]', valueId)
-      })
+    // Add selected attribute values in format: attributes[attributeId]=valueId
+    Object.entries(selectedAttributes).forEach(([attributeId, valueIds]) => {
+      if (valueIds.length > 0) {
+        // Join multiple values with comma, or use single value
+        const valueParam = valueIds.join(',')
+        params.set(`attributes[${attributeId}]`, valueParam)
+      }
     })
     
     // Reset to page 1 when applying filters
@@ -168,7 +182,16 @@ function VariableWidget({ attributes, totalProducts }: { attributes: Attribute[]
     // Create new URLSearchParams with existing params
     const params = new URLSearchParams(searchParams.toString())
     
-    // Remove all attributes[] parameters
+    // Remove all attributes[attributeId] parameters
+    const keysToDelete: string[] = []
+    params.forEach((_, key) => {
+      if (key.startsWith('attributes[')) {
+        keysToDelete.push(key)
+      }
+    })
+    keysToDelete.forEach(key => params.delete(key))
+    
+    // Also remove old format attributes[]
     params.delete('attributes[]')
     
     // Reset to page 1

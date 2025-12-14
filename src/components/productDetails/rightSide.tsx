@@ -49,6 +49,9 @@ function RightSide({
   // Ref to track if we've already fetched for the current selection
   const lastFetchedSelection = useRef<string>('')
   
+  // State to track if variations are being fetched
+  const [isFetchingVariations, setIsFetchingVariations] = useState(false)
+  
   // Zustand store for product variation data
   const { setVariation, getVariation, clearVariation } = useProductStore()
   
@@ -113,6 +116,8 @@ function RightSide({
       return
     }
 
+    setIsFetchingVariations(true)
+
     // Format payload: { product_id, attributes: { [attribute_id]: value_id } }
     const payload = {
       product_id: product.id,
@@ -152,8 +157,10 @@ function RightSide({
         setVariation(product.id, null)
       }
       throw error
+    } finally {
+      setIsFetchingVariations(false)
     }
-  }, [product?.id, selectedAttributes, setVariation])
+  }, [product?.id, selectedAttributes, setVariation, locale])
 
   // Fetch product variations when all variations are selected
   useEffect(() => {
@@ -207,10 +214,12 @@ function RightSide({
      <ProductColor /> */}
      <Comment customerNote={customerNote} onCustomerNoteChange={setCustomerNote} />
      <ProductActions 
-       disabled={product?.variations && product.variations.length > 0 ? !allVariationsSelected : false}
        product={product}
        quantity={quantity}
        customerNote={customerNote}
+       selectedAttributes={selectedAttributes}
+       allVariationsSelected={allVariationsSelected}
+       isFetchingVariations={isFetchingVariations}
      />
      
     </div>

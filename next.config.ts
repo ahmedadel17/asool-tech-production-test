@@ -3,7 +3,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
-
   images: {
     unoptimized: true,
     formats: ["image/avif", "image/webp"],

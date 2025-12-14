@@ -15,10 +15,15 @@ interface Order {
   total: string;
 }
 
-interface WishlistItem {
-  title: string;
-  image: string;
-  price: string;
+type Statistics = {
+  total_wallet_balance: number;
+  total_points: number;
+  total_orders: number;
+  total_wishlist_items: number;
+  paid_amount: number;
+  favorites_count: number;
+  orders_count: number;
+  latest_orders: Order[];
 }
 
 export default function Dashboard() {
@@ -29,24 +34,20 @@ export default function Dashboard() {
   const locale = useLocale();
   // Consolidated state for better performance and organization
   const [state, setState] = useState({
-    wallet: null as {balance:number} | null,
-    points: null as {points:number, current_points_int: number} | null,
-    profile: null as {name:string} | null,
+    statistics: null as Statistics | null,
     isLoading: {
-      wallet: false,
-      points: false,
-      profile: false
+     statistics: false
     }
   });
-  const getWallet = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, wallet: true } }));
+  const getStatistics = useCallback(async () => {
+    setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, statistics: true } }));
     try {
-      const response = await getRequest('/customer/wallet', {'Content-Type': 'application/json'}, token, locale);
+      const response = await getRequest('/customer/statistics', {'Content-Type': 'application/json'}, token, locale);
       // console.log('wallet', response);
       setState(prev => ({ 
         ...prev, 
-        wallet: response?.data,
-        isLoading: { ...prev.isLoading, wallet: false }
+        statistics: response?.data,
+        isLoading: { ...prev.isLoading, statistics: false }
       }));
       if (response?.status) {
         return response?.data;
@@ -54,46 +55,16 @@ export default function Dashboard() {
       return null;
     } catch (error) {
       console.error('Error fetching wallet:', error);
-      setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, wallet: false } }));
+      setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, statistics: false } }));
     }
   }, [token, locale]);
 
-  const getPoints = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, points: true } }));
-    try {
-      const response = await getRequest('/customer/points-history', {'Content-Type': 'application/json'}, token, locale);
-      // console.log('points', response);
-      setState(prev => ({ 
-        ...prev, 
-        points: response?.data,
-        isLoading: { ...prev.isLoading, points: false }
-      }));
-    } catch (error) {
-      console.error('Error fetching points:', error);
-      setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, points: false } }));
-    }
-  }, [token, locale]);
 
-  const getProfile = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, profile: true } }));
-    try {
-      const response = await getRequest('/customer/get-profile', {'Content-Type': 'application/json'}, token, locale);
-      // console.log('profile', response);
-      setState(prev => ({ 
-        ...prev, 
-        profile: response?.data,
-        isLoading: { ...prev.isLoading, profile: false }
-      }));
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setState(prev => ({ ...prev, isLoading: { ...prev.isLoading, profile: false } }));
-    }
-  }, [token, locale]);
+
+
  useEffect(()=>{
-  getWallet();
-  getPoints();
-  getProfile();
- },[getWallet, getPoints, getProfile]);
+  getStatistics();
+ },[ getStatistics]);
 
   return (
   <>
@@ -116,9 +87,9 @@ export default function Dashboard() {
                 <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
               </svg>
             }
-            value={state.isLoading.wallet ? t("Loading") : `$ ${state.wallet?.balance || '0'}`}
+            value={state.isLoading.statistics ? t("Loading") : `$ ${state.statistics?.total_wallet_balance || '0'}`}
             label={t('Wallet Balance')}
-            isLoading={state.isLoading.wallet}
+            isLoading={state.isLoading.statistics}
           />
 
           {/* Points Card */}
@@ -130,24 +101,24 @@ export default function Dashboard() {
                 <path d="M11.051 7.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.867l-1.156-1.152a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z" />
               </svg>
             }
-            value={state.isLoading.points ? t("Loading") : `${state.points?.current_points_int || '0'}`}
+            value={state.isLoading.statistics ? t("Loading") : `${state.statistics?.total_points || '0'}`}
             label={t('Reward Points')}
-            isLoading={state.isLoading.points}
+            isLoading={state.isLoading.statistics}
           />
 
           {/* Total Spent */}
-          <StatCard color="purple" icon={<span className="text-lg">﷼</span>} value="65.00" label={t('Total Spent')} />
+          <StatCard color="purple" icon={<span className="text-lg">﷼</span>} value={state.isLoading.statistics ? t("Loading") : `$ ${state.statistics?.paid_amount || '0'}`} label={t('Total Spent')} />
 
           {/* Wishlist */}
-          <StatCard color="red" icon={<HeartIcon />} value="12" label={t('Wishlist Items')} />
+          <StatCard color="red" icon={<HeartIcon />} value={state.isLoading.statistics ? t("Loading") : `${state.statistics?.total_wishlist_items || '0'}`} label={t('Wishlist Items')} />
 
           {/* Total Orders */}
-          <StatCard color="blue" icon={<BagIcon />} value="12" label={t('Total Orders')} />
+          <StatCard color="blue" icon={<BagIcon />} value={state.isLoading.statistics ? t("Loading") : `${state.statistics?.total_orders || '0'}`} label={t('Total Orders')} />
         </div>
 
 
         {/* Recent Orders */}
-    <DashboardOrders />
+    <DashboardOrders orders={state.statistics?.latest_orders || null} isLoading={state.isLoading.statistics} />
 
       
       </div>

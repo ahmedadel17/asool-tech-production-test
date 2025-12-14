@@ -1,24 +1,15 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
-import getRequest from "../../../helpers/get";
-import { useUserStore } from "@/store/userStore";
-import { useLocale, useTranslations } from "next-intl";
+import React, { useState } from "react";
+
 import OrderItem from "./dashboardOrdersComponents/orderItem";
+import { useTranslations } from "next-intl";
 interface Order {
   id: string;
   date: string;
-  status: {
-    text: "Delivered" | "Shipped" | "Processing" | "Cancelled";
-    color: string;
-  };
   total: string;
 }
 
-const OrdersPage: React.FC = () => {
-  const { token } = useUserStore();
-  const locale = useLocale();
-  const [ordersNew,setOrdersNew]=useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const OrdersPage: React.FC<{ orders: Order[] | null, isLoading: boolean }> = ({ orders, isLoading }) => {
   const [filters, setFilters] = useState({
     orderId: "",
     date: "",
@@ -30,23 +21,7 @@ const OrdersPage: React.FC = () => {
 
   // Filtering logic
   const t = useTranslations('Dashboard');
-  const getOrders = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await getRequest('/order/orders', {'Content-Type': 'application/json'}, token, locale);
-      // console.log('orders',response.data.my_orders.items);
-      setOrdersNew(response?.data?.my_orders?.items);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      setOrdersNew([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token, locale]);
-  
-  useEffect(() => {
-    getOrders();
-  }, [getOrders]);  
+
   return (
 <>
       {/* Main Content */}
@@ -134,7 +109,7 @@ const OrdersPage: React.FC = () => {
                       </div>
                     </td>
                   </tr>
-                ) : ordersNew?.length === 0 ? (
+                ) : orders?.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-12">
                       <div className="flex flex-col items-center justify-center">
@@ -147,7 +122,7 @@ const OrdersPage: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  ordersNew?.map((order) => (
+                  orders?.map((order) => (
                     <OrderItem key={order?.id} order={order} />
                   ))
                 )}

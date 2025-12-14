@@ -205,7 +205,12 @@
     "Enter your comment here": "أدخل تعليقك هنا",
     "Adding": "جاري الإضافة",
     "Add to Cart": "إضافة إلى العربة",
+    "Loading": "جاري التحميل",
     "Please login to add to cart": "يرجى تسجيل الدخول لإضافة المنتج إلى العربة",
+    "Please select variations first": "يرجى اختيار المتغيرات أولاً",
+    "Variation": "المتغير",
+    "No variation_id or default_variation_id available": "لا يوجد variation_id أو default_variation_id متاح",
+    "Failed to add to cart": "فشل إضافة المنتج إلى العربة",
     "Failed to add to cart": "فشل إضافة المنتج إلى العربة",
     "No variation_id or default_variation_id available": "لا يوجد منتج مطابقة"
    },
@@ -387,7 +392,10 @@
    "Saving":"جاري الحفظ",
    "Phone Number":"رقم الهاتف",
    "Failed to fetch addresses":"فشل احضار العناوين",
-   "Phone":"الهاتف"
+   "Phone":"الهاتف",
+   "Setting as Default": "تعيين كافتراضي",
+   "Failed to set address as default": "فشل تعيين العنوان كافتراضي",
+   "Address set as default successfully": "تم تعيين العنوان كافتراضي بنجاح"
    },
    "Account Settings":{
     "Account Settings": "إعدادات الحساب",

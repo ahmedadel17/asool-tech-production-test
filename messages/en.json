@@ -202,7 +202,13 @@
     "Enter your comment here": "Enter your comment here",
     "Adding": "Adding",
     "Add to Cart": "Add to Cart",
-    "Products": "Products"
+    "Products": "Products",
+    "Loading": "Loading",
+    "Please select variations first": "Please select variations first",
+    "Variation": "Variation",
+    "No variation_id or default_variation_id available": "No variation_id or default_variation_id available",
+    "Failed to add to cart": "Failed to add to cart",
+    "Please login to add to cart": "Please login to add to cart"
 },
 "Dashboard":{
  "Welcome back": "Welcome back",
@@ -388,7 +394,10 @@
     "Saving":"Saving",
     "Phone Number":"Phone Number",
     "Failed to fetch addresses":"Failed to fetch addresses",
-    "Phone":"Phone"
+    "Phone":"Phone",
+    "Setting as Default": "Setting as Default",
+    "Failed to set address as default": "Failed to set address as default",
+    "Address set as default successfully": "Address set as default successfully"
 },
 "Account Settings":{
     "Account Settings": "Account Settings",

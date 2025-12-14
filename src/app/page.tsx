@@ -27,6 +27,8 @@ interface SectionWithMeta {
 async function Page() {
   const locale = await getLocale();
 
+
+
   const homeData = await getRequest('/home-v2', {}, null, locale);
   
   // Get all sections and convert to array with their keys
