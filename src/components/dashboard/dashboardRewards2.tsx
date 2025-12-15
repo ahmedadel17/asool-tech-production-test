@@ -130,7 +130,10 @@ function DashboardRewards2() {
             </div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("Wallet Balance")}</h2>
             <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                <span className="icon-riyal-symbol text-lg mr-1"></span>{pointsHistory?.current_wallet_balance || 0}             </p>
+                {locale=='ar' ? <span className="icon-riyal-symbol text-lg mr-1"></span> : <span className='text-lg mr-1'>
+                    SAR
+                </span>}
+                <span className='ml-1'>{pointsHistory?.current_wallet_balance || 0}</span>             </p>
             <p className="text-sm text-purple-600 dark:text-purple-300">{t("Ready to spend")}</p>
         </div>
 
@@ -150,7 +153,10 @@ function DashboardRewards2() {
                 {pointsHistory?.current_points || 0}
             </p>
             <p className="text-sm text-green-600 dark:text-green-300">
-                {t('Worth')} <span className="icon-riyal-symbol text-xs"></span>{pointsHistory?.total_current_points_with_sar || 0}                </p>
+                {t('Worth')}   {locale=='ar' ? <span className="icon-riyal-symbol text-xs"></span> : <span className='text-xs'>
+                    SAR
+                </span>}
+                <span className='ml-1'>{pointsHistory?.total_current_points_with_sar || 0}</span>                </p>
         </div>
     </div>
 

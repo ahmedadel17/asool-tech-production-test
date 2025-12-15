@@ -397,7 +397,8 @@
     "Phone":"Phone",
     "Setting as Default": "Setting as Default",
     "Failed to set address as default": "Failed to set address as default",
-    "Address set as default successfully": "Address set as default successfully"
+    "Address set as default successfully": "Address set as default successfully",
+    "street":"street"
 },
 "Account Settings":{
     "Account Settings": "Account Settings",
