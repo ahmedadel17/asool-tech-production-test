@@ -11,9 +11,10 @@ import DashboardHeader from './DashboardHeader';
 function DashboardRewards2() {
     const [pointsHistory, setPointsHistory] = useState< {
         current_points: number;
+        current_wallet_balance: number;
         total_current_points_with_sar: number;
         example_rate: number;
-    }>({current_points: 0, total_current_points_with_sar: 0, example_rate: 0});
+    }>({current_points: 0, current_wallet_balance: 0, total_current_points_with_sar: 0, example_rate: 0});
     const [isLoading, setIsLoading] = useState(false);
     const [pointsToConvert, setPointsToConvert] = useState<number>(0);
     const [resultAmount, setResultAmount] = useState<number>(0);
@@ -29,7 +30,7 @@ function DashboardRewards2() {
         setIsLoading(true);
         try {
             const response = await getRequest('/customer/points-history', {'Content-Type': 'application/json'}, token, locale);
-            setPointsHistory(response?.data ?? {current_points: 0, total_current_points_with_sar: 0, example_rate: 0});
+            setPointsHistory(response?.data ?? {current_points: 0, current_wallet_balance: 0, total_current_points_with_sar: 0, example_rate: 0});
         } catch (error) {
             console.error('Error fetching transactions:', error);
         } finally {
@@ -93,7 +94,6 @@ function DashboardRewards2() {
                 setSubmitMessage({type: 'error', text: response.data?.message || 'Failed to convert points'});
             }
         } catch (error: unknown) {
-            console.error('Error converting points:', error);
             let errorMessage = 'An error occurred while converting points';
             if (error && typeof error === 'object' && 'response' in error) {
                 const axiosError = error as { response?: { data?: { message?: string } } };
@@ -130,7 +130,7 @@ function DashboardRewards2() {
             </div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("Wallet Balance")}</h2>
             <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                <span className="icon-riyal-symbol text-lg mr-1"></span>50.00                </p>
+                <span className="icon-riyal-symbol text-lg mr-1"></span>{pointsHistory?.current_wallet_balance || 0}             </p>
             <p className="text-sm text-purple-600 dark:text-purple-300">{t("Ready to spend")}</p>
         </div>
 

@@ -1,13 +1,13 @@
 'use client'
 import React, { useEffect } from 'react'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useQuickViewStore } from '@/store/quickViewStore'
 
 function QuickViewModal() {
   const t = useTranslations('productsCard')
   const { isOpen, product, closeQuickView } = useQuickViewStore()
-
+  const locale = useLocale()
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -81,13 +81,22 @@ function QuickViewModal() {
               <div className="mb-4">
                 {originalPrice && (
                   <p className="text-lg text-gray-500 line-through mb-1">
-                    <span className="icon-riyal-symbol"></span>
-                    {originalPrice}
+                    {locale=='ar' ? <span className="icon-riyal-symbol"></span> : <span>
+                      SAR
+                    </span>}
+                    <span className='ml-1'>
+                      {originalPrice}
+                    </span>
                   </p>
                 )}
                 <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                  <span className="icon-riyal-symbol"></span>
+                  {locale=='ar' ? <span className="icon-riyal-symbol"></span> : <span>
+                    SAR
+                  </span>}
+                  <span className='ml-1'>
+
                   {displayPrice}
+                  </span>
                 </p>
               </div>
               <div className="space-y-4">

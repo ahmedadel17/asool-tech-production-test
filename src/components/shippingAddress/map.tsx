@@ -36,18 +36,33 @@ declare global {
 interface MapComponentProps {
   onLocationSelect?: (lat: number, lng: number, address?: string) => void;
   searchInputRef?: React.RefObject<HTMLInputElement | null>;
+  initialLat?: number;
+  initialLng?: number;
 }
 
-export default function MapComponent({ onLocationSelect, searchInputRef }: MapComponentProps) {
+export default function MapComponent({ onLocationSelect, searchInputRef, initialLat, initialLng }: MapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const fallbackInputRef = useRef<HTMLInputElement>(null);
   const inputRef = searchInputRef || fallbackInputRef;
   const [map, setMap] = useState<any>(null);
   const [marker, setMarker] = useState<any>(null);
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
-    lat: 30.0444,
-    lng: 31.2357,
+    lat: initialLat || 30.0444,
+    lng: initialLng || 31.2357,
   });
+
+  // Update position when initialLat/initialLng change (edit mode)
+  useEffect(() => {
+    if (initialLat && initialLng) {
+      setPosition({ lat: initialLat, lng: initialLng });
+      if (map && marker) {
+        const newPos = { lat: initialLat, lng: initialLng };
+        marker.setPosition(newPos);
+        map.panTo(newPos);
+        map.setZoom(15);
+      }
+    }
+  }, [initialLat, initialLng, map, marker]);
 
   useEffect(() => {
     if (window.google) {

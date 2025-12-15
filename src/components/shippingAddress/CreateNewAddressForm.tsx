@@ -81,6 +81,17 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
     }
   }, [initialValuesOverride]);
 
+  // Set search input value when address is available (edit mode)
+  useEffect(() => {
+    // Use a small timeout to ensure the ref is attached
+    const timer = setTimeout(() => {
+      if (searchInputRef.current && mergedInitialValues.address) {
+        searchInputRef.current.value = mergedInitialValues.address;
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [mergedInitialValues.address]);
+
   const validationSchema = Yup.object({
       name: Yup.string().notRequired().nullable().min(2, t('Name must be at least 2 characters')),
     contact_phone: Yup.string().notRequired().nullable().matches(/^[0-9]*$/, ('Phone number must contain only digits')).min(7, ('Phone number must be at least 7 digits')).max(15, ('Phone number must not exceed 15 digits')),
@@ -136,9 +147,9 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
           initialValues={mergedInitialValues}
           onSubmit={onSubmit}
           validationSchema={validationSchema}
+          enableReinitialize={true}
         >
-          {({ values, setFieldValue, handleChange, handleBlur, errors, touched, isSubmitting }) => {
-          
+          {({ values, setFieldValue, errors, touched, isSubmitting }) => {
             
             return (
             <Form>
@@ -148,6 +159,8 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
 
                 <MapComponent
                   searchInputRef={searchInputRef}
+                  initialLat={values.lat ? parseFloat(values.lat) : undefined}
+                  initialLng={values.lng ? parseFloat(values.lng) : undefined}
                   onLocationSelect={(lat: number, lng: number, address?: string) => {
                     setFieldValue('lat', String(lat));
                     setFieldValue('lng', String(lng));
@@ -163,6 +176,7 @@ const CreateNewAddressForm: React.FC<CreateNewAddressFormProps> = ({ onAddressCr
                   <input
                     ref={searchInputRef}
                     type="text"
+                    defaultValue={mergedInitialValues.address || ''}
                     placeholder={t('Search for a location')}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
                   />

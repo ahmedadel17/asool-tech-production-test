@@ -10,6 +10,10 @@ import { useLocale, useTranslations } from "next-intl";
 // 🏠 Address interface based on API response
 interface Address {
   id: number;
+  lat?: string;
+  lng?: string;
+  city_id?: string;
+  country_id?: string;
   label?: string;
   name?: string;
   address?: string;
@@ -262,10 +266,10 @@ const MyAddressesPage: React.FC = () => {
                       street: editingAddress.street || '',
                       notes: editingAddress.notes || '',
                       // lat/lng/city_id/country_id are required to submit; user can re-pick
-                      lat: '',
-                      lng: '',
-                      city_id: '',
-                      country_id: ''
+                      lat: editingAddress.lat || '',
+                      lng: editingAddress.lng || '',
+                      city_id: editingAddress.city_id || '',
+                      country_id: editingAddress.country_id || ''
                     }}
                     onAddressCreated={() => {
                       setEditingAddress(null);

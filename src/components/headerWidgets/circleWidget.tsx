@@ -91,7 +91,7 @@ account:
     </div>}
 
 
-    {accountGrid && <AccountGrid title={accountGridTitle || ''} subtitle={accountGridSubtitle || ''} />}
+    {accountGrid && <AccountGrid title={accountGridTitle || ''} subtitle={accountGridSubtitle || ''} onClick={()=>open(icon)} />}
     {type=='dropdown' && icon=='account' && <AccountDropDown isOpen={currentIsOpen}  />}
     {type=='dropdown' && icon=='cart' && <CartDropDown isOpen={currentIsOpen}  />}
     </div>

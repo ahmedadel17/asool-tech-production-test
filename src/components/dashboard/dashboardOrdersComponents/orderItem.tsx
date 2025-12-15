@@ -1,8 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 function OrderItem({order}: {order: any}) {
   const t = useTranslations('Dashboard');
+  const locale = useLocale();
   // console.log('order', order);
   return (
     <>
@@ -41,7 +42,15 @@ function OrderItem({order}: {order: any}) {
                      
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs">﷼</span> {order?.total_amount}
+                      <span className="text-xs">
+                        
+                        {
+                          locale=='ar' ?
+                          <span className="icon-riyal-symbol"></span> :
+                          'SAR'
+                          }
+
+                        </span> {order?.total_amount}
                     </td>
                     <td className="px-6 py-4">
                       <Link href={`/order/${order?.id}`} className="font-medium text-primary-600 dark:text-primary-100 hover:underline">

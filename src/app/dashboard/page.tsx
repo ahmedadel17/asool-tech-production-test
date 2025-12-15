@@ -87,7 +87,7 @@ export default function Dashboard() {
                 <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
               </svg>
             }
-            value={state.isLoading.statistics ? t("Loading") : `$ ${state.statistics?.total_wallet_balance || '0'}`}
+            value={state.isLoading.statistics ? t("Loading") : ` ${state.statistics?.total_wallet_balance || '0'}`}
             label={t('Wallet Balance')}
             isLoading={state.isLoading.statistics}
           />
@@ -107,7 +107,7 @@ export default function Dashboard() {
           />
 
           {/* Total Spent */}
-          <StatCard color="purple" icon={<span className="text-lg">﷼</span>} value={state.isLoading.statistics ? t("Loading") : `$ ${state.statistics?.paid_amount || '0'}`} label={t('Total Spent')} />
+          <StatCard color="purple" icon={<span className="icon-riyal-symbol"></span>} value={state.isLoading.statistics ? t("Loading") : ` ${state.statistics?.paid_amount || '0'}`} label={t('Total Spent')} />
 
           {/* Wishlist */}
           <StatCard color="red" icon={<HeartIcon />} value={state.isLoading.statistics ? t("Loading") : `${state.statistics?.total_wishlist_items || '0'}`} label={t('Wishlist Items')} />
