@@ -42,7 +42,7 @@ export default function Notifications() {
 
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [locale]);
 
 
 

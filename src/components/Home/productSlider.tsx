@@ -4,8 +4,10 @@ import React, { useCallback, useEffect } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import ProductCard from '../productCard'
 import ProductSliderContainer from './productSliderContainer'
+import { useTranslations } from 'next-intl'
 
 function ProductSlider({products}: {products: any}) {
+  const t = useTranslations('productSlider')
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
     containScroll: 'trimSnaps',
@@ -43,7 +45,7 @@ function ProductSlider({products}: {products: any}) {
           <div className='te-carousel'>  
       <div className="flex items-center justify-between mb-4">
 
-<h2 className="product-title text-2xl font-bold text-gray-900 dark:text-white">المنتجات الأكثر مبيعا</h2>
+<h2 className="product-title text-2xl font-bold text-gray-900 dark:text-white">{t('Best Selling Products')}</h2>
 
 <div className="embla-control flex gap-1 rtl:flex-row-reverse">
     <button onClick={scrollPrev} className="embla-prev bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors">
