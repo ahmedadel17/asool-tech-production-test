@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useTranslations } from "next-intl";
+import { useCheckoutStore } from "@/store/checkoutStore";
+import { useCartStore } from "@/store/cartStore";
 interface MenuItem {
   title: string;
   icon: React.ReactNode;
@@ -138,30 +140,33 @@ const menuItems: MenuItem[] = [
 
 const DashboardSidebar: React.FC = () => {
   const pathname = usePathname();
-  const { user, logout } = useUserStore();
   const [mounted, setMounted] = useState(false);
   const t = useTranslations('dashboardSidebar');
-  
+  const user = useUserStore((state) => state.user)
+  const logout = useUserStore((state) => state.logout)
+  const clearCart = useCartStore((state) => state.clearCart)
+  const clearCheckout = useCheckoutStore((state) => state.clearCheckout)
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist)
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const router = useRouter();
   const handleLogout = () => {
-    // Remove authToken, cartData, and wishlist from localStorage
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('cartData');
-    localStorage.removeItem('wishlist-storage');
+    clearCart()
+    // Clear checkout data from localStorage
+    clearCheckout()
+    // Clear wishlist data from localStorage
+    clearWishlist()
     // Also clear cookie
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     
     // Clear wishlist from store
-    const { clearWishlist } = useWishlistStore.getState();
-    clearWishlist();
     
     // Call logout function from useAuth hook (this also handles Redux store cleanup)
     logout();
     // Redirect to login page
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   };
   return (
     <div className="lg:col-span-1">

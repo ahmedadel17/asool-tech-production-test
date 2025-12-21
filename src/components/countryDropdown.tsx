@@ -36,10 +36,16 @@ interface CountryDropdownProps {
 export default function CountryDropdown({ selectedCountry, onCountryChange }: CountryDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isMounted, setIsMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const t = useTranslations("login")
   const locale = useLocale()
+
+  // Ensure locale-dependent rendering only happens on client
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -88,7 +94,7 @@ export default function CountryDropdown({ selectedCountry, onCountryChange }: Co
         </button>
         
         {isOpen && (
-          <div className={`absolute top-full  md:left-0 md:translate-x-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 ${locale === 'ar' ? 'right-0' : 'left-0'}`} >
+          <div className={`absolute top-full  md:left-0 md:translate-x-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 ${isMounted && locale === 'ar' ? 'right-0' : 'left-0'}`} >
             <div className="p-2 border-b border-gray-200 dark:border-gray-700">
               <input
                 ref={searchInputRef}
