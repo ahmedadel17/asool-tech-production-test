@@ -169,14 +169,17 @@ const DashboardSidebar: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           {/* User Profile */}
           <div className="flex items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-600">
-            <div className="w-16 h-16 uppercase bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+           {user?.avatar?
+           <img src={user?.avatar as string} alt="Avatar" className="w-16 h-16 rounded-full object-cover shrink-0" />:
+           
+           <div className="w-16 h-16 uppercase bg-primary-600 dark:bg-primary-300 rounded-full flex items-center justify-center text-white font-semibold text-lg shrink-0">
               {!mounted ? (
                 <div className="animate-pulse bg-white/20 rounded-full w-8 h-8"></div>
               ) : (
                 (user?.first_name?.charAt(0) || '') + (user?.last_name?.charAt(0) || '') || 'U'
               )}
-            </div>
-            <div className="ms-4">
+            </div>}
+            <div className="mx-2">
               <h3 className="font-semibold text-gray-900 dark:text-white capitalize">
                 {!mounted ? (
                   <div className="animate-pulse bg-gray-300 dark:bg-gray-600 rounded h-4 w-32"></div>

@@ -74,11 +74,44 @@ function RegisterContent() {
         ? countries.find(c => c.code === countryFromQuery) || countries[0]
         : countries[0]
       
-      if (country.dialCode && phoneFromQuery.startsWith(country.dialCode)) {
-        phone = phoneFromQuery.replace(country.dialCode, '')
-      } else {
-        phone = phoneFromQuery
+      // Remove leading "0" from phone number if present
+      let cleanedPhone = phoneFromQuery.startsWith('0') ? phoneFromQuery.slice(1) : phoneFromQuery
+      
+      // Get dial code without + and compare digits only
+      const dialCodeWithoutPlus = country.dialCode.replace('+', '')
+      const dialCodeDigitsOnly = dialCodeWithoutPlus.replace(/\D/g, '')
+      const cleanedPhoneDigitsOnly = cleanedPhone.replace(/\D/g, '')
+      
+      // Check if phone (digits only) starts with dial code (digits only) and remove it
+      if (dialCodeDigitsOnly && cleanedPhoneDigitsOnly.startsWith(dialCodeDigitsOnly)) {
+        // Try to remove dial code with formatting first (with +)
+        if (cleanedPhone.startsWith(country.dialCode)) {
+          cleanedPhone = cleanedPhone.slice(country.dialCode.length).trim()
+        } else if (cleanedPhone.startsWith(dialCodeWithoutPlus)) {
+          cleanedPhone = cleanedPhone.slice(dialCodeWithoutPlus.length).trim()
+        } else {
+          // Remove dial code digits from the beginning (handles cases with formatting)
+          // Reconstruct phone keeping formatting but removing dial code digits
+          let digitCount = 0
+          let newPhone = ''
+          for (let i = 0; i < cleanedPhone.length; i++) {
+            if (/\d/.test(cleanedPhone[i])) {
+              if (digitCount >= dialCodeDigitsOnly.length) {
+                newPhone += cleanedPhone[i]
+              }
+              digitCount++
+            } else {
+              // Only add non-digit characters if we've passed the dial code
+              if (digitCount >= dialCodeDigitsOnly.length) {
+                newPhone += cleanedPhone[i]
+              }
+            }
+          }
+          cleanedPhone = newPhone.trim()
+        }
       }
+      
+      phone = cleanedPhone
     }
     
     return {
@@ -103,6 +136,7 @@ function RegisterContent() {
       if (cleanedPhone.startsWith(dialCodeWithoutPlus)) {
         cleanedPhone = cleanedPhone.slice(dialCodeWithoutPlus.length)
       }
+
       
       const formData = {
         firstName: values.firstName,
@@ -121,7 +155,7 @@ function RegisterContent() {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
-        phone: formData.fullPhoneNumber,
+        phone: `${selectedCountry.dialCode}${formData.fullPhoneNumber}`,
         country_code: formData.countryCode
       }))
       

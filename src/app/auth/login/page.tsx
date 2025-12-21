@@ -33,10 +33,38 @@ function Login() {
       // Remove leading "0" from phone number if present
       let cleanedPhone = phone.startsWith('0') ? phone.slice(1) : phone
       
-      // Remove dial code (without +) from the beginning if phone starts with it
+      // Get dial code without + and compare digits only
       const dialCodeWithoutPlus = selectedCountry.dialCode.replace('+', '')
-      if (cleanedPhone.startsWith(dialCodeWithoutPlus)) {
-        cleanedPhone = cleanedPhone.slice(dialCodeWithoutPlus.length)
+      const dialCodeDigitsOnly = dialCodeWithoutPlus.replace(/\D/g, '')
+      const cleanedPhoneDigitsOnly = cleanedPhone.replace(/\D/g, '')
+      
+      // Check if phone (digits only) starts with dial code (digits only) and remove it
+      if (dialCodeDigitsOnly && cleanedPhoneDigitsOnly.startsWith(dialCodeDigitsOnly)) {
+        // Try to remove dial code with formatting first (with +)
+        if (cleanedPhone.startsWith(selectedCountry.dialCode)) {
+          cleanedPhone = cleanedPhone.slice(selectedCountry.dialCode.length).trim()
+        } else if (cleanedPhone.startsWith(dialCodeWithoutPlus)) {
+          cleanedPhone = cleanedPhone.slice(dialCodeWithoutPlus.length).trim()
+        } else {
+          // Remove dial code digits from the beginning (handles cases with formatting)
+          // Reconstruct phone keeping formatting but removing dial code digits
+          let digitCount = 0
+          let newPhone = ''
+          for (let i = 0; i < cleanedPhone.length; i++) {
+            if (/\d/.test(cleanedPhone[i])) {
+              if (digitCount >= dialCodeDigitsOnly.length) {
+                newPhone += cleanedPhone[i]
+              }
+              digitCount++
+            } else {
+              // Only add non-digit characters if we've passed the dial code
+              if (digitCount >= dialCodeDigitsOnly.length) {
+                newPhone += cleanedPhone[i]
+              }
+            }
+          }
+          cleanedPhone = newPhone.trim()
+        }
       }
       
       const formData = {

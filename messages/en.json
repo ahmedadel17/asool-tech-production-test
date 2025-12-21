@@ -420,7 +420,12 @@
     "Select gender": "Select gender",
     "Male": "Male",
     "Female": "Female",
-    "Other": "Other"
+    "Other": "Other",
+    "Image file": "Image file",
+    "max": "max",
+    "MB": "MB",
+    "Click the camera icon to change your avatar": "Click the camera icon to change your avatar",
+    "Avatar": "Avatar"
 },
 "cart":{
     "Home": "Home",

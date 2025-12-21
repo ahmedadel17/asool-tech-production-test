@@ -422,7 +422,13 @@
     "Other": "غير ذكر أو أنثى",
     "Please login to update your profile": "يرجى تسجيل الدخول لتحديث الملف الشخصي",
     "Profile updated successfully": "تم تحديث الملف الشخصي بنجاح",
-    "Failed to update profile": "فشل تحديث الملف الشخصي يرجى المحاولة مرة أخرى"
+    "Failed to update profile": "فشل تحديث الملف الشخصي يرجى المحاولة مرة أخرى",
+    "Image file": "ملف الصورة",
+    "max": "الحد الأقصى لحجم الملف هو",
+    "MB": "ميجابايت",
+    "Click the camera icon to change your avatar": "اضغط على زر الكاميرا لتغيير الصورة الشخصية",
+    "Avatar": "الصورة الشخصية",
+    "Change avatar": "تغيير الصورة الشخصية"
    },
    "cart":{
     "Home": "الرئيسية",
